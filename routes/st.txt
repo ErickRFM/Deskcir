@@ -1,0 +1,7 @@
+use App\Http\Controllers\ProductController;
+
+Route::middleware(['auth','admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', fn() => view('admin.dashboard'))->name('admin.dashboard');
+
+    Route::resource('/products', ProductController::class);
+});

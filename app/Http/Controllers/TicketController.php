@@ -1,38 +1,93 @@
-class TicketController extends Controller {
+<?php
 
-    public function create() {
-        return view('tickets.create');
+namespace App\Http\Controllers;
+
+use App\Models\Ticket;
+use App\Models\TicketMessage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class TicketController extends Controller
+{
+    // CLIENTE → lista SUS tickets (SOPORTE)
+    public function index()
+    {
+        $tickets = Ticket::where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('support.index', compact('tickets'));
     }
 
-    public function store(Request $r) {
-        Ticket::create([
-            'user_id' => auth()->id(),
-            'subject' => $r->subject,
-            'description' => $r->description,
-            'priority' => $r->priority,
-            'status' => 'Nuevo'
+    // FORM crear ticket
+    public function create()
+    {
+        return view('support.create');
+    }
+
+    // GUARDAR ticket
+    public function store(Request $r)
+    {
+        $r->validate([
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string',
+            'priority' => 'nullable|string'
         ]);
 
-        return redirect('/tickets');
+       $ticket = Ticket::create([
+         'user_id' => auth()->id(),
+         'subject' => $r->subject,
+         'description' => $r->description,
+         'priority' => $r->priority,
+         'status' => 'abierto'
+        ]);
+
+        return redirect('/support')
+            ->with('success','Ticket creado 🔥');
     }
 
-    public function index() {
-        $tickets = Ticket::where('user_id',auth()->id())->get();
-        return view('tickets.index',compact('tickets'));
+    // VER ticket con mensajes
+    public function show($id)
+    {
+        $ticket = Ticket::with('messages.user')
+                    ->findOrFail($id);
+
+        // SEGURIDAD: solo su ticket
+        if ($ticket->user_id != auth()->id()) {
+            abort(403);
+        }
+
+        return view('support.show', compact('ticket'));
     }
 
-    public function show($id) {
-        $ticket = Ticket::with('messages','report')->findOrFail($id);
-        return view('tickets.show',compact('ticket'));
-    }
+    // RESPONDER ticket
+    public function addMessage(Request $r, $id)
+    {
+        $r->validate([
+            'message' => 'required|string',
+            'file' => 'nullable|file|max:4096'
+        ]);
 
-    public function addMessage(Request $r,$id) {
+        $ticket = Ticket::findOrFail($id);
+
+        // SEGURIDAD
+        if ($ticket->user_id != auth()->id()) {
+            abort(403);
+        }
+
+        $path = null;
+
+        if ($r->hasFile('file')) {
+            $path = $r->file('file')->store('tickets','public');
+        }
+
         TicketMessage::create([
-            'ticket_id'=>$id,
-            'user_id'=>auth()->id(),
-            'message'=>$r->message
+            'ticket_id' => $id,
+            'user_id' => auth()->id(),
+            'message' => $r->message,
+            'file' => $path
         ]);
-        return back();
+
+        return back()->with('success','Mensaje enviado');
     }
 }
-

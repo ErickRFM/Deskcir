@@ -11,15 +11,22 @@ class Product extends Model
 
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'price',
         'stock',
-        'image',
-        'category'
+        'category_id'
     ];
 
+    // 👉 Relación con imágenes múltiples
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+
+    // 👉 Relación con categoría
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

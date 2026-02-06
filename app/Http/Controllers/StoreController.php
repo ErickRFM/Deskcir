@@ -14,7 +14,8 @@ class StoreController extends Controller
      */
     public function index()
     {
-        $categories = Category::with('products')->get();
+        $categories = Category::with('products.images')->get();
+
         return view('store.index', compact('categories'));
     }
 

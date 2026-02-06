@@ -1,20 +1,53 @@
-<h3>{{ $ticket->subject }}</h3>
-<p>Estado: {{ $ticket->status }}</p>
+@extends('layouts.app')
+
+@section('content')
+
+<h4>{{ $ticket->subject }}</h4>
+
+<p>{{ $ticket->description }}</p>
 
 <hr>
 
+<h5>Conversación</h5>
+
 @foreach($ticket->messages as $m)
-<p><strong>{{ $m->user->name }}:</strong> {{ $m->message }}</p>
-@endforeach
 
-<form method="POST" action="/tickets/{{ $ticket->id }}/message">
-@csrf
-<textarea name="message" class="form-control"></textarea>
-<button class="btn btn-secondary mt-2">Enviar</button>
-</form>
+<div class="card mb-2">
+<div class="card-body">
 
-@if($ticket->report)
-<a href="/tickets/{{ $ticket->id }}/report" class="btn btn-success mt-3">
-Ver informe final
+<strong>{{ $m->user->name }}</strong>
+
+<p>{{ $m->message }}</p>
+
+@if($m->file)
+<a href="{{ asset('storage/'.$m->file) }}">
+Descargar archivo
 </a>
 @endif
+
+</div>
+</div>
+
+@endforeach
+
+<hr>
+
+<form method="POST"
+      action="/tickets/{{ $ticket->id }}/message"
+      enctype="multipart/form-data">
+@csrf
+
+<textarea name="message"
+          class="form-control mb-2">
+</textarea>
+
+<input type="file" name="file"
+       class="form-control mb-2">
+
+<button class="btn btn-primary">
+Responder
+</button>
+
+</form>
+
+@endsection

@@ -111,7 +111,7 @@
 
 </div>
 
-{{-- SCRIPT SWEETALERT --}}
+{{-- SCRIPT SWEETALERT ELIMINAR --}}
 <script>
 function eliminar(id){
     Swal.fire({
@@ -130,5 +130,16 @@ function eliminar(id){
     })
 }
 </script>
+
+{{-- ✅ MENSAJE DE ÉXITO --}}
+@if(session('success'))
+<script>
+Swal.fire({
+  icon: 'success',
+  title: '¡Listo!',
+  text: '{{ session('success') }}'
+})
+</script>
+@endif
 
 @endsection

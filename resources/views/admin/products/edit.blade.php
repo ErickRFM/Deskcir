@@ -2,38 +2,50 @@
 
 @section('content')
 <div class="container">
-    <h3>Editar producto</h3>
+<h3>Editar producto</h3>
 
-    <form method="POST"
-          action="{{ route('admin.products.update', $product->id) }}"
-          enctype="multipart/form-data">
+{{-- 👉 MOSTRAR ERRORES --}}
+@if($errors->any())
+<div class="alert alert-danger">
+<ul>
+@foreach($errors->all() as $e)
+<li>{{ $e }}</li>
+@endforeach
+</ul>
+</div>
+@endif
 
-        @csrf
-        @method('PUT')
+<form method="POST"
+      action="{{ route('admin.products.update', $product->id) }}"
+      enctype="multipart/form-data">
 
-        <input class="form-control mb-2"
-               name="name"
-               value="{{ $product->name }}">
+@csrf
+@method('PUT')
 
-        <textarea class="form-control mb-2"
-                  name="description">{{ $product->description }}</textarea>
+<input class="form-control mb-2"
+       name="name"
+       value="{{ $product->name }}">
 
-        <input class="form-control mb-2"
-               name="price"
-               value="{{ $product->price }}">
+<textarea class="form-control mb-2"
+          name="description">{{ $product->description }}</textarea>
 
-        <input class="form-control mb-2"
-               name="stock"
-               value="{{ $product->stock }}">
+<input class="form-control mb-2"
+       name="price"
+       value="{{ $product->price }}">
 
-        @if($product->image)
-            <img src="{{ asset('storage/'.$product->image) }}"
-                 style="max-width:120px">
-        @endif
+<input class="form-control mb-2"
+       name="stock"
+       value="{{ $product->stock }}">
 
-        <input type="file" name="image" class="form-control mt-2">
+@if($product->image)
+<img src="{{ asset('storage/'.$product->image) }}"
+     style="max-width:120px">
+@endif
 
-        <button class="btn btn-warning mt-3">Actualizar</button>
-    </form>
+<input type="file" name="image" class="form-control mt-2">
+
+<button class="btn btn-warning mt-3">Actualizar</button>
+
+</form>
 </div>
 @endsection

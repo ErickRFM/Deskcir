@@ -1,3 +1,165 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ========================= */
+/* 🌙 MODO OSCURO DEFINITIVO */
+/* ========================= */
+
+.dark body {
+    background: #0a0f1c !important;
+    color: #e5e7eb !important;
+}
+
+/* NAVBAR */
+.dark nav,
+.dark .navbar {
+    background: #0a0f1c !important;
+    border-bottom: 1px solid #1b2235 !important;
+}
+
+.dark nav a {
+    color: #e5e7eb !important;
+}
+
+/* CARDS */
+.dark .card {
+    background: #11172b !important;
+    border: 1px solid #1f293f !important;
+    color: white !important;
+}
+
+/* TABLAS */
+.dark table,
+.dark .table {
+    background: #0e1424 !important;
+    color: white !important;
+}
+
+.dark thead {
+    background: #070b16 !important;
+}
+
+.dark th {
+    color: white !important;
+}
+
+.dark td {
+    color: #d1d5db !important;
+}
+
+/* INPUTS */
+.dark .form-control,
+.dark .form-select,
+.dark textarea {
+    background: #060a15 !important;
+    color: white !important;
+    border: 1px solid #1f293f !important;
+}
+
+/* BOTONES */
+.dark .btn-secondary {
+    background: #1f293f !important;
+}
+
+.dark .btn-outline-primary {
+    border-color: #3b82f6 !important;
+    color: #60a5fa !important;
+}
+
+/* ZONAS BLANCAS DEL STORE */
+.dark .bg-light {
+    background: #0e1424 !important;
+}
+
+/* TITULOS */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5 {
+    color: white !important;
+}
+
+/* ============================== */
+/* 🔧 FIX DEFINITIVO TABLAS CARRITO */
+/* ============================== */
+
+
+/* Fuerza a TODAS las tablas aunque no tengan clase */
+.dark table:not(.no-dark),
+.dark .table:not(.no-dark) {
+    background: #0b1220 !important;
+    color: white !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+}
+
+
+/* Header aunque no haya THEAD real */
+.dark table tr:first-child td,
+.dark table tr:first-child th {
+    background: #060a15 !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+
+/* TODAS las celdas */
+.dark table td,
+.dark table th {
+    background: #0e1424 !important;
+    color: #e5e7eb !important;
+    border-bottom: 1px solid #1a2236 !important;
+    opacity: 1 !important;
+}
+
+
+/* Hover mamalón */
+.dark table tr:hover td {
+    background: #111a2e !important;
+}
+
+
+/* Columnas específicas por posición */
+.dark table td:nth-child(1) { color: #fff !important; }
+.dark table td:nth-child(2) { color: #a5b4fc !important; }
+.dark table td:nth-child(3) { color: #34d399 !important; }
+
+
+/* FIX contenedor blanco del carrito */
+.dark .container .bg-white,
+.dark .container-fluid .bg-white {
+    background: #0e1424 !important;
+}
+
+
+/* Botón finalizar pedido */
+.dark .btn-success,
+.dark .btn-finalizar,
+.dark button.bg-success,
+.dark a.bg-success {
+    background: #0f766e !important;
+    color: white !important;
+    border: none !important;
+}
+
+
+/* Sombras del carrito */
+.dark .container table {
+    box-shadow: 0 0 15px rgba(0,0,0,.4) !important;
+}
+
+
+/* Si tu tabla está dentro de card */
+.dark .card table {
+    background: transparent !important;
+}
+
+
+/* FIX texto gris fantasma */
+.dark table *,
+.dark table span,
+.dark table p {
+    color: #e5e7eb !important;
+}

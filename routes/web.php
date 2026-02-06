@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('public.home'));
 
-// 🛒 STORE
+// STORE
 Route::get('/store', [StoreController::class, 'index']);
 Route::get('/store/category/{slug}', [StoreController::class, 'category']);
 Route::get('/store/product/{id}', [StoreController::class, 'show']);
@@ -27,25 +27,38 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// 🔐 Auth
+//  Auth
 Route::middleware('auth')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/support', [TicketController::class, 'create']);
+    // TICKETS (INTERNO)
+    Route::get('/tickets', [TicketController::class,'index']);
+    Route::get('/tickets/create', [TicketController::class,'create']);
+    Route::post('/tickets', [TicketController::class,'store']);
+    Route::get('/tickets/{id}', [TicketController::class,'show']);
+
+    Route::post('/tickets/{id}/message',
+        [TicketController::class,'addMessage']);
+
+    // SOPORTE CLIENTE 
+    Route::get('/support', [TicketController::class, 'index']);
+    Route::get('/support/create', [TicketController::class, 'create']);
     Route::post('/support', [TicketController::class, 'store']);
 
-    Route::get('/tickets', [TicketController::class, 'index']);
-    Route::get('/tickets/{id}', [TicketController::class, 'show']);
-    Route::post('/tickets/{id}/message', [TicketController::class, 'addMessage']);
+    Route::get('/support/{id}', [TicketController::class, 'show']);
+    Route::post('/support/{id}/message', 
+        [TicketController::class, 'addMessage']);
 
+    // CITAS
     Route::get('/appointments', [AppointmentController::class, 'index']);
     Route::get('/appointments/create/{ticket}', [AppointmentController::class, 'create']);
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::get('/appointments/{id}', [AppointmentController::class, 'show']);
 
+    // REPORTES
     Route::get('/reports/{ticket}', [ReportController::class, 'show']);
     Route::get('/reports/{ticket}/pdf', [ReportController::class, 'pdf']);
 });
@@ -54,4 +67,4 @@ require __DIR__ . '/admin.php';
 require __DIR__ . '/client.php';
 require __DIR__ . '/technician.php';
 require __DIR__ . '/auth.php';
-require __DIR__.'/store.php';
+require __DIR__ . '/store.php';

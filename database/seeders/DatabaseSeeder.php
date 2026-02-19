@@ -3,18 +3,21 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use App\Models\Category;
 
-class DatabaseSeeder extends Seeder
+class CategorySeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        $this->call([
-            RoleSeeder::class,
-            CategorySeeder::class,
-            ProductSeeder::class,
-        ]);
+        $cats = [
+            'Gabinetes',
+            'Laptops',
+            'Accesorios',
+            'Refacciones'
+        ];
+
+        foreach ($cats as $c) {
+            Category::firstOrCreate(['name' => $c]);
+        }
     }
 }

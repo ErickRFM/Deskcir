@@ -12,7 +12,7 @@
 <div class="row">
 @forelse($category->products as $product)
 <div class="col-md-3 mb-4">
-<div class="card h-100 shadow-sm border-0">
+<div class="card h-100 product-card shadow-sm border-0">
 
 {{-- Imagen del producto --}}
 <div class="bg-light d-flex align-items-center justify-content-center"

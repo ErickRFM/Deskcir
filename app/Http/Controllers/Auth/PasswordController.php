@@ -3,27 +3,40 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
 
 class PasswordController extends Controller
 {
-    /**
-     * Update the user's password.
-     */
-    public function update(Request $request): RedirectResponse
+    public function update(Request $r)
     {
-        $validated = $request->validateWithBag('updatePassword', [
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+        $r->validate([
+            'current_password' => ['required'],
+            'password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'regex:/[A-Z]/',   // al menos una mayúscula
+                'regex:/[0-9]/'    // al menos un número
+            ]
+        ],[
+            'password.min' => 'Debe tener al menos 8 caracteres',
+            'password.confirmed' => 'Las contraseñas no coinciden',
+            'password.regex' => 'Debe incluir una mayúscula y un número'
         ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
+        // 🔥 VALIDAR CONTRASEÑA ACTUAL REAL
+        if (!Hash::check($r->current_password, $r->user()->password)) {
+            return back()->withErrors([
+                'current_password' => 'La contraseña actual es incorrecta'
+            ]);
+        }
+
+        // ACTUALIZAR
+        $r->user()->update([
+            'password' => Hash::make($r->password)
         ]);
 
-        return back()->with('status', 'password-updated');
+        return back()->with('status','password-updated');
     }
 }

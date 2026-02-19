@@ -5,12 +5,22 @@
 @section('content')
 <div class="container py-4">
 
+    {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold">📦 Gestión de Productos</h2>
+
+        <div>
+            {{-- BOTÓN REGRESAR --}}
+            <a href="javascript:history.back()" class="btn btn-outline-secondary mb-3">
+                ← Regresar
+            </a>
+
+            <h2 class="fw-bold mt-2">📦 Gestión de Productos</h2>
+        </div>
 
         <a href="{{ route('admin.products.create') }}" class="btn btn-warning">
             ➕ Agregar producto
         </a>
+
     </div>
 
     @if($products->isEmpty())
@@ -18,8 +28,10 @@
             No hay productos registrados aún.
         </div>
     @else
+
         <div class="table-responsive">
-            <table class="table table-bordered align-middle">
+            <table class="table table-bordered align-middle mt-3">
+
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
@@ -30,28 +42,37 @@
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @foreach($products as $product)
                         <tr>
-                            <td>{{ $product->id }}</td>
 
-                            <td>
+                            <td class="py-3">
+                                {{ $product->id }}
+                            </td>
+
+                            <td class="py-3">
 
                                 {{-- GALERÍA DE IMÁGENES --}}
+                                <div class="mb-2">
                                 @foreach($product->images as $img)
                                     <img src="{{ asset('storage/'.$img->path) }}"
-                                         class="img-fluid mb-1 me-1"
+                                         class="img-fluid mb-1 me-1 rounded"
                                          style="max-width:100px">
                                 @endforeach
+                                </div>
 
                                 <strong>{{ $product->name }}</strong>
+
                                 <br>
+
                                 <small class="text-muted">
                                     {{ \Illuminate\Support\Str::limit($product->description, 50) }}
                                 </small>
+
                             </td>
 
-                            <td>
+                            <td class="py-3">
                                 @if($product->category)
                                     <span class="badge bg-secondary">
                                         {{ $product->category->name }}
@@ -63,11 +84,11 @@
                                 @endif
                             </td>
 
-                            <td>
+                            <td class="py-3">
                                 ${{ number_format($product->price, 2) }}
                             </td>
 
-                            <td>
+                            <td class="py-3">
                                 @if($product->stock > 0)
                                     <span class="badge bg-success">
                                         {{ $product->stock }}
@@ -79,7 +100,8 @@
                                 @endif
                             </td>
 
-                            <td class="text-center">
+                            <td class="text-center py-3">
+
                                 <a href="{{ route('admin.products.edit', $product->id) }}"
                                    class="btn btn-sm btn-primary">
                                     ✏️
@@ -99,14 +121,18 @@
                                         onclick="eliminar({{$product->id}})">
                                         🗑️
                                     </button>
+
                                 </form>
 
                             </td>
+
                         </tr>
                     @endforeach
                 </tbody>
+
             </table>
         </div>
+
     @endif
 
 </div>

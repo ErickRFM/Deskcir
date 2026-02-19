@@ -22,7 +22,7 @@
     color: #e5e7eb !important;
 }
 
-/* CARDS */
+/* CARDS BASE (sin sombras globales) */
 .dark .card {
     background: #11172b !important;
     border: 1px solid #1f293f !important;
@@ -82,11 +82,9 @@
 }
 
 /* ============================== */
-/* 🔧 FIX DEFINITIVO TABLAS CARRITO */
+/* 🔧 FIX TABLAS CARRITO          */
 /* ============================== */
 
-
-/* Fuerza a TODAS las tablas aunque no tengan clase */
 .dark table:not(.no-dark),
 .dark .table:not(.no-dark) {
     background: #0b1220 !important;
@@ -95,8 +93,6 @@
     overflow: hidden !important;
 }
 
-
-/* Header aunque no haya THEAD real */
 .dark table tr:first-child td,
 .dark table tr:first-child th {
     background: #060a15 !important;
@@ -104,62 +100,241 @@
     font-weight: bold !important;
 }
 
-
-/* TODAS las celdas */
 .dark table td,
 .dark table th {
     background: #0e1424 !important;
     color: #e5e7eb !important;
     border-bottom: 1px solid #1a2236 !important;
-    opacity: 1 !important;
 }
 
+/* ============================== */
+/* 🔥 SOLO TARJETAS DE PRODUCTOS  */
+/* ============================== */
 
-/* Hover mamalón */
-.dark table tr:hover td {
-    background: #111a2e !important;
+/* 👉 SOLO afecta a la tienda */
+.store .card,
+.product-card,
+.card-producto {
+    transition: .3s;
+    border-radius: 14px;
 }
 
-
-/* Columnas específicas por posición */
-.dark table td:nth-child(1) { color: #fff !important; }
-.dark table td:nth-child(2) { color: #a5b4fc !important; }
-.dark table td:nth-child(3) { color: #34d399 !important; }
-
-
-/* FIX contenedor blanco del carrito */
-.dark .container .bg-white,
-.dark .container-fluid .bg-white {
-    background: #0e1424 !important;
+/* Sombra SOLO en productos */
+.store .card:hover,
+.product-card:hover,
+.card-producto:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 30px rgba(0,0,0,.12) !important;
 }
 
+/* ============================== */
+/* 🔥 NAVBAR (esta sí con sombra) */
+/* ============================== */
 
-/* Botón finalizar pedido */
-.dark .btn-success,
-.dark .btn-finalizar,
-.dark button.bg-success,
-.dark a.bg-success {
-    background: #0f766e !important;
-    color: white !important;
-    border: none !important;
+.navbar,
+nav.navbar {
+    background: #ffffff !important;
+    border-bottom: none !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,.06) !important;
+    transition: all .3s ease;
 }
 
-
-/* Sombras del carrito */
-.dark .container table {
-    box-shadow: 0 0 15px rgba(0,0,0,.4) !important;
+.navbar a.nav-link {
+    color: #1f2937 !important;
+    font-weight: 500;
+    transition: .2s;
 }
 
-
-/* Si tu tabla está dentro de card */
-.dark .card table {
-    background: transparent !important;
+.navbar a.nav-link:hover {
+    color: #2563eb !important;
+    transform: translateY(-1px);
 }
 
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: .3px;
+}
 
-/* FIX texto gris fantasma */
-.dark table *,
-.dark table span,
-.dark table p {
+.dark .navbar {
+    background: #0a0f1c !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,.3) !important;
+}
+
+/* ============================== */
+/* 🧼 FIX TEXTOS                  */
+/* ============================== */
+
+.dark .text-muted {
+    color: #d1d5db !important;
+}
+
+.dark .card .text-muted {
     color: #e5e7eb !important;
+}
+/* ===================================== */
+/* 🧼 CARDS LIMPIAS Y PROFESIONALES      */
+/* ===================================== */
+
+.card{
+    transition: .2s ease;
+    border-radius: 14px;
+
+    /* sombra fija suavecita */
+    box-shadow: 0 6px 14px rgba(0,0,0,.06) !important;
+
+    /* borde sutil */
+    border: 1px solid #e5e7eb !important;
+
+    transform: none !important;
+}
+
+/* 👇 SOLO PRODUCTOS MÁS PRO */
+.store .card,
+.product-card,
+.card-producto{
+    border: 1px solid #d1d5db !important;
+    box-shadow: 0 10px 18px rgba(0,0,0,.08) !important;
+}
+
+/* SIN BRINCO AL HOVER */
+.card:hover{
+    transform: none !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,.06) !important;
+}
+
+/* 🌙 MODO OSCURO */
+.dark .card{
+    border: 1px solid #1f293f !important;
+    box-shadow: 0 6px 14px rgba(0,0,0,.25) !important;
+}
+
+/* Productos en oscuro más marcados */
+.dark .store .card,
+.dark .product-card{
+    border: 1px solid #2d3a5a !important;
+    box-shadow: 0 10px 18px rgba(0,0,0,.4) !important;
+}
+/* ===================================== */
+/* 🧭 NAVBAR CON SOMBRA LIGERA           */
+/* ===================================== */
+
+.navbar{
+    box-shadow:0 8px 20px rgba(0,0,0,.06) !important;
+}
+
+/* En oscuro un poco más fuerte */
+.dark .navbar{
+    box-shadow:0 8px 20px rgba(0,0,0,.25) !important;
+}
+/* BOTÓN LOGIN NAVBAR */
+.btn-outline-light{
+    background:#111827 !important;
+    color:white !important;
+    border:1px solid #111827 !important;
+}
+
+/* Hover en claro */
+.btn-outline-light:hover{
+    background:black !important;
+    color:white !important;
+}
+
+/* 🌙 Modo oscuro */
+.dark .btn-outline-light{
+    background:#0b1220 !important;
+    border:1px solid #1f293f !important;
+    color:white !important;
+}
+
+.dark .btn-outline-light:hover{
+    background:#060a15 !important;
+}
+/* ============================== */
+/* 🧑‍💼 CLIENT DASHBOARD BUTTONS */
+/* ============================== */
+
+.btn-client{
+    background:#00798E !important;
+    color:white !important;
+    border-radius:12px;
+    padding:10px 18px;
+    border:none;
+    transition:.2s;
+}
+
+.btn-client:hover{
+    background:#006070 !important;
+    transform:translateY(-1px);
+}
+
+.btn-client-outline{
+    background:transparent !important;
+    color:#00798E !important;
+    border:1px solid #00798E !important;
+    border-radius:12px;
+    padding:10px 18px;
+}
+
+.btn-client-outline:hover{
+    background:#00798E !important;
+    color:white !important;
+}
+
+/* 🌙 DARK */
+.dark .btn-client-outline{
+    color:#4fd1c5 !important;
+    border-color:#4fd1c5 !important;
+}
+
+.dark .btn-client-outline:hover{
+    background:#00798E !important;
+    color:white !important;
+}
+/* FIX TITULO CLIENTE EN MODO CLARO */
+h2.fw-bold.mb-1{
+    color:#0f172a !important;   /* negro elegante en light */
+}
+
+/* Mantenerlo blanco en dark */
+.dark h2.fw-bold.mb-1{
+    color:#ffffff !important;
+}
+
+.avatar-user{
+    width:100px;
+    height:100px;
+    object-fit:cover;
+    border:3px solid #00798E;
+}
+
+/* Centrado interior solo tarjeta perfil */
+.card-body.text-center{
+    align-items:center;
+}
+/* LABELS CLAROS */
+.form-label{
+    color:#000 !important;
+}
+
+/* 🌙 DARK */
+.dark .form-label{
+    color:#fff !important;
+}
+
+/* Inputs coherentes */
+.input-pro{
+    border-radius:12px;
+    padding:10px;
+}
+
+/* Select bonito */
+select.input-pro{
+    cursor:pointer;
+}
+/* Icono adjunto más grande y centrado */
+.chat-box .btn-attach,
+.chat-box svg{
+    font-size:18px !important;
+    width:22px !important;
+    height:22px !important;
 }

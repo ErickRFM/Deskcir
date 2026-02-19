@@ -18,6 +18,10 @@ class Product extends Model
         'category_id'
     ];
 
+    // ==============================
+    // 🌄 RELACIONES ACTUALES
+    // ==============================
+
     // 👉 Relación con imágenes múltiples
     public function images()
     {
@@ -28,5 +32,14 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    // ==============================
+    // 🧾 NUEVO: RELACIÓN CON VENTAS
+    // ==============================
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }

@@ -1,67 +1,115 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container py-4">
 
-<h2 class="mb-3">🎧 Mis tickets de soporte</h2>
+{{-- HEADER --}}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1">Centro de Soporte</h3>
+        <p class="text-muted mb-0">
+            Gestiona tus conversaciones con el equipo
+        </p>
+    </div>
 
-<a href="/support/create" class="btn btn-warning mb-3">
-➕ Nuevo ticket
-</a>
-
-@if($tickets->isEmpty())
-<div class="alert alert-info">
-Aún no tienes tickets creados.
+    <a href="/support/create" class="btn btn-client">
+        + Nuevo ticket
+    </a>
 </div>
-@else
 
-<table class="table table-bordered align-middle">
-<thead class="table-dark">
+{{-- BUSCADOR (visual por ahora) --}}
+<div class="card p-3 mb-3">
+    <input class="form-control input-pro"
+    placeholder="Buscar ticket por asunto...">
+</div>
+
+{{-- TABLA PRO --}}
+<div class="card">
+<div class="table-responsive">
+
+<table class="table align-middle mb-0">
+
+<thead class="table-light">
 <tr>
 <th>Asunto</th>
-<th>Estado</th>
 <th>Prioridad</th>
+<th>Estado</th>
+<th>Último mensaje</th>
 <th></th>
 </tr>
 </thead>
 
-@foreach($tickets as $t)
-<tr>
+<tbody>
+
+@forelse($tickets as $t)
+
+<tr class="ticket-row">
+
 <td>
-<strong>{{ $t->subject }}</strong>
+<div class="fw-bold">{{ $t->subject }}</div>
+<small class="text-muted">
+#{{ $t->id }} • {{ $t->created_at->format('d M Y') }}
+</small>
 </td>
 
 <td>
-<span class="badge bg-{{ 
-$t->status == 'Abierto' ? 'success' :
-($t->status == 'En proceso' ? 'warning' : 'secondary')
+<span class="badge bg-{{
+$t->priority=='alta'?'danger':
+($t->priority=='media'?'warning':'secondary')
 }}">
-{{ $t->status }}
+{{ ucfirst($t->priority) }}
 </span>
 </td>
 
 <td>
-<span class="badge bg-{{ 
-$t->priority == 'Alta' ? 'danger' :
-($t->priority == 'Media' ? 'warning' : 'info')
+<span class="badge bg-{{
+$t->status=='cerrado'?'success':
+($t->status=='en_proceso'?'warning':'secondary')
 }}">
-{{ $t->priority }}
+{{ ucfirst(str_replace('_',' ',$t->status)) }}
 </span>
 </td>
 
 <td>
+{{ optional($t->messages->last())->message ?? 'Sin mensajes' }}
+</td>
+
+<td class="text-end">
 <a href="/support/{{ $t->id }}"
-class="btn btn-sm btn-dark">
-👁 Ver
+class="btn btn-sm btn-outline-dark">
+Abrir
 </a>
 </td>
 
 </tr>
-@endforeach
+
+@empty
+
+<tr>
+<td colspan="5" class="text-center py-5 text-muted">
+No tienes tickets aún
+</td>
+</tr>
+
+@endforelse
+
+</tbody>
 
 </table>
 
-@endif
-
 </div>
+</div>
+</div>
+
+<style>
+.ticket-row:hover{
+    background:#f9fafb;
+    cursor:pointer;
+}
+.dark .ticket-row:hover{
+    background:#0e1424;
+}
+</style>
+
 @endsection

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    // 👉 VER TODOS LOS TICKETS
     public function index()
     {
         $tickets = Ticket::with('user')
@@ -21,67 +20,63 @@ class TicketController extends Controller
         return view('admin.tickets.index', compact('tickets'));
     }
 
-    // 👉 VER TICKET Y CONVERSACIÓN
     public function show($id)
     {
         $ticket = Ticket::with('messages.user','user')
             ->findOrFail($id);
 
-        // 🔹 Técnicos (según tu nuevo enfoque)
-       $tecnicos = User::whereHas('role', function($q){
-         $q->where('name','technician');
+        $tecnicos = User::whereHas('role', function($q){
+            $q->where('name','technician');
         })->get();
 
         return view('admin.tickets.show', compact('ticket','tecnicos'));
     }
 
-    // 👉 ACTUALIZAR ESTADO + PRIORIDAD + ASIGNADO
     public function updateStatus(Request $request, $id)
     {
         $ticket = Ticket::findOrFail($id);
 
         $ticket->update([
-            'status' => $request->status,
+            'status'      => $request->status,
             'assigned_to' => $request->assigned_to,
-            'priority' => $request->priority
+            'priority'    => $request->priority
         ]);
 
         return back()->with('success','Ticket actualizado');
     }
 
-    // 👉 RESPONDER COMO SOPORTE (NUEVA VERSIÓN)
-    public function reply(Request $request, $id)
+    // ✅ TU MÉTODO NUEVO INTEGRADO
+    public function reply(Request $r, $id)
     {
-        $request->validate([
-            'message' => 'required',
-            'file' => 'nullable|file'
+        $r->validate([
+            'message'=>'required'
         ]);
 
-        $path = null;
+        $file = null;
 
-        if ($request->file) {
-            $path = $request->file('file')
-                    ->store('tickets','public');
+        if($r->hasFile('file')){
+            $file = $r->file('file')
+                ->store('tickets','public');
         }
 
         TicketMessage::create([
             'ticket_id' => $id,
-            'user_id' => Auth::id(),
-            'message' => $request->message,
-            'file' => $path
+            'user_id'   => auth()->id(),
+            'message'   => $r->message,
+            'file'      => $file,
+            'from_role' => 'admin'
         ]);
 
         return back()->with('success','Respuesta enviada');
     }
 
-    // 👉 ASIGNAR TÉCNICO RÁPIDO (opcional si lo usas aparte)
     public function assign(Request $request, $id)
     {
         $ticket = Ticket::findOrFail($id);
 
         $ticket->update([
             'assigned_to' => $request->user_id,
-            'status' => 'en_proceso'
+            'status'      => 'en_proceso'
         ]);
 
         return back()->with('success','Técnico asignado');

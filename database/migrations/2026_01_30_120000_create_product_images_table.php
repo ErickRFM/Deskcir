@@ -6,16 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('product_images', function (Blueprint $table) {
+
             $table->id();
 
             $table->foreignId('product_id')
-                  ->constrained()
+                  ->constrained('products')
                   ->cascadeOnDelete();
 
             $table->string('path');
@@ -24,9 +22,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('product_images');

@@ -3,70 +3,135 @@
 @section('title', 'Tienda')
 
 @section('content')
-<div class="container py-4">
-<h2 class="mb-4 text-center">🛒 Tienda Deskcir</h2>
 
-@forelse($categories as $category)
-<h4 class="mt-5 mb-3">{{ $category->name }}</h4>
+<div class="store-wrapper store-scope">
+
+<div class="container-fluid px-4">
 
 <div class="row">
-@forelse($category->products as $product)
-<div class="col-md-3 mb-4">
-<div class="card h-100 product-card shadow-sm border-0">
 
-{{-- Imagen del producto --}}
-<div class="bg-light d-flex align-items-center justify-content-center"
-style="height:180px;">
+    {{-- SIDEBAR FILTRO --}}
+    <div class="col-lg-3 col-md-4 mb-4">
 
-{{-- 🔥 AQUÍ VA TU CAMBIO --}}
-@if($product->images->count() > 0)
-<img src="{{ asset('storage/'.$product->images->first()->path) }}"
-class="img-fluid"
-style="max-height:170px;">
-@else
-<div class="bg-light text-center p-5">
-Sin imagen
+        <div class="store-filter">
+
+            <h5 class="filter-title">
+                <i class="bi bi-funnel"></i> Filtros
+            </h5>
+
+            <div class="filter-section">
+                <label class="filter-label">Precio mínimo</label>
+                <input type="number" class="form-control filter-input" placeholder="$0">
+            </div>
+
+            <div class="filter-section">
+                <label class="filter-label">Precio máximo</label>
+                <input type="number" class="form-control filter-input" placeholder="$50000">
+            </div>
+
+            <div class="filter-section">
+                <label class="filter-label">Condición</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox">
+                    <label class="form-check-label">Nuevo</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox">
+                    <label class="form-check-label">Usado</label>
+                </div>
+            </div>
+
+            <button class="btn btn-apply w-100 mt-3">
+                <i class="bi bi-search"></i> Aplicar filtros
+            </button>
+
+        </div>
+
+    </div>
+
+    {{-- PRODUCTOS --}}
+    <div class="col-lg-9 col-md-8">
+
+        @forelse($categories as $category)
+
+            <h5 class="category-title">{{ $category->name }}</h5>
+
+            <div class="row g-4">
+
+                @forelse($category->products as $product)
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="product-card">
+
+                        <div class="product-img">
+
+                            @if($product->images->count() > 0)
+                            <img src="{{ asset('storage/'.$product->images->first()->path) }}">
+                            @else
+                            <div class="no-img">Sin imagen</div>
+                            @endif
+
+                        </div>
+
+                        <div class="product-body">
+
+                            <h6 class="product-name">
+                                {{ $product->name }}
+                            </h6>
+
+                            <p class="product-desc">
+                                {{ Str::limit($product->description, 70) }}
+                            </p>
+
+                            <div class="product-footer">
+
+                                <div>
+                                    <span class="product-price">
+                                        ${{ number_format($product->price,2) }}
+                                    </span>
+                                </div>
+
+                                <div class="product-actions">
+
+                                    <a href="/store/product/{{ $product->id }}"
+                                    class="btn btn-view">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <form method="POST" action="/cart/add/{{ $product->id }}">
+                                        @csrf
+                                        <button class="btn btn-cart">
+                                            <i class="bi bi-cart-plus"></i>
+                                        </button>
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                @empty
+                <p class="text-muted">No hay productos.</p>
+                @endforelse
+
+            </div>
+
+        @empty
+        <p>No hay categorías registradas.</p>
+        @endforelse
+
+    </div>
+
 </div>
-@endif
 
 </div>
 
-<div class="card-body d-flex flex-column">
-<h6 class="fw-bold">{{ $product->name }}</h6>
-
-@if($product->description)
-<p class="small text-muted">
-{{ Str::limit($product->description, 60) }}
-</p>
-@endif
-
-<div class="mt-auto">
-<p class="fw-bold mb-2">
-${{ number_format($product->price, 2) }}
-</p>
-
-<a href="/store/product/{{ $product->id }}"
-class="btn btn-outline-primary btn-sm w-100 mb-2">
-Ver producto
-</a>
-
-<form method="POST" action="/cart/add/{{ $product->id }}">
-@csrf
-<button class="btn btn-warning btn-sm w-100">
-Agregar al carrito
-</button>
-</form>
 </div>
 
-</div>
-</div>
-</div>
-@empty
-<p class="text-muted">No hay productos en esta categoría.</p>
-@endforelse
-</div>
-@empty
-<p class="text-center text-muted">No hay categorías registradas.</p>
-@endforelse
-</div>
 @endsection

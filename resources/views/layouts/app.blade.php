@@ -1,86 +1,44 @@
 <!DOCTYPE html>
-<html lang="es" class="transition-all">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>@yield('title','Deskcir')</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-@vite(['resources/css/app.css','resources/js/app.js'])
-
-<!-- 🌙 SCRIPT MODO OSCURO -->
+<!-- 🔥 ACTIVAR DARK MODE ANTES DE QUE CARGUE TODO -->
 <script>
-if(localStorage.getItem('modo') === 'dark'){
-    document.documentElement.classList.add('dark');
-}
+(function () {
+    const theme = localStorage.getItem('modo');
+
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+    }
+})();
 </script>
 
-<style>
-/* ====== ESTILO PRO GLOBAL ====== */
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-body{
-background:#f5f6fa;
-}
-
-.navbar{
-backdrop-filter: blur(10px);
-}
-
-.card{
-border-radius:16px;
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-4px);
-box-shadow:0 20px 30px rgba(0,0,0,.08);
-}
-
-/* Botones */
-.btn{
-border-radius:12px;
-}
-
-/* Inputs */
-.form-control{
-border-radius:12px;
-padding:10px;
-}
-
-/* Login */
-.login-wrapper{
-min-height:80vh;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.login-card{
-background:white;
-padding:30px;
-border-radius:20px;
-width:420px;
-box-shadow:0 20px 40px rgba(0,0,0,.15);
-}
-
-</style>
+<!-- Tailwind compilado -->
+@vite(['resources/css/app.css','resources/js/app.js'])
 
 </head>
 
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+<body class="transition-colors duration-300">
 
-{{-- ===== NAVBAR PRO ===== --}}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+{{-- ===== NAVBAR ===== --}}
+<nav class="navbar navbar-expand-lg shadow-sm">
 <div class="container">
 
 <a class="navbar-brand d-flex align-items-center gap-2" href="/store">
-    <img src="{{ asset('img/logo.png') }}" 
-         style="height:30px" 
-         alt="Deskcir">
-    <span class="fw-bold"></span>
+    <img src="{{ asset('img/logo.png') }}" style="height:30px" alt="Deskcir">
 </a>
 
-<ul class="navbar-nav ms-auto">
+<ul class="navbar-nav ms-auto align-items-center gap-2">
 
 <li class="nav-item">
 <a class="nav-link" href="/store">🛒 Tienda</a>
@@ -93,7 +51,6 @@ box-shadow:0 20px 40px rgba(0,0,0,.15);
 @auth
 
 <li class="nav-item dropdown">
-
 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
 {{ auth()->user()->name }}
 </a>
@@ -101,35 +58,21 @@ box-shadow:0 20px 40px rgba(0,0,0,.15);
 <ul class="dropdown-menu">
 
 @if(auth()->user()->role->name=='admin')
-<li>
-<a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-Panel Admin
-</a>
-</li>
+<li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Panel Admin</a></li>
 @endif
 
 @if(auth()->user()->role->name=='technician')
-<li>
-<a class="dropdown-item" href="/technician">
-Panel Técnico
-</a>
-</li>
+<li><a class="dropdown-item" href="/technician">Panel Técnico</a></li>
 @endif
 
 @if(auth()->user()->role->name=='client')
-<li>
-<a class="dropdown-item" href="/client">
-Mi Cuenta
-</a>
-</li>
+<li><a class="dropdown-item" href="/client">Mi Cuenta</a></li>
 @endif
 
 <li>
 <form method="POST" action="/logout">
 @csrf
-<button class="dropdown-item text-danger">
-Cerrar sesión
-</button>
+<button class="dropdown-item text-danger">Cerrar sesión</button>
 </form>
 </li>
 
@@ -139,15 +82,11 @@ Cerrar sesión
 @else
 
 <li>
-<a class="btn btn-outline-light me-2" href="/login">
-Login
-</a>
+<a class="btn btn-outline-secondary" href="/login">Login</a>
 </li>
 
 <li>
-<a class="btn btn-warning" href="/register">
-Registro
-</a>
+<a class="btn btn-warning" href="/register">Registro</a>
 </li>
 
 @endauth
@@ -156,11 +95,11 @@ Registro
 </div>
 </nav>
 
-<!-- 🌙 BOTÓN MODO OSCURO -->
+<!-- 🌙 BOTÓN DARK MODE -->
 <button onclick="toggleDark()" 
 id="btnDark"
-style="position:fixed;bottom:20px;right:20px;z-index:999"
-class="btn btn-dark shadow">
+class="btn btn-dark shadow"
+style="position:fixed;bottom:20px;right:20px;z-index:999">
 🌙
 </button>
 
@@ -168,26 +107,28 @@ class="btn btn-dark shadow">
 @yield('content')
 </div>
 
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<!-- 🌙 CONTROLADOR DARK MODE -->
 <script>
-function toggleDark(){
-document.documentElement.classList.toggle('dark');
+function toggleDark() {
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
 
-if(document.documentElement.classList.contains('dark')){
-localStorage.setItem('modo','dark');
-btnDark.innerHTML = '☀';
-} else {
-localStorage.setItem('modo','light');
-btnDark.innerHTML = '🌙';
-}
+    localStorage.setItem('modo', isDark ? 'dark' : 'light');
+    updateDarkIcon(isDark);
 }
 
-window.onload = () => {
-if(localStorage.getItem('modo') === 'dark'){
-btnDark.innerHTML = '☀';
+function updateDarkIcon(isDark) {
+    const btn = document.getElementById('btnDark');
+    if (!btn) return;
+    btn.innerHTML = isDark ? '☀️' : '🌙';
 }
-}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateDarkIcon(document.documentElement.classList.contains('dark'));
+});
 </script>
 
 <!-- SWEETALERT -->

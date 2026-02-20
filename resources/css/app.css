@@ -338,3 +338,323 @@ select.input-pro{
     width:22px !important;
     height:22px !important;
 }
+/* ============================= */
+/* 🛒 STORE MARKETPLACE UI */
+/* ============================= */
+
+.store-wrapper{
+    background:#f8fafc;
+    padding:40px 0;
+}
+
+/* SIDEBAR */
+.store-filter{
+    background:#ffffff;
+    padding:25px;
+    border-radius:18px;
+    border:1px solid #e5e7eb;
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.filter-title{
+    font-weight:600;
+    margin-bottom:20px;
+}
+
+.filter-section{
+    margin-bottom:18px;
+}
+
+.filter-label{
+    font-size:13px;
+    font-weight:500;
+    margin-bottom:6px;
+    display:block;
+}
+
+.filter-input{
+    border-radius:10px;
+}
+
+.btn-apply{
+    background:#00798E;
+    color:white;
+    border:none;
+    border-radius:12px;
+    padding:8px;
+    font-weight:600;
+}
+
+.btn-apply:hover{
+    background:#006070;
+}
+
+/* HEADER */
+.store-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+/* CARD */
+.product-card{
+    background:#ffffff;
+    border-radius:20px;
+    overflow:hidden;
+    border:1px solid #e5e7eb;
+    transition:.25s;
+    height:100%;
+}
+
+.product-card:hover{
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+    transform:translateY(-3px);
+}
+
+/* IMAGEN */
+.product-img{
+    height:220px;
+    background:#f1f5f9;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.product-img img{
+    max-height:180px;
+    max-width:85%;
+    object-fit:contain;
+}
+
+/* BODY */
+.product-body{
+    padding:18px;
+}
+
+.product-name{
+    font-weight:600;
+    font-size:15px;
+}
+
+.product-desc{
+    font-size:13px;
+    color:#6b7280;
+    min-height:40px;
+}
+
+.product-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:15px;
+}
+
+.product-price{
+    font-weight:700;
+    font-size:18px;
+    color:#0f172a;
+}
+
+.product-actions{
+    display:flex;
+    gap:8px;
+}
+
+.btn-view{
+    background:#e0f2fe;
+    border:none;
+    border-radius:10px;
+    padding:6px 10px;
+    color:#0284c7;
+}
+
+.btn-cart{
+    background:#f59e0b;
+    border:none;
+    border-radius:10px;
+    padding:6px 10px;
+    color:white;
+}
+
+.btn-cart:hover{
+    background:#d97706;
+}
+
+/* DARK MODE */
+.dark .store-wrapper{
+    background:#0a0f1c;
+}
+
+.dark .store-filter,
+.dark .product-card{
+    background:#111827;
+    border:1px solid #1f2937;
+}
+
+.dark .product-img{
+    background:#0b1220;
+}
+
+.dark .product-price{
+    color:white;
+}
+
+.dark .product-desc{
+    color:#9ca3af;
+}
+/* ===================================== */
+/* 🔧 STORE UX POLISH (NO rompe nada) */
+/* ===================================== */
+
+.store-scope{
+    --store-bg:#f6f8fb;
+    --store-card:#ffffff;
+    --store-border:#e6eaf0;
+    --store-text:#0f172a;
+}
+
+/* Fondo más suave */
+.store-scope.store-wrapper{
+    background:var(--store-bg);
+    padding:32px 0 40px;
+}
+
+/* Sidebar más ligero */
+.store-scope .store-filter{
+    border-radius:16px;
+    border:1px solid var(--store-border);
+    box-shadow:0 6px 18px rgba(0,0,0,.04);
+    padding:22px;
+}
+
+/* Labels más legibles */
+.store-scope .filter-label{
+    font-size:13px;
+    color:#475569;
+    margin-bottom:4px;
+}
+
+/* Inputs menos duros */
+.store-scope .filter-input{
+    height:38px;
+    font-size:14px;
+    border:1px solid #e2e8f0;
+}
+
+/* Card más limpia */
+.store-scope .product-card{
+    border-radius:18px;
+    border:1px solid var(--store-border);
+    box-shadow:0 8px 20px rgba(0,0,0,.05);
+    transition:.2s ease;
+}
+
+/* Hover sutil (no brinco) */
+.store-scope .product-card:hover{
+    transform:none;
+    box-shadow:0 10px 26px rgba(0,0,0,.06);
+}
+
+/* Imagen con mejor padding */
+.store-scope .product-img{
+    height:210px;
+    background:#f1f5f9;
+    padding:18px;
+}
+
+/* Nombre */
+.store-scope .product-name{
+    font-size:15px;
+    margin-bottom:2px;
+    color:var(--store-text);
+}
+
+/* Descripción */
+.store-scope .product-desc{
+    font-size:13px;
+    color:#64748b;
+}
+
+/* Precio */
+.store-scope .product-price{
+    font-size:17px;
+    letter-spacing:.2px;
+}
+
+/* Botones más alineados */
+.store-scope .product-actions .btn{
+    width:34px;
+    height:34px;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Header separación */
+.store-scope .store-header{
+    margin-bottom:18px;
+}
+
+/* Categoría */
+.store-scope .category-title{
+    margin:26px 0 14px;
+    font-weight:600;
+    color:#1e293b;
+}
+/* ===================================== */
+/* 🌙 STORE DARK FIX (solo tienda) */
+/* ===================================== */
+
+.dark .store-scope{
+    --store-bg:#0b1220;
+    --store-card:#111827;
+    --store-border:#1f2937;
+    --store-text:#f1f5f9;
+}
+
+.dark .store-scope .store-wrapper{
+    background:var(--store-bg);
+}
+
+/* Sidebar */
+.dark .store-scope .store-filter{
+    background:var(--store-card);
+    border:1px solid var(--store-border);
+    box-shadow:none;
+}
+
+/* Inputs */
+.dark .store-scope .filter-input{
+    background:#0b1220;
+    border:1px solid #1f2937;
+    color:#e5e7eb;
+}
+
+/* Textos */
+.dark .store-scope .filter-label,
+.dark .store-scope .category-title{
+    color:#cbd5e1;
+}
+
+/* Cards */
+.dark .store-scope .product-card{
+    background:var(--store-card);
+    border:1px solid var(--store-border);
+    box-shadow:0 8px 22px rgba(0,0,0,.35);
+}
+
+/* Imagen */
+.dark .store-scope .product-img{
+    background:#0a0f1c;
+}
+
+/* Descripción */
+.dark .store-scope .product-desc{
+    color:#94a3b8;
+}
+
+/* Precio */
+.dark .store-scope .product-price{
+    color:#f8fafc;
+}

@@ -20,17 +20,17 @@
             </h5>
 
             <div class="filter-section">
-                <label class="filter-label">Precio mínimo</label>
+                <label class="filter-label">Precio m?nimo</label>
                 <input type="number" class="form-control filter-input" placeholder="$0">
             </div>
 
             <div class="filter-section">
-                <label class="filter-label">Precio máximo</label>
+                <label class="filter-label">Precio m?ximo</label>
                 <input type="number" class="form-control filter-input" placeholder="$50000">
             </div>
 
             <div class="filter-section">
-                <label class="filter-label">Condición</label>
+                <label class="filter-label">Condici?n</label>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox">
                     <label class="form-check-label">Nuevo</label>
@@ -152,7 +152,7 @@
             </div>
 
         @empty
-        <p>No hay categorías registradas.</p>
+        <p>No hay categor?as registradas.</p>
         @endforelse
 
     </div>

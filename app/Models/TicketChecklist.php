@@ -15,7 +15,16 @@ class TicketChecklist extends Model
         'diagnostico_notes',
         'reparacion_notes',
         'pruebas_notes',
-        'progress'
+        'errores',
+        'observaciones',
+        'status',
+        'progress',
+    ];
+
+    protected $casts = [
+        'diagnostico' => 'boolean',
+        'reparacion' => 'boolean',
+        'pruebas' => 'boolean',
     ];
 
     public function ticket()
@@ -25,6 +34,6 @@ class TicketChecklist extends Model
 
     public function photos()
     {
-    return $this->hasMany(ChecklistPhoto::class,'ticket_checklist_id');
+        return $this->hasMany(ChecklistPhoto::class, 'ticket_checklist_id');
     }
 }

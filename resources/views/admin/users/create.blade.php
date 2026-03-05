@@ -10,9 +10,9 @@
 
         <div class="d-flex gap-3">
 
-            {{-- BOTÓN REGRESAR --}}
+            {{-- BOT?N REGRESAR --}}
             <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-                ← Regresar
+                ? Regresar
             </a>
 
         </div>
@@ -39,7 +39,7 @@
 
                     <input name="name"
                            class="form-control"
-                           placeholder="Ej: Juan Pérez">
+                           placeholder="Ej: Juan P?rez">
 
                 </div>
 
@@ -62,7 +62,7 @@
                 <div class="col-md-6">
 
                     <label class="form-label fw-semibold">
-                        Contraseña
+                        Contrase?a
                     </label>
 
                     <input name="password"

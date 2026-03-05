@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <title>@yield('title','Deskcir')</title>
 
-<!-- 🔥 ACTIVAR DARK MODE ANTES DE QUE CARGUE TODO -->
+<!-- ?? ACTIVAR DARK MODE ANTES DE QUE CARGUE TODO -->
 <script>
 (function () {
     const theme = localStorage.getItem('modo');
@@ -25,7 +25,7 @@
 <!-- Bootstrap Icons (por si se usan en otras vistas) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-<!-- 🔥 GOOGLE MATERIAL SYMBOLS -->
+<!-- ?? GOOGLE MATERIAL SYMBOLS -->
 <link rel="stylesheet"
 href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:
 opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
@@ -35,7 +35,7 @@ opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 <style>
 
-/* 🔧 alineación iconos navbar */
+/* ?? alineaci?n iconos navbar */
 .material-symbols-outlined{
 font-size:20px;
 vertical-align:middle;
@@ -176,7 +176,7 @@ Mi Cuenta
 logout
 </span>
 
-Cerrar sesión
+Cerrar sesi?n
 
 </button>
 
@@ -223,13 +223,13 @@ Registro
 </nav>
 
 
-<!-- 🌙 BOTÓN DARK MODE -->
+<!-- ?? BOT?N DARK MODE -->
 <button onclick="toggleDark()" 
 id="btnDark"
 class="btn btn-dark shadow"
 style="position:fixed;bottom:20px;right:20px;z-index:999">
 
-🌙
+??
 
 </button>
 
@@ -249,7 +249,7 @@ style="position:fixed;bottom:20px;right:20px;z-index:999">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
-<!-- 🌙 CONTROLADOR DARK MODE -->
+<!-- ?? CONTROLADOR DARK MODE -->
 <script>
 
 function toggleDark() {
@@ -270,7 +270,7 @@ const btn = document.getElementById('btnDark');
 
 if (!btn) return;
 
-btn.innerHTML = isDark ? '☀️' : '🌙';
+btn.innerHTML = isDark ? '??' : '??';
 
 }
 
@@ -286,3 +286,4 @@ updateDarkIcon(document.documentElement.classList.contains('dark'));
 
 </body>
 </html>
+

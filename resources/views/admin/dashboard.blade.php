@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title','Admin | Deskcir')
 
@@ -27,7 +27,7 @@
                     </h3>
 
                     <small class="text-success d-block mt-2">
-                        ▲ +8% vs ayer
+                        ? +8% vs ayer
                     </small>
 
                 </div>
@@ -83,7 +83,7 @@
                     </h3>
 
                     <small class="text-danger d-block mt-2">
-                        Requieren atención
+                        Requieren atenci?n
                     </small>
 
                 </div>
@@ -92,7 +92,7 @@
 
     </div>
 
-    {{-- ============== MÓDULOS ============== --}}
+    {{-- ============== M?DULOS ============== --}}
     <div class="row g-4 mb-5">
 
         <div class="col-md-3">
@@ -159,7 +159,7 @@
                     <h6 class="mb-2">Reportes</h6>
 
                     <p class="text-muted small mb-3">
-                        Estadísticas y métricas
+                        Estad?sticas y m?tricas
                     </p>
 
                     <a href="/admin/reports"
@@ -194,7 +194,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Cliente</th>
-                                    <th>Método</th>
+                                    <th>M?todo</th>
                                     <th>Total</th>
                                     <th>Estado</th>
                                     <th>Fecha</th>
@@ -248,3 +248,4 @@
 
 </div>
 @endsection
+

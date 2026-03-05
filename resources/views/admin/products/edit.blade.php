@@ -10,7 +10,7 @@
 <h3>Editar producto</h3>
 
 <button onclick="history.back()" class="btn btn-outline-deskcir py-2">
-← Regresar
+? Regresar
 </button>
 </div>
 
@@ -25,7 +25,7 @@
 @endif
 
 
-{{-- 🔥 FORM PRINCIPAL --}}
+{{-- ?? FORM PRINCIPAL --}}
 <form method="POST"
 action="{{ route('admin.products.update',$product->id) }}"
 enctype="multipart/form-data"
@@ -42,9 +42,9 @@ class="form-control input-pro"
 value="{{ old('name',$product->name) }}">
 </div>
 
-{{-- DESCRIPCIÓN --}}
+{{-- DESCRIPCI?N --}}
 <div class="mb-3">
-<label class="form-label">Descripción</label>
+<label class="form-label">Descripci?n</label>
 <textarea name="description"
 class="form-control input-pro">{{ old('description',$product->description) }}</textarea>
 </div>
@@ -72,13 +72,13 @@ value="{{ old('stock',$product->stock) }}">
 </div>
 
 
-{{-- CATEGORÍA --}}
+{{-- CATEGOR?A --}}
 <div class="mb-4">
-<label>Categoría</label>
+<label>Categor?a</label>
 
 <select name="category_id" class="form-select input-pro">
 
-<option value="">Selecciona categoría</option>
+<option value="">Selecciona categor?a</option>
 
 @foreach($categories as $cat)
 
@@ -95,11 +95,11 @@ value="{{ old('stock',$product->stock) }}">
 </div>
 
 
-{{-- 🔥 IMÁGENES ACTUALES (SIN FORM ANIDADO) --}}
+{{-- ?? IM?GENES ACTUALES (SIN FORM ANIDADO) --}}
 <div class="mb-4">
 
 <label class="form-label fw-bold mb-2">
-Imágenes actuales
+Im?genes actuales
 </label>
 
 <div class="d-flex flex-wrap gap-3">
@@ -116,7 +116,7 @@ class="rounded border shadow-sm">
 onclick="eliminarImagen({{ $img->id }})"
 class="btn btn-danger btn-sm position-absolute"
 style="top:-8px;right:-8px;border-radius:50%">
-✕
+?
 </button>
 
 </div>
@@ -125,7 +125,7 @@ style="top:-8px;right:-8px;border-radius:50%">
 
 @if($product->images->isEmpty())
 <p class="text-muted">
-Este producto no tiene imágenes
+Este producto no tiene im?genes
 </p>
 @endif
 
@@ -137,7 +137,7 @@ Este producto no tiene imágenes
 <div class="mb-4">
 
 <label class="form-label fw-bold">
-Agregar más imágenes
+Agregar m?s im?genes
 </label>
 
 <input type="file"
@@ -169,7 +169,7 @@ Guardar cambios
 </div>
 
 
-{{-- 🔥 SCRIPTS --}}
+{{-- ?? SCRIPTS --}}
 <script>
 function eliminarImagen(id){
 

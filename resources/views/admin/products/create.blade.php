@@ -10,7 +10,7 @@
     <h3 class="fw-bold">Agregar producto</h3>
 
     <button onclick="history.back()" class="btn btn-outline-deskcir py-2">
-        ← Regresar
+        ? Regresar
     </button>
 </div>
 
@@ -41,9 +41,9 @@ value="{{ old('name') }}"
 required>
 </div>
 
-{{-- DESCRIPCIÓN --}}
+{{-- DESCRIPCI?N --}}
 <div class="mb-3">
-<label class="form-label fw-semibold">Descripción</label>
+<label class="form-label fw-semibold">Descripci?n</label>
 <textarea class="form-control input-pro"
 name="description"
 rows="3">{{ old('description') }}</textarea>
@@ -74,13 +74,13 @@ required>
 
 </div>
 
-{{--  CATEGORÍAS FIJAS --}}
+{{--  CATEGOR?AS FIJAS --}}
 <div class="mb-3">
-<label class="form-label fw-semibold">Categoría</label>
+<label class="form-label fw-semibold">Categor?a</label>
 
 <select name="category_id" class="form-select input-pro" required>
 
-<option value="">Selecciona categoría</option>
+<option value="">Selecciona categor?a</option>
 
 <option value="1">Gabinetes</option>
 <option value="2">Laptops</option>
@@ -90,10 +90,10 @@ required>
 </select>
 </div>
 
-{{-- IMÁGENES --}}
+{{-- IM?GENES --}}
 <div class="mb-3">
 <label class="form-label fw-semibold">
-Imágenes del producto
+Im?genes del producto
 </label>
 
 <input type="file"

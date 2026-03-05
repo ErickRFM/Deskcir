@@ -8,22 +8,22 @@
 <!-- ================= FORMULARIO ================= -->
 <div class="col-md-8">
 
-<h3 class="mb-3">🛒 Finalizar compra</h3>
+<h3 class="mb-3">?? Finalizar compra</h3>
 
 <form method="POST" action="/checkout">
 @csrf
 
 <div class="card p-3 mb-3">
-<h5> Datos de envío</h5>
+<h5> Datos de env?o</h5>
 
-<input name="address" class="form-control mb-2" placeholder="Dirección" required>
+<input name="address" class="form-control mb-2" placeholder="Direcci?n" required>
 <input name="city" class="form-control mb-2" placeholder="Ciudad" required>
-<input name="postal_code" class="form-control mb-2" placeholder="Código postal" required>
-<input name="phone" class="form-control mb-2" placeholder="Teléfono" required>
+<input name="postal_code" class="form-control mb-2" placeholder="C?digo postal" required>
+<input name="phone" class="form-control mb-2" placeholder="Tel?fono" required>
 </div>
 
 <div class="card p-3 mb-3">
-<h5> Método de pago</h5>
+<h5> M?todo de pago</h5>
 
 <select name="payment_method" id="metodo" class="form-control">
 <option value="card">Tarjeta</option>
@@ -37,7 +37,7 @@
 <div id="cardBox" class="card p-3 mb-3 d-none">
 <h5> Datos de tarjeta</h5>
 
-<input class="form-control mb-2" placeholder="Número de tarjeta">
+<input class="form-control mb-2" placeholder="N?mero de tarjeta">
 <input class="form-control mb-2" placeholder="Nombre del titular">
 
 <div class="row">
@@ -59,18 +59,18 @@
 <p>Banco: BANAMEX</p>
 <p>Referencia: <b>#{{ rand(1000,9999) }}</b></p>
 
-<small>Tu pedido se liberará al confirmar pago</small>
+<small>Tu pedido se liberar? al confirmar pago</small>
 </div>
 
 <!-- ========== BITCOIN ========== -->
 <div id="btcBox" class="card p-3 mb-3 d-none">
-<h5>₿ Bitcoin</h5>
+<h5>? Bitcoin</h5>
 
-<p>Dirección:</p>
+<p>Direcci?n:</p>
 <code>bc1qdeskcirficticia12345</code>
 
 <p class="mt-2">Red: Bitcoin</p>
-<p>Tiempo límite: 30 min</p>
+<p>Tiempo l?mite: 30 min</p>
 </div>
 
 <button class="btn btn-success w-100">

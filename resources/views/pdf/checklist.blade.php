@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -66,10 +66,10 @@ padding:3px;
 {{-- DIAGNOSTICO --}}
 <div class="section">
 
-<div class="title">Diagnóstico realizado</div>
+<div class="title">Diagn?stico realizado</div>
 
 <div class="box">
-{{ $checklist->diagnostico_notes ?? 'Sin información' }}
+{{ $checklist->diagnostico_notes ?? 'Sin informaci?n' }}
 </div>
 
 </div>
@@ -78,10 +78,10 @@ padding:3px;
 {{-- REPARACION --}}
 <div class="section">
 
-<div class="title">Reparación aplicada</div>
+<div class="title">Reparaci?n aplicada</div>
 
 <div class="box">
-{{ $checklist->reparacion_notes ?? 'Sin información' }}
+{{ $checklist->reparacion_notes ?? 'Sin informaci?n' }}
 </div>
 
 </div>
@@ -93,7 +93,7 @@ padding:3px;
 <div class="title">Pruebas finales</div>
 
 <div class="box">
-{{ $checklist->pruebas_notes ?? 'Sin información' }}
+{{ $checklist->pruebas_notes ?? 'Sin informaci?n' }}
 </div>
 
 </div>
@@ -105,7 +105,7 @@ padding:3px;
 <div class="title">Errores detectados</div>
 
 <div class="box">
-{{ $checklist->errores ?? 'Sin información' }}
+{{ $checklist->errores ?? 'Sin informaci?n' }}
 </div>
 
 </div>
@@ -117,7 +117,7 @@ padding:3px;
 <div class="title">Observaciones técnicas</div>
 
 <div class="box">
-{{ $checklist->observaciones ?? 'Sin información' }}
+{{ $checklist->observaciones ?? 'Sin informaci?n' }}
 </div>
 
 </div>
@@ -142,3 +142,4 @@ padding:3px;
 
 </body>
 </html>
+

@@ -6,7 +6,7 @@
 
 <div class="login-card">
 
-    <!-- LOGO MÁS PRO -->
+    <!-- LOGO M?S PRO -->
     <div class="logo-zone">
         <img src="{{ asset('img/logo.png') }}" class="login-logo">
     </div>
@@ -14,7 +14,7 @@
     <h2 class="title">Bienvenido a Deskcir</h2>
     <p class="subtitle">Accede para continuar</p>
 
-    {{-- 👉 MENSAJES DE ERROR GENERALES --}}
+    {{-- ?? MENSAJES DE ERROR GENERALES --}}
     @if($errors->any())
         <div class="alert alert-danger">
             Credenciales incorrectas
@@ -43,13 +43,13 @@
     </div>
 
     <div class="mb-2">
-        <label class="form-label">Contraseña</label>
+        <label class="form-label">Contrase?a</label>
 
         <input
             type="password"
             name="password"
             class="form-control input-pro"
-            placeholder="••••••"
+            placeholder="??????"
             required>
 
         @error('password')
@@ -59,7 +59,7 @@
         @enderror
     </div>
 
-    {{-- 🔥👉 AQUÍ MOVÍ "CREAR CUENTA" --}}
+    {{-- ???? AQU? MOV? "CREAR CUENTA" --}}
     <div class="mt-2  text-start">
         <a href="/register" class="link-pro">
             Crear cuenta
@@ -67,12 +67,12 @@
     </div>
 
     <button class="btn-login mt-3">
-        Iniciar sesión →
+        Iniciar sesi?n ?
     </button>
 
     </form>
 
-    {{-- 👉 LOGIN CON GOOGLE --}}
+    {{-- ?? LOGIN CON GOOGLE --}}
     <div class="mt-3">
         <a href="{{ route('google.login') }}"
            class="btn btn-client-outline w-100">
@@ -176,7 +176,7 @@ color:white;
 }
 
 /* =============================
-   BOTÓN
+   BOT?N
 ============================= */
 
 .btn-login{
@@ -212,7 +212,7 @@ text-decoration:underline;
 }
 
 /* =============================
-   ANIMACIÓN
+   ANIMACI?N
 ============================= */
 
 @keyframes fade{

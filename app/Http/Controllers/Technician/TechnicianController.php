@@ -3,58 +3,75 @@
 namespace App\Http\Controllers\Technician;
 
 use App\Http\Controllers\Controller;
-use App\Models\Ticket;
 use App\Models\Appointment;
-use Illuminate\Http\Request; // 👈 IMPORTANTE (para filtros)
+use App\Models\Ticket;
+use Illuminate\Http\Request;
 
 class TechnicianController extends Controller
 {
-
     public function dashboard()
     {
-        $asignados = Ticket::where('status','pendiente')->count();
+        $technicianId = auth()->id();
 
-        $proceso = Ticket::where('status','en_proceso')->count();
+        $ticketBaseQuery = Ticket::where('technician_id', $technicianId);
 
-        $cerrados = Ticket::where('status','cerrado')->count();
+        $asignados = (clone $ticketBaseQuery)
+            ->where('status', 'abierto')
+            ->count();
 
-        $hoy = Ticket::whereDate('updated_at',now())->count();
+        $proceso = (clone $ticketBaseQuery)
+            ->where('status', 'en_proceso')
+            ->count();
 
-        $recientes = Ticket::latest()->take(5)->get();
+        $cerrados = (clone $ticketBaseQuery)
+            ->where('status', 'cerrado')
+            ->count();
 
-        return view('technician.dashboard',compact(
+        $hoy = (clone $ticketBaseQuery)
+            ->whereDate('updated_at', today())
+            ->count();
+
+        $tickets = (clone $ticketBaseQuery)
+            ->with('checklist')
+            ->latest('updated_at')
+            ->take(5)
+            ->get();
+
+        $recientes = (clone $ticketBaseQuery)
+            ->with('user')
+            ->latest('updated_at')
+            ->take(8)
+            ->get();
+
+        return view('technician.dashboard', compact(
             'asignados',
             'proceso',
             'cerrados',
             'hoy',
+            'tickets',
             'recientes'
         ));
     }
 
-    // ================= LISTADO DE TICKETS DEL TÉCNICO =================
-
     public function index(Request $request)
     {
         $tickets = Ticket::with('user')
-            ->where('technician_id', auth()->id()); // solo los suyos
+            ->where('technician_id', auth()->id());
 
-        // 🔎 filtro por prioridad
-        if($request->priority){
+        if ($request->priority) {
             $tickets->where('priority', $request->priority);
         }
 
-        // 🔎 filtro por estado
-        if($request->status){
+        if ($request->status) {
             $tickets->where('status', $request->status);
         }
 
-        // 🔎 búsqueda por asunto o cliente
-        if($request->search){
-            $tickets->where(function($q) use ($request){
-                $q->where('subject','like','%'.$request->search.'%')
-                  ->orWhereHas('user', function($u) use ($request){
-                        $u->where('name','like','%'.$request->search.'%');
-                  });
+        if ($request->search) {
+            $tickets->where(function ($q) use ($request) {
+                $q->where('subject', 'like', '%' . $request->search . '%')
+                    ->orWhereHas('user', function ($u) use ($request) {
+                        $u->where('name', 'like', '%' . $request->search . '%');
+                    });
             });
         }
 
@@ -63,40 +80,38 @@ class TechnicianController extends Controller
         return view('technician.tickets.index', compact('tickets'));
     }
 
-    // =============== TU CALENDAR COMO LO PEDISTE ===============
-
     public function calendar()
     {
         $user = auth()->user();
 
         $citas = Appointment::with('ticket.user')
-            ->where('technician_id',$user->id)
+            ->where('technician_id', $user->id)
             ->orderBy('date')
+            ->orderBy('time')
             ->get();
 
-        $hoy = Appointment::where('technician_id',$user->id)
-            ->whereDate('date',now())
+        $hoy = Appointment::where('technician_id', $user->id)
+            ->whereDate('date', now())
             ->count();
 
-        $semana = Appointment::where('technician_id',$user->id)
-            ->whereBetween('date',[now(), now()->addDays(7)])
+        $semana = Appointment::where('technician_id', $user->id)
+            ->whereBetween('date', [now()->toDateString(), now()->addDays(7)->toDateString()])
             ->count();
 
-        $pendientes = Appointment::where('technician_id',$user->id)
-            ->where('status','pendiente')
+        $pendientes = Appointment::where('technician_id', $user->id)
+            ->whereIn('status', ['programada', 'en_proceso'])
             ->count();
 
-        $completadas = Appointment::where('technician_id',$user->id)
-            ->where('status','completado')
+        $completadas = Appointment::where('technician_id', $user->id)
+            ->where('status', 'completada')
             ->count();
 
-        return view('technician.calendar',compact(
+        return view('technician.calendar', compact(
             'citas',
             'hoy',
             'semana',
             'pendientes',
-            'completadas'  
+            'completadas'
         ));
     }
-
 }

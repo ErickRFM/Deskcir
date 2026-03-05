@@ -50,9 +50,15 @@ class TechnicianTicketController extends Controller
     // ==========================================
     public function show($id)
     {
-        $ticket = Ticket::with(['messages.user','user'])
-            ->where('technician_id', auth()->id()) // 🔐 evita acceso a tickets ajenos
+        $ticket = Ticket::where('technician_id', auth()->id()) // 🔐 evita acceso a tickets ajenos
             ->findOrFail($id);
+
+        $ticket->messages()
+            ->where('user_id', '!=', auth()->id())
+            ->whereNull('seen_at')
+            ->update(['seen_at' => now()]);
+
+        $ticket->load(['messages.user','user','files','checklist']);
 
         return view('technician.tickets.show', compact('ticket'));
     }
@@ -81,7 +87,8 @@ class TechnicianTicketController extends Controller
             'user_id'   => auth()->id(),
             'message'   => $r->message,
             'file'      => $file,
-            'from_role' => 'tecnico'
+            'from_role' => 'tecnico',
+            'seen_at'   => null,
         ]);
 
         return back()->with('success','Respuesta enviada');

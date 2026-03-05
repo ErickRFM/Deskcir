@@ -8,44 +8,32 @@ use Illuminate\Http\Request;
 
 class StoreController extends Controller
 {
-    /**
-     * Mostrar tienda principal
-     * Categorías con productos + búsqueda
-     */
-    /** */
-public function index(Request $request)
-{
-    $query = $request->q;
+    public function index(Request $request)
+    {
+        $query = $request->q;
 
-    $categories = Category::with(['products' => function($q) use ($query){
+        $categories = Category::with(['products' => function ($q) use ($query) {
+            if ($query) {
+                $q->where(function ($sub) use ($query) {
+                    $sub->where('name', 'like', "%{$query}%")
+                        ->orWhere('description', 'like', "%{$query}%");
+                });
+            }
 
-        if($query){
-            $q->where(function($sub) use ($query){
-                $sub->where('name','like',"%{$query}%")
-                    ->orWhere('description','like',"%{$query}%");
-            });
+            $q->with('images');
+        }])->get();
+
+        $totalResults = 0;
+
+        if ($query) {
+            foreach ($categories as $cat) {
+                $totalResults += $cat->products->count();
+            }
         }
 
-        // 👇 seguimos cargando imágenes normalmente
-        $q->with('images');
-
-    }])->get();
-
-    // contador de resultados reales
-    $totalResults = 0;
-
-    if($query){
-        foreach($categories as $cat){
-            $totalResults += $cat->products->count();
-        }
+        return view('store.index', compact('categories', 'totalResults', 'query'));
     }
 
-    return view('store.index', compact('categories','totalResults','query'));
-}
-
-    /**
-     * Mostrar productos por categoría
-     */
     public function category($slug)
     {
         $category = Category::where('slug', $slug)
@@ -55,41 +43,45 @@ public function index(Request $request)
         return view('store.category', compact('category'));
     }
 
-    /**
-     * Mostrar detalle de producto
-     */
     public function show($id)
     {
-        $product = Product::findOrFail($id);
-        return view('store.show', compact('product'));
+        $product = Product::with(['images', 'category'])->findOrFail($id);
+
+        $relatedProducts = Product::with('images')
+            ->where('category_id', $product->category_id)
+            ->whereKeyNot($product->id)
+            ->latest('id')
+            ->take(8)
+            ->get();
+
+        return view('store.show', compact('product', 'relatedProducts'));
     }
 
-    /**
-     * Ver carrito
-     */
     public function cart()
     {
         $cart = session()->get('cart', []);
         return view('store.cart', compact('cart'));
     }
 
-    /**
-     * Agregar producto al carrito
-     */
-    public function addToCart($id)
+    public function addToCart(Request $request, $id)
     {
         $product = Product::findOrFail($id);
 
         $cart = session()->get('cart', []);
+        $qty = max(1, (int) $request->input('qty', 1));
 
         $cart[$id] = [
-            'name'  => $product->name,
+            'name' => $product->name,
             'price' => $product->price,
-            'qty'   => ($cart[$id]['qty'] ?? 0) + 1,
+            'qty' => ($cart[$id]['qty'] ?? 0) + $qty,
         ];
 
         session()->put('cart', $cart);
 
-        return back();
+        if ((int) $request->input('buy_now', 0) === 1) {
+            return redirect('/checkout');
+        }
+
+        return back()->with('success', 'Producto agregado al carrito.');
     }
 }

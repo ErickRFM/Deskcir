@@ -12,7 +12,7 @@ class Ticket extends Model
         'description',
         'status',
         'priority',
-        'assigned_to'
+        'assigned_to',
     ];
 
     public function user()
@@ -25,12 +25,23 @@ class Ticket extends Model
         return $this->hasMany(TicketMessage::class);
     }
 
+    public function files()
+    {
+        return $this->hasMany(TicketFile::class);
+    }
+
     public function technician()
     {
-    return $this->belongsTo(User::class, 'technician_id');
+        return $this->belongsTo(User::class, 'technician_id');
     }
+
     public function checklist()
     {
-    return $this->hasOne(TicketChecklist::class);
+        return $this->hasOne(TicketChecklist::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
     }
 }

@@ -12,12 +12,12 @@
     <div>
         <h3 class="fw-bold mb-1">Estatus de Ventas</h3>
         <p class="text-muted mb-0">
-            Gestión de pedidos y estado de entregas
+            Gesti?n de pedidos y estado de entregas
         </p>
     </div>
 
     <a href="{{ url('/admin/dashboard') }}" class="btn btn-outline-deskcir py-2">
-        ← Regresar
+        ? Regresar
     </a>
 
 </div>
@@ -33,7 +33,7 @@
 <tr>
     <th>#</th>
     <th>Cliente</th>
-    <th>Método</th>
+    <th>M?todo</th>
     <th>Total</th>
     <th>Estado</th>
     <th>Fecha</th>
@@ -112,7 +112,7 @@ Guardar
 <td class="text-center">
 
 <button class="btn btn-sm btn-outline-primary">
-👁 Ver
+?? Ver
 </button>
 
 </td>
@@ -133,7 +133,7 @@ Guardar
 </table>
 </div>
 
-{{-- PAGINACIÓN --}}
+{{-- PAGINACI?N --}}
 <div class="mt-3">
 {{ $orders->links() }}
 </div>

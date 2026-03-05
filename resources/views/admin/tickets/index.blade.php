@@ -10,9 +10,9 @@
 
         <div class="d-flex gap-3">
 
-            {{-- BOTÓN REGRESAR --}}
+            {{-- BOT?N REGRESAR --}}
            <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-              ← Regresar
+              ? Regresar
           </a>
         
         </div>
@@ -78,7 +78,7 @@
 
             <tr>
                 <td colspan="5" class="text-center py-4 text-muted">
-                    No hay tickets registrados aún
+                    No hay tickets registrados a?n
                 </td>
             </tr>
 

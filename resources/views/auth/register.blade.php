@@ -12,9 +12,9 @@
     </div>
 
     <h2 class="title">Crear cuenta</h2>
-    <p class="subtitle">Únete a Deskcir</p>
+    <p class="subtitle">?nete a Deskcir</p>
 
-    {{-- 👉 ERRORES GENERALES --}}
+    {{-- ?? ERRORES GENERALES --}}
     @if($errors->any())
         <div class="alert alert-danger">
             Revisa los datos del formulario
@@ -64,13 +64,13 @@
 
 {{-- PASSWORD --}}
 <div class="mb-3">
-    <label class="form-label">Contraseña</label>
+    <label class="form-label">Contrase?a</label>
 
     <input
         type="password"
         name="password"
         class="form-control input-pro"
-        placeholder="••••••"
+        placeholder="??????"
         required>
 
     @error('password')
@@ -82,13 +82,13 @@
 
 {{-- CONFIRM --}}
 <div class="mb-2">
-    <label class="form-label">Confirmar contraseña</label>
+    <label class="form-label">Confirmar contrase?a</label>
 
     <input
         type="password"
         name="password_confirmation"
         class="form-control input-pro"
-        placeholder="••••••"
+        placeholder="??????"
         required>
 </div>
 
@@ -100,13 +100,13 @@
 
 <div class="mt-3 text-center">
 <button class="btn-login">
-    Crear cuenta →
+    Crear cuenta ?
 </button>
 </div>
 
 </form>
 
-{{-- 👉 GOOGLE --}}
+{{-- ?? GOOGLE --}}
 <div class="mt-3">
     <a href="{{ route('google.login') }}"
        class="btn btn-client-outline w-100">
@@ -215,7 +215,7 @@ color:white;
 color:black;
 }
 /* =============================
-   BOTÓN
+   BOT?N
 ============================= */
 
 .btn-login{
@@ -251,7 +251,7 @@ text-decoration:underline;
 }
 
 /* =============================
-   ANIMACIÓN
+   ANIMACI?N
 ============================= */
 
 @keyframes fade{

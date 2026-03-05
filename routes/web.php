@@ -140,6 +140,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('tickets', TicketController::class);
     Route::post('/tickets/{id}/message',[TicketController::class,'addMessage']);
+    Route::get('/tickets/{ticket}/messages/poll', App\Http\Controllers\TicketMessagePollController::class)->name('tickets.messages.poll');
 
     Route::resource('appointments', AppointmentController::class);
 
@@ -238,6 +239,10 @@ Route::middleware(['auth'])->prefix('technician')->group(function(){
         [ChecklistController::class,'pdf'])
         ->name('technician.checklist.pdf');
 
+    Route::match(['post', 'delete'], '/checklist/{ticket}/photo/{photo}',
+        [ChecklistController::class,'deletePhoto'])
+        ->name('technician.checklist.photo.delete');
+
 });
 
 /*
@@ -246,9 +251,17 @@ Route::middleware(['auth'])->prefix('technician')->group(function(){
 |--------------------------------------------------------------------------
 */
 
-Route::post('/webrtc/offer',[App\Http\Controllers\WebRTCController::class,'offer']);
-Route::post('/webrtc/answer',[App\Http\Controllers\WebRTCController::class,'answer']);
-Route::post('/webrtc/ice',[App\Http\Controllers\WebRTCController::class,'ice']);
+
+Route::middleware('auth')->group(function(){
+    Route::post('/presence/ping',[App\Http\Controllers\PresenceController::class,'ping']);
+    Route::get('/presence/user/{userId}',[App\Http\Controllers\PresenceController::class,'status']);
+});
+Route::middleware('auth')->group(function(){
+    Route::post('/webrtc/offer',[App\Http\Controllers\WebRTCController::class,'offer']);
+    Route::post('/webrtc/answer',[App\Http\Controllers\WebRTCController::class,'answer']);
+    Route::post('/webrtc/ice',[App\Http\Controllers\WebRTCController::class,'ice']);
+    Route::get('/webrtc/poll',[App\Http\Controllers\WebRTCController::class,'poll']);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -277,3 +290,6 @@ require __DIR__.'/admin.php';
 require __DIR__.'/client.php';
 require __DIR__.'/technician.php';
 require __DIR__.'/store.php';
+
+
+

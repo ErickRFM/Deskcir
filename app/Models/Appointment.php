@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
@@ -17,10 +17,12 @@ class Appointment extends Model
         'time',
         'type',
         'status',
-        'notes'
+        'notes',
     ];
 
-    // ===== RELACIONES =====
+    protected $casts = [
+        'date' => 'date',
+    ];
 
     public function ticket()
     {

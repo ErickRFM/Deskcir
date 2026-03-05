@@ -27,8 +27,14 @@ class TicketController extends Controller
     // ===============================
     public function show($id)
     {
-        $ticket = Ticket::with(['messages.user','user','technician'])
-            ->findOrFail($id);
+        $ticket = Ticket::findOrFail($id);
+
+        $ticket->messages()
+            ->where('user_id', '!=', auth()->id())
+            ->whereNull('seen_at')
+            ->update(['seen_at' => now()]);
+
+        $ticket->load(['messages.user','user','technician','files','checklist']);
 
         // 👇 traer usuarios con rol técnico
         $technicians = User::whereHas('role', function($q){
@@ -80,7 +86,8 @@ class TicketController extends Controller
             'user_id'   => auth()->id(),
             'message'   => $r->message,
             'file'      => $file,
-            'from_role' => 'admin'
+            'from_role' => 'admin',
+            'seen_at'   => null,
         ]);
 
         return back()->with('success','Respuesta enviada');

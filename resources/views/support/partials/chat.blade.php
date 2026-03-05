@@ -14,7 +14,7 @@
 
 @if($m->file)
 <a href="{{ asset('storage/'.$m->file) }}"
-class="file-link">📎 Archivo</a>
+class="file-link">?? Archivo</a>
 @endif
 
 <div class="time">

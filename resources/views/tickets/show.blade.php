@@ -8,7 +8,7 @@
 
 <hr>
 
-<h5>Conversación</h5>
+<h5>Conversaci?n</h5>
 
 @foreach($ticket->messages as $m)
 

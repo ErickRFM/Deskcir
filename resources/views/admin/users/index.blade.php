@@ -6,13 +6,13 @@
     {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-      <h3 class="fw-bold mt-2">Gestión de Usuarios</h3>
+      <h3 class="fw-bold mt-2">Gesti?n de Usuarios</h3>
 
       <div class="d-flex gap-3">
 
-        {{-- BOTÓN REGRESAR --}}
+        {{-- BOT?N REGRESAR --}}
         <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-            ← Regresar
+            ? Regresar
         </a>
 
         <a href="{{ route('admin.users.create') }}" class="btn btn-deskcir py-2">

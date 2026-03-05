@@ -5,7 +5,7 @@
 
 <hr>
 
-<h4>Bitácora</h4>
+<h4>Bit?cora</h4>
 <ul>
 @foreach($logs as $log)
     <li>{{ $log->created_at }} - {{ $log->description }}</li>

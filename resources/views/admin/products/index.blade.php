@@ -7,11 +7,11 @@
 
     {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mt-2">Gestión de Productos</h2>
+        <h2 class="fw-bold mt-2">Gesti?n de Productos</h2>
         <div class="d-flex gap-3">
             
             <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-                ← Regresar
+                ? Regresar
             </a>
 
             <a href="{{ route('admin.products.create') }}" class="btn btn-deskcir py-2">
@@ -24,7 +24,7 @@
 
     @if($products->isEmpty())
         <div class="alert alert-info text-center">
-            No hay productos registrados aún.
+            No hay productos registrados a?n.
         </div>
     @else
 
@@ -35,7 +35,7 @@
                     <tr>
                         <th>#</th>
                         <th>Producto</th>
-                        <th>Categoría</th>
+                        <th>Categor?a</th>
                         <th>Precio</th>
                         <th>Stock</th>
                         <th class="text-center">Acciones</th>
@@ -52,7 +52,7 @@
 
                             <td class="py-3">
 
-                                {{-- GALERÍA DE IMÁGENES --}}
+                                {{-- GALER?A DE IM?GENES --}}
                                 <div class="mb-2">
                                 @foreach($product->images as $img)
                                     <img src="{{ asset('storage/'.$img->path) }}"
@@ -78,7 +78,7 @@
                                     </span>
                                 @else
                                     <span class="badge bg-warning">
-                                        Sin categoría
+                                        Sin categor?a
                                     </span>
                                 @endif
                             </td>
@@ -108,7 +108,7 @@
                                     </span>
                                 </a>
 
-                                {{-- 🔥 ELIMINAR CON SWEETALERT --}}
+                                {{-- ?? ELIMINAR CON SWEETALERT --}}
                                 <form id="delete{{$product->id}}"
                                       action="{{ route('admin.products.destroy', $product->id) }}"
                                       method="POST"
@@ -146,13 +146,13 @@
 <script>
 function eliminar(id){
     Swal.fire({
-        title: '¿Eliminar producto?',
-        text: "No podrás recuperarlo",
+        title: '?Eliminar producto?',
+        text: "No podr?s recuperarlo",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, eliminar',
+        confirmButtonText: 'S?, eliminar',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -162,12 +162,12 @@ function eliminar(id){
 }
 </script>
 
-{{-- ✅ MENSAJE DE ÉXITO --}}
+{{-- ? MENSAJE DE ?XITO --}}
 @if(session('success'))
 <script>
 Swal.fire({
   icon: 'success',
-  title: '¡Listo!',
+  title: '?Listo!',
   text: '{{ session('success') }}'
 })
 </script>

@@ -11,7 +11,7 @@
         <textarea class="form-control mb-2" name="description"></textarea>
         <input class="form-control mb-2" name="price" placeholder="Precio">
         <input class="form-control mb-2" name="stock" placeholder="Stock">
-        <input class="form-control mb-2" name="category" placeholder="Categoría">
+        <input class="form-control mb-2" name="category" placeholder="Categor?a">
         <input class="form-control mb-2" name="image" placeholder="imagen.jpg">
 
         <button class="btn btn-warning">Guardar</button>

@@ -1,204 +1,127 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="container py-4 ticket-page">
 
-<div class="container py-4">
+    <a href="{{ route('technician.tickets') }}" class="btn btn-outline-secondary btn-sm mb-3 d-inline-flex align-items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m14 6-6 6 6 6 1.4-1.4L10.8 12l4.6-4.6L14 6Z"/>
+        </svg>
+        Regresar
+    </a>
 
-{{-- ========== HEADER ========== --}}
-<div class="card p-4 mb-4">
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+    <section class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                <div>
+                    <h4 class="fw-bold mb-2">{{ $ticket->subject }}</h4>
+                    <p class="text-muted mb-2">Cliente: {{ $ticket->user->name }}</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge rounded-pill bg-warning text-dark text-uppercase">{{ $ticket->status }}</span>
+                        <span class="badge rounded-pill bg-info text-dark text-uppercase">{{ $ticket->priority ?? 'media' }}</span>
+                        <span class="badge rounded-pill bg-light text-dark border">Ticket #{{ $ticket->id }}</span>
+                    </div>
+                </div>
 
-<div>
-<h5 class="mb-1">{{ $ticket->subject }}</h5>
-<p class="text-muted mb-0">
-Cliente: {{ $ticket->user->name }}
-</p>
+                <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir pantalla" call-label="Llamar" :peer-user-id="$ticket->user->id" :peer-label="$ticket->user->name" />
+            </div>
+        </div>
+    </section>
+
+    @if($ticket->files->count())
+        <section class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4">
+                <h6 class="fw-bold mb-3">Evidencia del cliente</h6>
+                <div class="row g-3">
+                    @foreach($ticket->files as $file)
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="attachment-box h-100">
+                                @if(str_starts_with($file->type, 'image/'))
+                                    <img src="{{ asset('storage/'.$file->path) }}" class="w-100 rounded" style="height:180px;object-fit:cover;" alt="Adjunto">
+                                @elseif(str_starts_with($file->type, 'video/'))
+                                    <video controls class="w-100 rounded" style="height:180px;object-fit:cover;">
+                                        <source src="{{ asset('storage/'.$file->path) }}" type="{{ $file->type }}">
+                                    </video>
+                                @else
+                                    <a href="{{ asset('storage/'.$file->path) }}" target="_blank" class="btn btn-outline-deskcir w-100">Ver archivo</a>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
+    <section class="mb-4">
+        <x-chat :ticket="$ticket" action="/technician/tickets/{{ $ticket->id }}/reply" />
+    </section>
+
+    <section class="card border-0 shadow-sm checklist-summary">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h6 class="fw-bold mb-0">Checklist Tecnico - Ticket #{{ $ticket->id }}</h6>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge rounded-pill bg-light text-dark border text-uppercase">
+                        {{ optional($ticket->checklist)->progress ?? 'pendiente' }}
+                    </span>
+                    <a href="{{ route('technician.checklist',$ticket->id) }}" class="btn btn-sm btn-deskcir">Abrir checklist completo</a>
+                </div>
+            </div>
+
+            @php
+                $check = $ticket->checklist;
+            @endphp
+
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <div class="check-item {{ $check && $check->diagnostico ? 'is-done' : '' }}">Diagnostico realizado</div>
+                </div>
+                <div class="col-md-4">
+                    <div class="check-item {{ $check && $check->reparacion ? 'is-done' : '' }}">Reparacion aplicada</div>
+                </div>
+                <div class="col-md-4">
+                    <div class="check-item {{ $check && $check->pruebas ? 'is-done' : '' }}">Pruebas finales</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </div>
 
-<div class="d-flex gap-2">
-
-<button onclick="startScreen()"
-class="btn btn-sm btn-outline-secondary px-3">
-📺 Compartir pantalla
-</button>
-
-<button onclick="startCall()"
-class="btn btn-sm btn-outline-secondary px-3">
-📞 Llamar
-</button>
-
-<button onclick="stopStream()"
-id="stopBtn"
-class="btn btn-sm btn-outline-danger px-3 d-none">
-⛔ Detener
-</button>
-
-</div>
-
-</div>
-</div>
-
-{{-- ========== VIDEOS (OCULTOS) ========== --}}
-<div id="videoZone" class="row g-3 mb-4 d-none">
-
-<div class="col-md-6">
-<div class="card p-2">
-<video id="local" autoplay muted
-class="w-100 rounded border bg-dark"
-style="min-height:220px"></video>
-</div>
-</div>
-
-<div class="col-md-6">
-<div class="card p-2">
-<video id="remote" autoplay
-class="w-100 rounded border bg-dark"
-style="min-height:220px"></video>
-</div>
-</div>
-
-</div>
-
-{{-- ========== CHAT ========== --}}
-<div class="mb-4">
-<x-chat
-:ticket="$ticket"
-action="/technician/tickets/{{ $ticket->id }}/reply" />
-</div>
-
-{{-- ========== CHECKLIST ========== --}}
-<div class="card p-4">
-
-<h6 class="mb-3">🧰 Checklist técnico</h6>
-
-<div class="form-check mb-2">
-<input class="form-check-input chk" type="checkbox" data-k="diag">
-<label class="form-check-label">Diagnóstico realizado</label>
-</div>
-
-<div class="form-check mb-2">
-<input class="form-check-input chk" type="checkbox" data-k="rep">
-<label class="form-check-label">Reparación aplicada</label>
-</div>
-
-<div class="form-check">
-<input class="form-check-input chk" type="checkbox" data-k="test">
-<label class="form-check-label">Pruebas finales</label>
-</div>
-
-</div>
-
-</div>
-
-{{-- ========== WEBRTC ========== --}}
-<script>
-
-let pc, stream
-const zone = document.getElementById('videoZone')
-const stopBtn = document.getElementById('stopBtn')
-
-const config = {
-iceServers:[{urls:'stun:stun.l.google.com:19302'}]
+<style>
+.attachment-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 8px;
 }
 
-// INICIAR PANTALLA
-async function startScreen(){
-zone.classList.remove('d-none')
-stopBtn.classList.remove('d-none')
-
-stream = await navigator.mediaDevices
-.getDisplayMedia({video:true,audio:true})
-
-local.srcObject = stream
-initPeer()
-
-stream.getTracks().forEach(t=>{
-pc.addTrack(t,stream)
-})
-
-createOffer()
+.checklist-summary .check-item {
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #f9fafb;
+    font-size: 14px;
 }
 
-// INICIAR LLAMADA
-async function startCall(){
-zone.classList.remove('d-none')
-stopBtn.classList.remove('d-none')
-
-stream = await navigator.mediaDevices
-.getUserMedia({audio:true,video:true})
-
-local.srcObject = stream
-initPeer()
-
-stream.getTracks().forEach(t=>{
-pc.addTrack(t,stream)
-})
-
-createOffer()
+.checklist-summary .check-item.is-done {
+    border-color: #0ea5a4;
+    background: rgba(14, 165, 164, 0.1);
+    color: #0f766e;
+    font-weight: 600;
 }
 
-// DETENER
-function stopStream(){
-stream.getTracks().forEach(t=>t.stop())
-zone.classList.add('d-none')
-stopBtn.classList.add('d-none')
+.dark .attachment-box {
+    background: #0f172a;
+    border-color: #253049;
 }
 
-// PEER
-function initPeer(){
-pc = new RTCPeerConnection(config)
-
-pc.ontrack = e=>{
-remote.srcObject = e.streams[0]
+.dark .checklist-summary .check-item {
+    background: #0f172a;
+    border-color: #253049;
+    color: #d1d5db;
 }
-
-pc.onicecandidate = e=>{
-if(e.candidate){
-fetch('/webrtc/ice',{
-method:'POST',
-headers:{
-'X-CSRF-TOKEN':'{{ csrf_token() }}',
-'Content-Type':'application/json'
-},
-body:JSON.stringify({
-ticket_id:'{{ $ticket->id }}',
-candidate:e.candidate
-})
-})
-}}
-}
-
-// OFERTA
-async function createOffer(){
-let offer = await pc.createOffer()
-await pc.setLocalDescription(offer)
-
-fetch('/webrtc/offer',{
-method:'POST',
-headers:{
-'X-CSRF-TOKEN':'{{ csrf_token() }}',
-'Content-Type':'application/json'
-},
-body:JSON.stringify({
-ticket_id:'{{ $ticket->id }}',
-offer
-})
-})
-}
-
-// CHECKLIST LOCAL
-const key='tech_check_{{ $ticket->id }}'
-const saved=JSON.parse(localStorage.getItem(key)||'{}')
-
-document.querySelectorAll('.chk').forEach(c=>{
-c.checked = saved[c.dataset.k] || false
-
-c.addEventListener('change',()=>{
-saved[c.dataset.k]=c.checked
-localStorage.setItem(key,JSON.stringify(saved))
-})
-})
-
-</script>
-
+</style>
 @endsection
+

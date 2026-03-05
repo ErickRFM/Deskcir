@@ -21,9 +21,9 @@
     </div>
 
     {{-- 🔥 REGRESO REAL --}}
-    <button onclick="history.back()" class="btn btn-sm btn-outline-secondary">
-        ← Regresar
-    </button>
+    <a href="/dashboard" class="btn btn-sm btn-outline-secondary">
+        Regresar
+    </a>
 </div>
 
 <form method="POST"

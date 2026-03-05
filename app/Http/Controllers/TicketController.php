@@ -2,91 +2,115 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Appointment;
 use App\Models\Ticket;
+use App\Models\TicketFile;
 use App\Models\TicketMessage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
-    // CLIENTE → lista SUS tickets (SOPORTE)
     public function index()
     {
-        $tickets = Ticket::where('user_id', auth()->id())
+        $tickets = Ticket::with('technician')
+            ->withCount(['appointments as citas_programadas_count' => function ($q) {
+                $q->where('status', '!=', 'cancelada');
+            }])
+            ->where('user_id', auth()->id())
             ->latest()
             ->get();
 
         return view('support.index', compact('tickets'));
     }
 
-    // FORM crear ticket
     public function create()
     {
         return view('support.create');
     }
 
-    // GUARDAR ticket
     public function store(Request $r)
     {
-    $r->validate([
-        'subject' => 'required|string|max:255',
-        'description' => 'required|string',
-        'priority' => 'nullable|in:alta,media,baja'
-    ]);
+        $r->validate([
+            'subject' => 'required|string|max:255',
+            'description' => 'required|string',
+            'priority' => 'nullable|in:alta,media,baja',
+            'attachments' => 'nullable|array|max:5',
+            'attachments.*' => 'file|mimes:jpg,jpeg,png,webp,mp4,mov,avi,webm|max:20480',
+        ]);
 
-    $ticket = Ticket::create([
-        'user_id' => auth()->id(),
-        'subject' => $r->subject,
-        'description' => $r->description,
-        'priority' => strtolower($r->priority) ?? 'media'
-        // 👇 NO ponemos status, la BD lo pone como 'pendiente'
-    ]);
+        $ticket = Ticket::create([
+            'user_id' => auth()->id(),
+            'subject' => $r->subject,
+            'description' => $r->description,
+            'priority' => strtolower($r->priority) ?? 'media',
+        ]);
 
-    return redirect('/support')
-        ->with('success','Ticket creado 🔥');
+        if ($r->hasFile('attachments')) {
+            foreach ($r->file('attachments') as $file) {
+                $path = $file->store('tickets/evidence', 'public');
+
+                TicketFile::create([
+                    'ticket_id' => $ticket->id,
+                    'path' => $path,
+                    'type' => $file->getMimeType() ?? 'application/octet-stream',
+                ]);
+            }
+        }
+
+        return redirect('/support')->with('success', 'Ticket creado');
     }
-    // VER ticket con mensajes
+
     public function show($id)
     {
-        $ticket = Ticket::with('messages.user')
-                    ->findOrFail($id);
+        $ticket = Ticket::findOrFail($id);
 
-        // SEGURIDAD: solo su ticket
-        if ($ticket->user_id != auth()->id()) {
+        if ((int) $ticket->user_id !== (int) auth()->id()) {
             abort(403);
         }
 
-        return view('support.show', compact('ticket'));
+        $ticket->messages()
+            ->where('user_id', '!=', auth()->id())
+            ->whereNull('seen_at')
+            ->update(['seen_at' => now()]);
+
+        $ticket->load(['messages.user', 'files', 'checklist', 'technician', 'appointments.technician']);
+
+        $appointments = Appointment::where('ticket_id', $ticket->id)
+            ->where('user_id', auth()->id())
+            ->orderByDesc('date')
+            ->orderByDesc('time')
+            ->get();
+
+        return view('support.show', compact('ticket', 'appointments'));
     }
 
-    // RESPONDER ticket
     public function addMessage(Request $r, $id)
     {
         $r->validate([
             'message' => 'required|string',
-            'file' => 'nullable|file|max:4096'
+            'file' => 'nullable|file|max:4096',
         ]);
 
         $ticket = Ticket::findOrFail($id);
 
-        // SEGURIDAD
-        if ($ticket->user_id != auth()->id()) {
+        if ((int) $ticket->user_id !== (int) auth()->id()) {
             abort(403);
         }
 
         $path = null;
 
         if ($r->hasFile('file')) {
-            $path = $r->file('file')->store('tickets','public');
+            $path = $r->file('file')->store('tickets', 'public');
         }
 
         TicketMessage::create([
             'ticket_id' => $id,
             'user_id' => auth()->id(),
             'message' => $r->message,
-            'file' => $path
+            'file' => $path,
+            'seen_at' => null,
         ]);
 
-        return back()->with('success','Mensaje enviado');
+        return back()->with('success', 'Mensaje enviado');
     }
 }

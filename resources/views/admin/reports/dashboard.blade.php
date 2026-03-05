@@ -8,9 +8,9 @@
     <h3>Reportes Desckir</h3>
 
     <div class="d-flex gap-3">
-            {{-- BOTÓN REGRESAR --}}
+            {{-- BOT?N REGRESAR --}}
            <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-           ← Regresar
+           ? Regresar
            </a>
     </div>
 </div>
@@ -50,14 +50,14 @@
 
 {{-- GRAFICA --}}
 <div class="card p-3 mt-4">
-<h5>Ventas últimos 30 días</h5>
+<h5>Ventas ?ltimos 30 d?as</h5>
 
 <canvas id="ventas"></canvas>
 </div>
 
 {{-- TOP --}}
 <div class="card p-3 mt-4">
-<h5>Más vendidos</h5>
+<h5>M?s vendidos</h5>
 
 @foreach($top as $p)
 <p>{{ $p->name }} - {{ $p->order_items_count }}</p>

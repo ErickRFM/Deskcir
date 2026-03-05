@@ -1,10 +1,10 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title','Cliente | Deskcir')
 
 @section('content')
 
-{{-- 👉 MENSAJE DE ÉXITO --}}
+{{-- ?? MENSAJE DE ?XITO --}}
 @if(session('success'))
 <div class="alert alert-success">
     {{ session('success') }}
@@ -16,7 +16,7 @@
         Hola, {{ auth()->user()->name }} 
     </h2>
     <p class="text-muted">
-        Gestiona tus servicios, soporte y compras desde aquí
+        Gestiona tus servicios, soporte y compras desde aqu?
     </p>
 </div>
 
@@ -38,7 +38,7 @@
                         class="rounded-circle shadow avatar-user"
                     >
 
-                    {{-- BOTÓN CAMBIAR FOTO --}}
+                    {{-- BOT?N CAMBIAR FOTO --}}
                     <form method="POST"
                         action="{{ route('profile.avatar') }}"
                         enctype="multipart/form-data">
@@ -66,7 +66,7 @@
                     </p>
                 </div>
 
-                {{-- BOTÓN --}}
+                {{-- BOT?N --}}
                 <div class="mt-3 px-3">
                     <a href="/profile" class="btn btn-client w-100 py-2">
                         Editar perfil
@@ -87,7 +87,7 @@
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">Tienda</h5>
                         <p class="text-muted mb-3">
-                            Compra productos tecnológicos
+                            Compra productos tecnol?gicos
                         </p>
                         <a href="/store" class="btn btn-client">
                             Ir a tienda
@@ -119,7 +119,7 @@
                         <p class="text-muted mb-3">
                             Servicios, tickets y compras
                         </p>
-                        <a href="/client/history" class="btn btn-client-outline">
+                        <a href="{{ route('client.history') }}" class="btn btn-client-outline">
                             Ver historial
                         </a>
                     </div>
@@ -132,10 +132,10 @@
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">Seguridad</h5>
                         <p class="text-muted mb-3">
-                            Cambia tu contraseña
+                            Cambia tu contrase?a
                         </p>
                         <a href="/profile#password" class="btn btn-client-outline">
-                            Cambiar contraseña
+                            Cambiar contrase?a
                         </a>
                     </div>
                 </div>
@@ -147,3 +147,4 @@
 </div>
 
 @endsection
+

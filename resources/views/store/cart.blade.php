@@ -5,7 +5,7 @@
 <h2>Carrito</h2>
 
 @if(empty($cart))
-    <p>Carrito vacío</p>
+    <p>Carrito vac?o</p>
 @else
 
 <table class="table">
@@ -31,7 +31,7 @@
         <form method="POST" action="/cart/remove/{{ $id }}">
             @csrf
             <button class="btn btn-sm btn-danger">
-                🗑️ Quitar
+                ??? Quitar
             </button>
         </form>
     </td>

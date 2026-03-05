@@ -10,7 +10,12 @@ class TicketMessage extends Model
         'ticket_id',
         'user_id',
         'message',
-        'file'
+        'file',
+        'seen_at',
+    ];
+
+    protected $casts = [
+        'seen_at' => 'datetime',
     ];
 
     public function ticket()

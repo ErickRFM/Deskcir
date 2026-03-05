@@ -6,15 +6,15 @@
 
 <div class="login-card">
 
-    <!-- LOGO M?S PRO -->
+    <!-- LOGO -->
     <div class="logo-zone">
-        <img src="{{ asset('img/logo.png') }}" class="login-logo">
+        <img src="{{ asset('img/logo.png') }}" class="login-logo" alt="Deskcir">
     </div>
 
     <h2 class="title">Bienvenido a Deskcir</h2>
     <p class="subtitle">Accede para continuar</p>
 
-    {{-- ?? MENSAJES DE ERROR GENERALES --}}
+    {{-- MENSAJES DE ERROR --}}
     @if($errors->any())
         <div class="alert alert-danger">
             Credenciales incorrectas
@@ -24,8 +24,10 @@
     <form method="POST" action="{{ route('login') }}">
     @csrf
 
+    {{-- CORREO --}}
     <div class="mb-3">
-        <label class="form-label">Correo</label>
+
+        <label class="form-label">Correo electrónico</label>
 
         <input
             type="email"
@@ -33,6 +35,7 @@
             value="{{ old('email') }}"
             class="form-control input-pro"
             placeholder="tu@email.com"
+            autocomplete="email"
             required>
 
         @error('email')
@@ -40,16 +43,20 @@
             {{ $message }}
         </small>
         @enderror
+
     </div>
 
+    {{-- PASSWORD --}}
     <div class="mb-2">
-        <label class="form-label">Contrase?a</label>
+
+        <label class="form-label">Contraseña</label>
 
         <input
             type="password"
             name="password"
             class="form-control input-pro"
-            placeholder="??????"
+            placeholder="••••••••"
+            autocomplete="current-password"
             required>
 
         @error('password')
@@ -57,22 +64,24 @@
             {{ $message }}
         </small>
         @enderror
+
     </div>
 
-    {{-- ???? AQU? MOV? "CREAR CUENTA" --}}
-    <div class="mt-2  text-start">
+    {{-- LINK REGISTRO --}}
+    <div class="mt-2 text-start">
         <a href="/register" class="link-pro">
             Crear cuenta
         </a>
     </div>
 
-    <button class="btn-login mt-3">
-        Iniciar sesi?n ?
+    {{-- BOTON LOGIN --}}
+    <button type="submit" class="btn-login mt-3">
+        Iniciar sesión
     </button>
 
     </form>
 
-    {{-- ?? LOGIN CON GOOGLE --}}
+    {{-- GOOGLE --}}
     <div class="mt-3">
         <a href="{{ route('google.login') }}"
            class="btn btn-client-outline w-100">
@@ -86,7 +95,19 @@
 <style>
 
 /* =============================
-   CARD ELITE
+   WRAPPER CENTRADO
+============================= */
+
+.login-wrapper{
+min-height:calc(100vh - 120px);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px 20px;
+}
+
+/* =============================
+   CARD
 ============================= */
 
 .login-card{
@@ -95,10 +116,9 @@ padding:34px;
 border-radius:22px;
 width:420px;
 
-box-shadow:
-0 6px 14px rgba(0,0,0,.10);
+box-shadow:0 6px 14px rgba(0,0,0,.10);
 
-animation: fade .6s ease;
+animation:fade .6s ease;
 }
 
 .dark .login-card{
@@ -112,11 +132,11 @@ border:1px solid #1f293f;
 
 .logo-zone{
 text-align:center;
-margin-bottom:10px;
+margin-bottom:12px;
 }
 
 .login-logo{
-height: 35px;
+height:35px;
 filter:drop-shadow(0 10px 10px rgba(0,0,0,.15));
 }
 
@@ -128,11 +148,13 @@ filter:drop-shadow(0 10px 10px rgba(0,0,0,.15));
 font-weight:800;
 margin-bottom:4px;
 color:#0f172a;
+text-align:center;
 }
 
 .subtitle{
 color:#374151;
 margin-bottom:22px;
+text-align:center;
 }
 
 .form-label{
@@ -144,12 +166,12 @@ font-weight:600;
 color:white;
 }
 
-.dark .form-label{
-color:#e5e7eb !important;
-}
-
 .dark .subtitle{
 color:#9ca3af;
+}
+
+.dark .form-label{
+color:#e5e7eb !important;
 }
 
 /* =============================
@@ -164,8 +186,8 @@ border:1px solid #d1d5db;
 }
 
 .input-pro:focus{
-border-color:#111827;
-box-shadow:0 0 0 3px rgba(0,0,0,.15);
+border-color:#00798E;
+box-shadow:0 0 0 3px rgba(0,121,142,.15);
 outline:none;
 }
 
@@ -176,7 +198,7 @@ color:white;
 }
 
 /* =============================
-   BOT?N
+   BOTÓN
 ============================= */
 
 .btn-login{
@@ -189,12 +211,12 @@ background:#00798E;
 color:white;
 
 font-weight:600;
-transition:.3s;
+transition:.25s;
 }
 
 .btn-login:hover{
 transform:translateY(-2px);
-background:#000;
+background:#00687a;
 }
 
 /* =============================
@@ -202,7 +224,7 @@ background:#000;
 ============================= */
 
 .link-pro{
-color:#2563eb;
+color:#00798E;
 font-weight:500;
 text-decoration:none;
 }
@@ -212,7 +234,7 @@ text-decoration:underline;
 }
 
 /* =============================
-   ANIMACI?N
+   ANIMACIÓN
 ============================= */
 
 @keyframes fade{
@@ -224,6 +246,7 @@ to{
 opacity:1;
 transform:none;
 }
+
 }
 
 </style>

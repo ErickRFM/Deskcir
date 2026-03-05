@@ -8,13 +8,13 @@
 
     <!-- LOGO -->
     <div class="logo-zone">
-        <img src="{{ asset('img/logo.png') }}" class="login-logo">
+        <img src="{{ asset('img/logo.png') }}" class="login-logo" alt="Deskcir">
     </div>
 
     <h2 class="title">Crear cuenta</h2>
-    <p class="subtitle">?nete a Deskcir</p>
+    <p class="subtitle">Únete a Deskcir</p>
 
-    {{-- ?? ERRORES GENERALES --}}
+    {{-- ERRORES GENERALES --}}
     @if($errors->any())
         <div class="alert alert-danger">
             Revisa los datos del formulario
@@ -26,14 +26,19 @@
 
 {{-- NOMBRE --}}
 <div class="mb-3">
-    <label class="form-label">Nombre</label>
+
+    <label for="name" class="form-label">
+        Nombre
+    </label>
 
     <input
+        id="name"
         type="text"
         name="name"
         value="{{ old('name') }}"
         class="form-control input-pro"
         placeholder="Tu nombre"
+        autocomplete="name"
         required>
 
     @error('name')
@@ -41,18 +46,24 @@
         {{ $message }}
     </small>
     @enderror
+
 </div>
 
 {{-- CORREO --}}
 <div class="mb-3">
-    <label class="form-label">Correo</label>
+
+    <label for="email" class="form-label">
+        Correo electrónico
+    </label>
 
     <input
+        id="email"
         type="email"
         name="email"
         value="{{ old('email') }}"
         class="form-control input-pro"
         placeholder="tu@email.com"
+        autocomplete="email"
         required>
 
     @error('email')
@@ -60,17 +71,23 @@
         {{ $message }}
     </small>
     @enderror
+
 </div>
 
-{{-- PASSWORD --}}
+{{-- CONTRASEÑA --}}
 <div class="mb-3">
-    <label class="form-label">Contrase?a</label>
+
+    <label for="password" class="form-label">
+        Contraseña
+    </label>
 
     <input
+        id="password"
         type="password"
         name="password"
         class="form-control input-pro"
-        placeholder="??????"
+        placeholder="••••••••"
+        autocomplete="new-password"
         required>
 
     @error('password')
@@ -78,35 +95,42 @@
         {{ $message }}
     </small>
     @enderror
+
 </div>
 
-{{-- CONFIRM --}}
+{{-- CONFIRMAR CONTRASEÑA --}}
 <div class="mb-2">
-    <label class="form-label">Confirmar contrase?a</label>
+
+    <label for="password_confirmation" class="form-label">
+        Confirmar contraseña
+    </label>
 
     <input
+        id="password_confirmation"
         type="password"
         name="password_confirmation"
         class="form-control input-pro"
-        placeholder="??????"
+        placeholder="••••••••"
+        autocomplete="new-password"
         required>
+
 </div>
 
-<div class="text-start">
+<div class="text-start mt-2">
     <a href="{{ route('login') }}" class="link-pro">
         Ya tengo cuenta
     </a>
 </div>
 
 <div class="mt-3 text-center">
-<button class="btn-login">
-    Crear cuenta ?
+<button type="submit" class="btn-login">
+    Crear cuenta
 </button>
 </div>
 
 </form>
 
-{{-- ?? GOOGLE --}}
+{{-- GOOGLE --}}
 <div class="mt-3">
     <a href="{{ route('google.login') }}"
        class="btn btn-client-outline w-100">
@@ -114,14 +138,25 @@
     </a>
 </div>
 
-
 </div>
 </div>
 
 <style>
 
 /* =============================
-   CARD ELITE
+   WRAPPER CENTRADO
+============================= */
+
+.login-wrapper{
+min-height:calc(100vh - 120px);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px 20px;
+}
+
+/* =============================
+   CARD
 ============================= */
 
 .login-card{
@@ -130,10 +165,9 @@ padding:34px;
 border-radius:22px;
 width:420px;
 
-box-shadow:
-0 6px 14px rgba(0,0,0,.10);
+box-shadow:0 6px 14px rgba(0,0,0,.10);
 
-animation: fade .6s ease;
+animation:fade .6s ease;
 }
 
 .dark .login-card{
@@ -151,7 +185,7 @@ margin-bottom:10px;
 }
 
 .login-logo{
-height: 35px;
+height:35px;
 }
 
 /* =============================
@@ -162,11 +196,13 @@ height: 35px;
 font-weight:800;
 margin-bottom:4px;
 color:#0f172a;
+text-align:center;
 }
 
 .subtitle{
 color:#374151;
 margin-bottom:22px;
+text-align:center;
 }
 
 .form-label{
@@ -174,7 +210,8 @@ color:#0f172a !important;
 font-weight:600;
 }
 
-/* dark */
+/* dark mode */
+
 .dark .title{
 color:white;
 }
@@ -199,8 +236,8 @@ border:1px solid #d1d5db;
 }
 
 .input-pro:focus{
-border-color:#111827;
-box-shadow:0 0 0 3px rgba(0,0,0,.15);
+border-color:#00798E;
+box-shadow:0 0 0 3px rgba(0,121,142,.15);
 outline:none;
 }
 
@@ -210,12 +247,22 @@ border:1px solid #1f293f;
 color:white;
 }
 
+/* =============================
+   LINK
+============================= */
 
 .link-pro{
-color:black;
+color:#00798E;
+font-weight:500;
+text-decoration:none;
 }
+
+.link-pro:hover{
+text-decoration:underline;
+}
+
 /* =============================
-   BOT?N
+   BOTÓN
 ============================= */
 
 .btn-login{
@@ -233,25 +280,11 @@ transition:.3s;
 
 .btn-login:hover{
 transform:translateY(-2px);
-background:#000;
+background:#00687a;
 }
 
 /* =============================
-   LINK
-============================= */
-
-.link-pro{
-color:#2563eb;
-font-weight:500;
-text-decoration:none;
-}
-
-.link-pro:hover{
-text-decoration:underline;
-}
-
-/* =============================
-   ANIMACI?N
+   ANIMACIÓN
 ============================= */
 
 @keyframes fade{

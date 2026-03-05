@@ -168,26 +168,17 @@ color:#e5e7eb !important;
 /* ========================= */
 /* BOTÓN LOGIN */
 /* ========================= */
-
-.btn-outline-light{
-background:#111827 !important;
-color:white !important;
-border:1px solid #111827 !important;
+.btn-outline-deskcir{
+background:transparent;
+color:#00798E;
+border:1px solid #00798E;
+border-radius:10px;
+padding:6px 14px;
 }
 
-.btn-outline-light:hover{
-background:black !important;
-color:white !important;
-}
-
-.dark .btn-outline-light{
-background:#0b1220 !important;
-border:1px solid #1f293f !important;
-color:white !important;
-}
-
-.dark .btn-outline-light:hover{
-background:#060a15 !important;
+.btn-outline-deskcir:hover{
+background:#00798E;
+color:white;
 }
 
 /* ========================= */
@@ -684,4 +675,13 @@ border:none;
 .search-btn i{
 font-size:18px;
 color:white;
+}
+.btn-warning{
+background:#00798E !important;
+border:none !important;
+color:white !important;
+}
+
+.btn-warning:hover{
+background:#00687a !important;
 }

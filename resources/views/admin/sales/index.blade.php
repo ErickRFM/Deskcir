@@ -10,14 +10,14 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <div>
-        <h3 class="fw-bold mb-1">🧾 Historial de Ventas</h3>
+        <h3 class="fw-bold mb-1">Estatus de Ventas</h3>
         <p class="text-muted mb-0">
             Gestión de pedidos y estado de entregas
         </p>
     </div>
 
-    <a href="{{ url('/admin/dashboard') }}" class="btn btn-outline-secondary">
-        ← Volver al panel
+    <a href="{{ url('/admin/dashboard') }}" class="btn btn-outline-deskcir py-2">
+        ← Regresar
     </a>
 
 </div>

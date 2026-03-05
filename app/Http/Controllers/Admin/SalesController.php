@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 
 class SalesController extends Controller
@@ -15,7 +16,24 @@ class SalesController extends Controller
             ->orderBy('created_at','desc')
             ->paginate(20);
 
-        return view('admin.sales.index', compact('orders'));
+        // KPI dashboard
+        $ventasHoy = Order::whereDate('created_at', now())
+            ->sum('total');
+
+        $ventasMes = Order::whereMonth('created_at', now()->month)
+            ->sum('total');
+
+        $clientes = User::count();
+
+        $tickets = Ticket::count();
+
+        return view('admin.sales.index', compact(
+            'orders',
+            'ventasHoy',
+            'ventasMes',
+            'clientes',
+            'tickets'
+        ));
     }
 
     public function updateStatus(Request $r, $id)

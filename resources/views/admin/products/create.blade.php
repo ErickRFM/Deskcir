@@ -9,7 +9,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="fw-bold">Agregar producto</h3>
 
-    <button onclick="history.back()" class="btn btn-outline-secondary">
+    <button onclick="history.back()" class="btn btn-outline-deskcir py-2">
         ← Regresar
     </button>
 </div>
@@ -74,7 +74,7 @@ required>
 
 </div>
 
-{{-- 🔥 CATEGORÍAS FIJAS --}}
+{{--  CATEGORÍAS FIJAS --}}
 <div class="mb-3">
 <label class="form-label fw-semibold">Categoría</label>
 
@@ -109,15 +109,9 @@ class="mt-3 d-flex gap-2 flex-wrap">
 
 {{-- BOTONES --}}
 <div class="mt-3">
-<button class="btn btn-warning px-4">
-💾 Guardar producto
+<button class="btn btn-deskcir py-2">
+Guardar producto
 </button>
-
-<a href="{{ route('admin.products.index') }}"
-class="btn btn-secondary ms-2">
-Cancelar
-</a>
-</div>
 
 </form>
 </div>

@@ -13,7 +13,7 @@
 
 <div class="mb-4">
     <h2 class="fw-bold mb-1 text-dark dark:text-white">
-        Hola, {{ auth()->user()->name }} 👋
+        Hola, {{ auth()->user()->name }} 
     </h2>
     <p class="text-muted">
         Gestiona tus servicios, soporte y compras desde aquí
@@ -85,7 +85,7 @@
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
-                        <h5 class="fw-bold mb-1">🛒 Tienda</h5>
+                        <h5 class="fw-bold mb-1">Tienda</h5>
                         <p class="text-muted mb-3">
                             Compra productos tecnológicos
                         </p>
@@ -100,7 +100,7 @@
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
-                        <h5 class="fw-bold mb-1">🧑‍💻 Soporte</h5>
+                        <h5 class="fw-bold mb-1">Soporte</h5>
                         <p class="text-muted mb-3">
                             Reporta fallas y chatea con técnicos
                         </p>
@@ -115,7 +115,7 @@
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
-                        <h5 class="fw-bold mb-1">📄 Historial</h5>
+                        <h5 class="fw-bold mb-1">Historial</h5>
                         <p class="text-muted mb-3">
                             Servicios, tickets y compras
                         </p>
@@ -130,7 +130,7 @@
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
-                        <h5 class="fw-bold mb-1">🔐 Seguridad</h5>
+                        <h5 class="fw-bold mb-1">Seguridad</h5>
                         <p class="text-muted mb-3">
                             Cambia tu contraseña
                         </p>

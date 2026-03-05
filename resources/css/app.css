@@ -6,655 +6,682 @@
 /* 🌙 MODO OSCURO DEFINITIVO */
 /* ========================= */
 
-.dark body {
-    background: #0a0f1c !important;
-    color: #e5e7eb !important;
+.dark body{
+background:#0a0f1c !important;
+color:#e5e7eb !important;
 }
 
 /* NAVBAR */
 .dark nav,
-.dark .navbar {
-    background: #0a0f1c !important;
-    border-bottom: 1px solid #1b2235 !important;
+.dark .navbar{
+background:#0a0f1c !important;
+border-bottom:1px solid #1b2235 !important;
 }
 
-.dark nav a {
-    color: #e5e7eb !important;
+.dark nav a{
+color:#e5e7eb !important;
 }
 
-/* CARDS BASE (sin sombras globales) */
-.dark .card {
-    background: #11172b !important;
-    border: 1px solid #1f293f !important;
-    color: white !important;
+/* ========================= */
+/* 🧼 CARDS BASE */
+/* ========================= */
+
+.card{
+transition:.2s ease;
+border-radius:14px;
+box-shadow:0 6px 14px rgba(0,0,0,.06) !important;
+border:1px solid #e5e7eb !important;
+transform:none !important;
 }
 
+.dark .card{
+background:#11172b !important;
+border:1px solid #1f293f !important;
+box-shadow:0 6px 14px rgba(0,0,0,.25) !important;
+color:white !important;
+}
+
+/* ========================= */
 /* TABLAS */
-.dark table,
-.dark .table {
-    background: #0e1424 !important;
-    color: white !important;
+/* ========================= */
+
+.dark table:not(.no-dark),
+.dark .table:not(.no-dark){
+background:#0b1220 !important;
+color:white !important;
+border-radius:10px !important;
+overflow:hidden !important;
 }
 
-.dark thead {
-    background: #070b16 !important;
+.dark table tr:first-child td,
+.dark table tr:first-child th{
+background:#060a15 !important;
+color:white !important;
+font-weight:bold !important;
 }
 
-.dark th {
-    color: white !important;
+.dark table td,
+.dark table th{
+background:#0e1424 !important;
+color:#e5e7eb !important;
+border-bottom:1px solid #1a2236 !important;
 }
 
-.dark td {
-    color: #d1d5db !important;
-}
-
+/* ========================= */
 /* INPUTS */
+/* ========================= */
+
 .dark .form-control,
 .dark .form-select,
-.dark textarea {
-    background: #060a15 !important;
-    color: white !important;
-    border: 1px solid #1f293f !important;
+.dark textarea{
+background:#060a15 !important;
+color:white !important;
+border:1px solid #1f293f !important;
 }
 
+/* ========================= */
 /* BOTONES */
-.dark .btn-secondary {
-    background: #1f293f !important;
+/* ========================= */
+
+.dark .btn-secondary{
+background:#1f293f !important;
 }
 
-.dark .btn-outline-primary {
-    border-color: #3b82f6 !important;
-    color: #60a5fa !important;
+.dark .btn-outline-primary{
+border-color:#3b82f6 !important;
+color:#60a5fa !important;
 }
 
-/* ZONAS BLANCAS DEL STORE */
-.dark .bg-light {
-    background: #0e1424 !important;
-}
-
+/* ========================= */
 /* TITULOS */
+/* ========================= */
+
 .dark h1,
 .dark h2,
 .dark h3,
 .dark h4,
-.dark h5 {
-    color: white !important;
+.dark h5{
+color:white !important;
 }
 
-/* ============================== */
-/* 🔧 FIX TABLAS CARRITO          */
-/* ============================== */
-
-.dark table:not(.no-dark),
-.dark .table:not(.no-dark) {
-    background: #0b1220 !important;
-    color: white !important;
-    border-radius: 10px !important;
-    overflow: hidden !important;
-}
-
-.dark table tr:first-child td,
-.dark table tr:first-child th {
-    background: #060a15 !important;
-    color: white !important;
-    font-weight: bold !important;
-}
-
-.dark table td,
-.dark table th {
-    background: #0e1424 !important;
-    color: #e5e7eb !important;
-    border-bottom: 1px solid #1a2236 !important;
-}
-
-/* ============================== */
-/* 🔥 SOLO TARJETAS DE PRODUCTOS  */
-/* ============================== */
-
-/* 👉 SOLO afecta a la tienda */
-.store .card,
-.product-card,
-.card-producto {
-    transition: .3s;
-    border-radius: 14px;
-}
-
-/* Sombra SOLO en productos */
-.store .card:hover,
-.product-card:hover,
-.card-producto:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 30px rgba(0,0,0,.12) !important;
-}
-
-/* ============================== */
-/* 🔥 NAVBAR (esta sí con sombra) */
-/* ============================== */
+/* ========================= */
+/* NAVBAR */
+/* ========================= */
 
 .navbar,
-nav.navbar {
-    background: #ffffff !important;
-    border-bottom: none !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,.06) !important;
-    transition: all .3s ease;
+nav.navbar{
+background:#ffffff !important;
+border-bottom:none !important;
+box-shadow:0 8px 20px rgba(0,0,0,.06) !important;
+transition:all .3s ease;
 }
 
-.navbar a.nav-link {
-    color: #1f2937 !important;
-    font-weight: 500;
-    transition: .2s;
-}
-
-.navbar a.nav-link:hover {
-    color: #2563eb !important;
-    transform: translateY(-1px);
-}
-
-.navbar-brand {
-    font-weight: 700;
-    letter-spacing: .3px;
-}
-
-.dark .navbar {
-    background: #0a0f1c !important;
-    box-shadow: 0 10px 20px rgba(0,0,0,.3) !important;
-}
-
-/* ============================== */
-/* 🧼 FIX TEXTOS                  */
-/* ============================== */
-
-.dark .text-muted {
-    color: #d1d5db !important;
-}
-
-.dark .card .text-muted {
-    color: #e5e7eb !important;
-}
-/* ===================================== */
-/* 🧼 CARDS LIMPIAS Y PROFESIONALES      */
-/* ===================================== */
-
-.card{
-    transition: .2s ease;
-    border-radius: 14px;
-
-    /* sombra fija suavecita */
-    box-shadow: 0 6px 14px rgba(0,0,0,.06) !important;
-
-    /* borde sutil */
-    border: 1px solid #e5e7eb !important;
-
-    transform: none !important;
-}
-
-/* 👇 SOLO PRODUCTOS MÁS PRO */
-.store .card,
-.product-card,
-.card-producto{
-    border: 1px solid #d1d5db !important;
-    box-shadow: 0 10px 18px rgba(0,0,0,.08) !important;
-}
-
-/* SIN BRINCO AL HOVER */
-.card:hover{
-    transform: none !important;
-    box-shadow: 0 6px 14px rgba(0,0,0,.06) !important;
-}
-
-/* 🌙 MODO OSCURO */
-.dark .card{
-    border: 1px solid #1f293f !important;
-    box-shadow: 0 6px 14px rgba(0,0,0,.25) !important;
-}
-
-/* Productos en oscuro más marcados */
-.dark .store .card,
-.dark .product-card{
-    border: 1px solid #2d3a5a !important;
-    box-shadow: 0 10px 18px rgba(0,0,0,.4) !important;
-}
-/* ===================================== */
-/* 🧭 NAVBAR CON SOMBRA LIGERA           */
-/* ===================================== */
-
-.navbar{
-    box-shadow:0 8px 20px rgba(0,0,0,.06) !important;
-}
-
-/* En oscuro un poco más fuerte */
 .dark .navbar{
-    box-shadow:0 8px 20px rgba(0,0,0,.25) !important;
+background:#0a0f1c !important;
+box-shadow:0 8px 20px rgba(0,0,0,.25) !important;
 }
-/* BOTÓN LOGIN NAVBAR */
+
+.navbar a.nav-link{
+color:#1f2937 !important;
+font-weight:500;
+transition:.2s;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+.navbar a.nav-link:hover{
+color:#00798E !important;
+transform:translateY(-1px);
+}
+
+.dark .navbar .nav-link{
+color:#e5e7eb !important;
+}
+
+.dark .navbar .nav-link:hover{
+color:#00798E !important;
+}
+
+.navbar-brand{
+font-weight:700;
+letter-spacing:.3px;
+}
+
+.navbar .material-symbols-outlined{
+font-size:20px;
+vertical-align:middle;
+}
+
+/* ========================= */
+/* TEXTOS */
+/* ========================= */
+
+.dark .text-muted{
+color:#d1d5db !important;
+}
+
+.dark .card .text-muted{
+color:#e5e7eb !important;
+}
+
+/* ========================= */
+/* BOTÓN LOGIN */
+/* ========================= */
+
 .btn-outline-light{
-    background:#111827 !important;
-    color:white !important;
-    border:1px solid #111827 !important;
+background:#111827 !important;
+color:white !important;
+border:1px solid #111827 !important;
 }
 
-/* Hover en claro */
 .btn-outline-light:hover{
-    background:black !important;
-    color:white !important;
+background:black !important;
+color:white !important;
 }
 
-/* 🌙 Modo oscuro */
 .dark .btn-outline-light{
-    background:#0b1220 !important;
-    border:1px solid #1f293f !important;
-    color:white !important;
+background:#0b1220 !important;
+border:1px solid #1f293f !important;
+color:white !important;
 }
 
 .dark .btn-outline-light:hover{
-    background:#060a15 !important;
+background:#060a15 !important;
 }
-/* ============================== */
-/* 🧑‍💼 CLIENT DASHBOARD BUTTONS */
-/* ============================== */
+
+/* ========================= */
+/* BOTONES CLIENTE */
+/* ========================= */
 
 .btn-client{
-    background:#00798E !important;
-    color:white !important;
-    border-radius:12px;
-    padding:10px 18px;
-    border:none;
-    transition:.2s;
+background:#00798E !important;
+color:white !important;
+border-radius:12px;
+padding:10px 18px;
+border:none;
+transition:.2s;
 }
 
 .btn-client:hover{
-    background:#006070 !important;
-    transform:translateY(-1px);
+background:#006070 !important;
+transform:translateY(-1px);
 }
 
 .btn-client-outline{
-    background:transparent !important;
-    color:#00798E !important;
-    border:1px solid #00798E !important;
-    border-radius:12px;
-    padding:10px 18px;
+background:transparent !important;
+color:#00798E !important;
+border:1px solid #00798E !important;
+border-radius:12px;
+padding:10px 18px;
 }
 
 .btn-client-outline:hover{
-    background:#00798E !important;
-    color:white !important;
+background:#00798E !important;
+color:white !important;
 }
 
-/* 🌙 DARK */
 .dark .btn-client-outline{
-    color:#4fd1c5 !important;
-    border-color:#4fd1c5 !important;
+color:#4fd1c5 !important;
+border-color:#4fd1c5 !important;
 }
 
 .dark .btn-client-outline:hover{
-    background:#00798E !important;
-    color:white !important;
-}
-/* FIX TITULO CLIENTE EN MODO CLARO */
-h2.fw-bold.mb-1{
-    color:#0f172a !important;   /* negro elegante en light */
+background:#00798E !important;
+color:white !important;
 }
 
-/* Mantenerlo blanco en dark */
+/* ========================= */
+/* PERFIL */
+/* ========================= */
+
+h2.fw-bold.mb-1{
+color:#0f172a !important;
+}
+
 .dark h2.fw-bold.mb-1{
-    color:#ffffff !important;
+color:#ffffff !important;
 }
 
 .avatar-user{
-    width:100px;
-    height:100px;
-    object-fit:cover;
-    border:3px solid #00798E;
+width:100px;
+height:100px;
+object-fit:cover;
+border:3px solid #00798E;
 }
 
-/* Centrado interior solo tarjeta perfil */
 .card-body.text-center{
-    align-items:center;
+align-items:center;
 }
-/* LABELS CLAROS */
+
+/* ========================= */
+/* FORM */
+/* ========================= */
+
 .form-label{
-    color:#000 !important;
+color:#000 !important;
 }
 
-/* 🌙 DARK */
 .dark .form-label{
-    color:#fff !important;
+color:#fff !important;
 }
 
-/* Inputs coherentes */
 .input-pro{
-    border-radius:12px;
-    padding:10px;
+border-radius:12px;
+padding:10px;
 }
 
-/* Select bonito */
 select.input-pro{
-    cursor:pointer;
+cursor:pointer;
 }
-/* Icono adjunto más grande y centrado */
+
+/* ========================= */
+/* CHAT */
+/* ========================= */
+
 .chat-box .btn-attach,
 .chat-box svg{
-    font-size:18px !important;
-    width:22px !important;
-    height:22px !important;
+font-size:18px !important;
+width:22px !important;
+height:22px !important;
 }
-/* ============================= */
-/* 🛒 STORE MARKETPLACE UI */
-/* ============================= */
+
+/* ========================= */
+/* STORE */
+/* ========================= */
 
 .store-wrapper{
-    background:#f8fafc;
-    padding:40px 0;
+background:#f8fafc;
+padding:40px 0;
 }
 
-/* SIDEBAR */
 .store-filter{
-    background:#ffffff;
-    padding:25px;
-    border-radius:18px;
-    border:1px solid #e5e7eb;
-    box-shadow:0 10px 25px rgba(0,0,0,.05);
+background:#ffffff;
+padding:25px;
+border-radius:18px;
+border:1px solid #e5e7eb;
+box-shadow:0 10px 25px rgba(0,0,0,.05);
 }
 
 .filter-title{
-    font-weight:600;
-    margin-bottom:20px;
+font-weight:600;
+margin-bottom:20px;
 }
 
 .filter-section{
-    margin-bottom:18px;
+margin-bottom:18px;
 }
 
 .filter-label{
-    font-size:13px;
-    font-weight:500;
-    margin-bottom:6px;
-    display:block;
+font-size:13px;
+font-weight:500;
+margin-bottom:6px;
+display:block;
 }
 
 .filter-input{
-    border-radius:10px;
+border-radius:10px;
 }
 
-.btn-apply{
-    background:#00798E;
-    color:white;
-    border:none;
-    border-radius:12px;
-    padding:8px;
-    font-weight:600;
-}
-
-.btn-apply:hover{
-    background:#006070;
-}
-
-/* HEADER */
 .store-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
-/* CARD */
 .product-card{
-    background:#ffffff;
-    border-radius:20px;
-    overflow:hidden;
-    border:1px solid #e5e7eb;
-    transition:.25s;
-    height:100%;
+background:#ffffff;
+border-radius:20px;
+overflow:hidden;
+border:1px solid #e5e7eb;
+transition:.25s;
+height:100%;
 }
 
 .product-card:hover{
-    box-shadow:0 15px 35px rgba(0,0,0,.08);
-    transform:translateY(-3px);
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+transform:translateY(-3px);
 }
 
-/* IMAGEN */
 .product-img{
-    height:220px;
-    background:#f1f5f9;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+height:220px;
+background:#f1f5f9;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .product-img img{
-    max-height:180px;
-    max-width:85%;
-    object-fit:contain;
+max-height:180px;
+max-width:85%;
+object-fit:contain;
 }
 
-/* BODY */
 .product-body{
-    padding:18px;
+padding:18px;
 }
 
 .product-name{
-    font-weight:600;
-    font-size:15px;
+font-weight:600;
+font-size:15px;
 }
 
 .product-desc{
-    font-size:13px;
-    color:#6b7280;
-    min-height:40px;
+font-size:13px;
+color:#6b7280;
+min-height:40px;
 }
 
 .product-footer{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-top:15px;
 }
 
 .product-price{
-    font-weight:700;
-    font-size:18px;
-    color:#0f172a;
+font-weight:700;
+font-size:18px;
+color:#0f172a;
 }
 
 .product-actions{
-    display:flex;
-    gap:8px;
+display:flex;
+gap:8px;
+}
+
+/* ========================= */
+/* DROPDOWN USER */
+/* ========================= */
+
+.dropdown-menu{
+border-radius:12px !important;
+border:1px solid #e5e7eb !important;
+padding:8px !important;
+box-shadow:0 10px 25px rgba(0,0,0,.08) !important;
+min-width:190px;
+}
+
+.dropdown-item{
+border-radius:8px;
+display:flex;
+align-items:center;
+gap:8px;
+font-size:14px;
+padding:8px 10px;
+transition:.15s;
+}
+
+.dropdown-item:hover{
+background:#f1f5f9 !important;
+color:#00798E !important;
+}
+
+.dropdown-item .material-symbols-outlined{
+font-size:18px;
+}
+
+.dropdown-divider{
+margin:6px 0;
+}
+
+.dropdown-item.text-danger:hover{
+background:#fee2e2 !important;
+color:#dc2626 !important;
+}
+
+.dark .dropdown-menu{
+background:#0f172a !important;
+border:1px solid #1f2937 !important;
+box-shadow:0 10px 30px rgba(0,0,0,.5) !important;
+}
+
+.dark .dropdown-item{
+color:#e5e7eb !important;
+}
+
+.dark .dropdown-item:hover{
+background:#111827 !important;
+color:#00798E !important;
+}
+
+.dark .dropdown-item.text-danger:hover{
+background:#3f1d1d !important;
+color:#ef4444 !important;
+}
+
+/* ========================= */
+/* BOTONES DESKCIR */
+/* ========================= */
+
+.btn-deskcir{
+background:#00798E;
+border:none;
+color:#fff;
+}
+
+.btn-deskcir:hover{
+background:#00687A;
+color:#fff;
+}
+
+.btn-deskcir:focus{
+background:#00687A;
+color:#fff;
+box-shadow:none;
+}
+
+.btn-outline-deskcir{
+color:#00798E;
+border:1px solid #00798E;
+background:transparent;
+}
+
+.btn-outline-deskcir:hover{
+background:#00798E;
+color:#fff;
+border:1px solid #00798E;
+}
+
+.btn .material-symbols-outlined{
+font-size:18px;
+}
+/* ============================= */
+/* 🔎 STORE SEARCH FIX           */
+/* ============================= */
+
+.store-search{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.search-box{
+display:flex;
+align-items:center;
+border:1px solid #e5e7eb;
+border-radius:12px;
+overflow:hidden;
+background:#fff;
+}
+
+.search-input{
+flex:1;
+border:none;
+padding:10px 12px;
+outline:none;
+font-size:14px;
+}
+
+.search-btn{
+background:#00798E;
+border:none;
+color:white;
+padding:8px 14px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.search-btn:hover{
+background:#00687A;
+}
+
+.search-result-text{
+font-size:13px;
+color:#6b7280;
+}
+
+/* ============================= */
+/* STORE BUTTONS                 */
+/* ============================= */
+
+.btn-apply{
+background:#00798E;
+color:white;
+border:none;
+border-radius:10px;
+padding:8px;
+}
+
+.btn-apply:hover{
+background:#00687A;
+color:white;
 }
 
 .btn-view{
-    background:#e0f2fe;
-    border:none;
-    border-radius:10px;
-    padding:6px 10px;
-    color:#0284c7;
+background:#e2f3f6;
+border:none;
+border-radius:10px;
+padding:6px 10px;
+color:#00798E;
 }
 
 .btn-cart{
-    background:#f59e0b;
-    border:none;
-    border-radius:10px;
-    padding:6px 10px;
-    color:white;
+background:#00798E;
+border:none;
+border-radius:10px;
+padding:6px 10px;
+color:white;
 }
 
 .btn-cart:hover{
-    background:#d97706;
+background:#099F99;
 }
 
-/* DARK MODE */
-.dark .store-wrapper{
-    background:#0a0f1c;
+/* ============================= */
+/* CATEGORY TITLE                */
+/* ============================= */
+
+.category-title{
+margin:26px 0 14px;
+font-weight:600;
+color:#1e293b;
 }
 
-.dark .store-filter,
-.dark .product-card{
-    background:#111827;
-    border:1px solid #1f2937;
+/* ============================= */
+/* NO IMAGE PRODUCT              */
+/* ============================= */
+
+.no-img{
+font-size:13px;
+color:#9ca3af;
 }
 
-.dark .product-img{
-    background:#0b1220;
+/* ============================= */
+/* DARK STORE FIX                */
+/* ============================= */
+
+.dark .search-box{
+background:#0b1220;
+border:1px solid #1f2937;
 }
 
-.dark .product-price{
-    color:white;
+.dark .search-input{
+background:transparent;
+color:#e5e7eb;
+}
+
+.dark .category-title{
+color:#e5e7eb;
 }
 
 .dark .product-desc{
-    color:#9ca3af;
-}
-/* ===================================== */
-/* 🔧 STORE UX POLISH (NO rompe nada) */
-/* ===================================== */
-
-.store-scope{
-    --store-bg:#f6f8fb;
-    --store-card:#ffffff;
-    --store-border:#e6eaf0;
-    --store-text:#0f172a;
+color:#9ca3af;
 }
 
-/* Fondo más suave */
-.store-scope.store-wrapper{
-    background:var(--store-bg);
-    padding:32px 0 40px;
+.dark .store-filter{
+background:#111827;
+border:1px solid #1f2937;
+}
+/* ================================= */
+/* 🌙 STORE DARK MODE FIX FINAL      */
+/* ================================= */
+
+/* sidebar filtros */
+.dark .store-filter{
+background:#0f172a !important;
+border:1px solid #1f2937 !important;
 }
 
-/* Sidebar más ligero */
-.store-scope .store-filter{
-    border-radius:16px;
-    border:1px solid var(--store-border);
-    box-shadow:0 6px 18px rgba(0,0,0,.04);
-    padding:22px;
+.dark .filter-label{
+color:#e5e7eb !important;
 }
 
-/* Labels más legibles */
-.store-scope .filter-label{
-    font-size:13px;
-    color:#475569;
-    margin-bottom:4px;
+.dark .form-check-label{
+color:#e5e7eb !important;
 }
 
-/* Inputs menos duros */
-.store-scope .filter-input{
-    height:38px;
-    font-size:14px;
-    border:1px solid #e2e8f0;
+/* cards producto */
+.dark .product-card{
+background:#111827 !important;
+border:1px solid #1f2937 !important;
 }
 
-/* Card más limpia */
-.store-scope .product-card{
-    border-radius:18px;
-    border:1px solid var(--store-border);
-    box-shadow:0 8px 20px rgba(0,0,0,.05);
-    transition:.2s ease;
+/* imagen card */
+.dark .product-img{
+background:#0b1220 !important;
 }
 
-/* Hover sutil (no brinco) */
-.store-scope .product-card:hover{
-    transform:none;
-    box-shadow:0 10px 26px rgba(0,0,0,.06);
+/* precio */
+.dark .product-price{
+color:#f9fafb !important;
+}
+.store-wrapper{
+background:transparent !important;
+
 }
 
-/* Imagen con mejor padding */
-.store-scope .product-img{
-    height:210px;
-    background:#f1f5f9;
-    padding:18px;
+.store-wrapper .container-fluid{
+background:transparent !important;
+
+}
+/* =========================
+BUSCADOR TIENDA
+========================= */
+
+.search-box{
+display:flex;
+align-items:center;
 }
 
-/* Nombre */
-.store-scope .product-name{
-    font-size:15px;
-    margin-bottom:2px;
-    color:var(--store-text);
+.search-input{
+flex:1;
+border-radius:8px 0 0 8px;
 }
 
-/* Descripción */
-.store-scope .product-desc{
-    font-size:13px;
-    color:#64748b;
+.search-btn{
+width:48px;
+height:48px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:0 8px 8px 0;
+background:#0ea5a5;
+border:none;
 }
 
-/* Precio */
-.store-scope .product-price{
-    font-size:17px;
-    letter-spacing:.2px;
-}
-
-/* Botones más alineados */
-.store-scope .product-actions .btn{
-    width:34px;
-    height:34px;
-    padding:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-/* Header separación */
-.store-scope .store-header{
-    margin-bottom:18px;
-}
-
-/* Categoría */
-.store-scope .category-title{
-    margin:26px 0 14px;
-    font-weight:600;
-    color:#1e293b;
-}
-/* ===================================== */
-/* 🌙 STORE DARK FIX (solo tienda) */
-/* ===================================== */
-
-.dark .store-scope{
-    --store-bg:#0b1220;
-    --store-card:#111827;
-    --store-border:#1f2937;
-    --store-text:#f1f5f9;
-}
-
-.dark .store-scope .store-wrapper{
-    background:var(--store-bg);
-}
-
-/* Sidebar */
-.dark .store-scope .store-filter{
-    background:var(--store-card);
-    border:1px solid var(--store-border);
-    box-shadow:none;
-}
-
-/* Inputs */
-.dark .store-scope .filter-input{
-    background:#0b1220;
-    border:1px solid #1f2937;
-    color:#e5e7eb;
-}
-
-/* Textos */
-.dark .store-scope .filter-label,
-.dark .store-scope .category-title{
-    color:#cbd5e1;
-}
-
-/* Cards */
-.dark .store-scope .product-card{
-    background:var(--store-card);
-    border:1px solid var(--store-border);
-    box-shadow:0 8px 22px rgba(0,0,0,.35);
-}
-
-/* Imagen */
-.dark .store-scope .product-img{
-    background:#0a0f1c;
-}
-
-/* Descripción */
-.dark .store-scope .product-desc{
-    color:#94a3b8;
-}
-
-/* Precio */
-.dark .store-scope .product-price{
-    color:#f8fafc;
+.search-btn i{
+font-size:18px;
+color:white;
 }

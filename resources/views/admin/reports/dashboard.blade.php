@@ -4,11 +4,16 @@
 
 <div class="container py-4">
 
-<a href="javascript:history.back()" class="btn btn-outline-secondary mb-3">
-← Regresar
-</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3>Reportes Desckir</h3>
 
-<h3>📊 Reportes Desckir</h3>
+    <div class="d-flex gap-3">
+            {{-- BOTÓN REGRESAR --}}
+           <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
+           ← Regresar
+           </a>
+    </div>
+</div>
 
 {{-- KPIS --}}
 <div class="row g-4 mt-3">

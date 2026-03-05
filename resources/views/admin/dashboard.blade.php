@@ -22,7 +22,9 @@
 
                     <h6 class="text-uppercase text-muted mb-2">Ventas hoy</h6>
 
-                    <h3 class="fw-bold mb-1">$12,450</h3>
+                    <h3 class="fw-bold mb-1">
+                      $ {{ number_format($ventasHoy,2) }}
+                    </h3>
 
                     <small class="text-success d-block mt-2">
                         ▲ +8% vs ayer
@@ -38,7 +40,9 @@
 
                     <h6 class="text-uppercase text-muted mb-2">Pedidos</h6>
 
-                    <h3 class="fw-bold mb-1">23</h3>
+                    <h3 class="fw-bold mb-1">
+                      {{ $pedidos }}
+                    </h3>
 
                     <small class="text-warning d-block mt-2">
                         5 en proceso
@@ -54,7 +58,9 @@
 
                     <h6 class="text-uppercase text-muted mb-2">Clientes</h6>
 
-                    <h3 class="fw-bold mb-1">142</h3>
+                    <h3 class="fw-bold mb-1">
+                      {{ $clientes }}
+                    </h3>
 
                     <small class="text-info d-block mt-2">
                         Activos este mes
@@ -72,7 +78,9 @@
                         Tickets abiertos
                     </h6>
 
-                    <h3 class="fw-bold mb-1">4</h3>
+                    <h3 class="fw-bold mb-1">
+                    {{ $ticketsAbiertos }}
+                    </h3>
 
                     <small class="text-danger d-block mt-2">
                         Requieren atención
@@ -91,14 +99,14 @@
             <div class="card h-100">
                 <div class="card-body p-4">
 
-                    <h6 class="mb-2">👥 Usuarios</h6>
+                    <h6 class="mb-2">Usuarios</h6>
 
                     <p class="text-muted small mb-3">
                         Administrar cuentas y roles
                     </p>
 
                     <a href="/admin/users"
-                       class="btn btn-dark btn-sm w-100 py-2">
+                       class="btn btn-deskcir btn-sm w-100 py-2">
                         Gestionar
                     </a>
 
@@ -110,14 +118,14 @@
             <div class="card h-100">
                 <div class="card-body p-4">
 
-                    <h6 class="mb-2">📦 Productos</h6>
+                    <h6 class="mb-2">Productos</h6>
 
                     <p class="text-muted small mb-3">
                         Inventario y precios
                     </p>
 
                     <a href="/admin/products"
-                       class="btn btn-dark btn-sm w-100 py-2">
+                       class="btn btn-deskcir btn-sm w-100 py-2">
                         Gestionar
                     </a>
 
@@ -129,14 +137,14 @@
             <div class="card h-100">
                 <div class="card-body p-4">
 
-                    <h6 class="mb-2">🎫 Tickets</h6>
+                    <h6 class="mb-2">Tickets</h6>
 
                     <p class="text-muted small mb-3">
                         Soporte y seguimiento
                     </p>
 
                     <a href="/admin/tickets"
-                       class="btn btn-dark btn-sm w-100 py-2">
+                       class="btn btn-deskcir btn-sm w-100 py-2">
                         Ver tickets
                     </a>
 
@@ -148,14 +156,14 @@
             <div class="card h-100">
                 <div class="card-body p-4">
 
-                    <h6 class="mb-2">📈 Reportes</h6>
+                    <h6 class="mb-2">Reportes</h6>
 
                     <p class="text-muted small mb-3">
                         Estadísticas y métricas
                     </p>
 
                     <a href="/admin/reports"
-                       class="btn btn-dark btn-sm w-100 py-2">
+                       class="btn btn-deskcir btn-sm w-100 py-2">
                         Ver reportes
                     </a>
 
@@ -172,10 +180,10 @@
                 <div class="card-body p-4">
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0">🧾 Historial de ventas</h5>
+                        <h5 class="mb-0">Historial de ventas</h5>
 
                         <a href="/admin/sales"
-                           class="btn btn-dark btn-sm">
+                           class="btn btn-deskcir btn-sm">
                             Ver todas
                         </a>
                     </div>

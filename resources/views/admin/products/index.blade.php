@@ -7,20 +7,19 @@
 
     {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <div>
-            {{-- BOTÓN REGRESAR --}}
-            <a href="javascript:history.back()" class="btn btn-outline-secondary mb-3">
+        <h2 class="fw-bold mt-2">Gestión de Productos</h2>
+        <div class="d-flex gap-3">
+            
+            <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
                 ← Regresar
             </a>
 
-            <h2 class="fw-bold mt-2">📦 Gestión de Productos</h2>
+            <a href="{{ route('admin.products.create') }}" class="btn btn-deskcir py-2">
+            Agregar producto
+            </a>
         </div>
 
-        <a href="{{ route('admin.products.create') }}" class="btn btn-warning">
-            ➕ Agregar producto
-        </a>
-
+        
     </div>
 
     @if($products->isEmpty())
@@ -104,7 +103,9 @@
 
                                 <a href="{{ route('admin.products.edit', $product->id) }}"
                                    class="btn btn-sm btn-primary">
-                                    ✏️
+                                    <span class="material-symbols-outlined">
+                                        edit
+                                    </span>
                                 </a>
 
                                 {{-- 🔥 ELIMINAR CON SWEETALERT --}}
@@ -119,7 +120,11 @@
                                     <button type="button"
                                         class="btn btn-sm btn-danger"
                                         onclick="eliminar({{$product->id}})">
-                                        🗑️
+
+                                        <span class="material-symbols-outlined">
+                                            delete
+                                        </span>
+
                                     </button>
 
                                 </form>

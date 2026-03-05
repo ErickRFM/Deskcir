@@ -10,14 +10,38 @@ class StoreController extends Controller
 {
     /**
      * Mostrar tienda principal
-     * Categorías con productos
+     * Categorías con productos + búsqueda
      */
-    public function index()
-    {
-        $categories = Category::with('products.images')->get();
+    /** */
+public function index(Request $request)
+{
+    $query = $request->q;
 
-        return view('store.index', compact('categories'));
+    $categories = Category::with(['products' => function($q) use ($query){
+
+        if($query){
+            $q->where(function($sub) use ($query){
+                $sub->where('name','like',"%{$query}%")
+                    ->orWhere('description','like',"%{$query}%");
+            });
+        }
+
+        // 👇 seguimos cargando imágenes normalmente
+        $q->with('images');
+
+    }])->get();
+
+    // contador de resultados reales
+    $totalResults = 0;
+
+    if($query){
+        foreach($categories as $cat){
+            $totalResults += $cat->products->count();
+        }
     }
+
+    return view('store.index', compact('categories','totalResults','query'));
+}
 
     /**
      * Mostrar productos por categoría

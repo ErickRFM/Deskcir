@@ -9,57 +9,65 @@
     <div>
         <h3 class="fw-bold mb-1">Centro de Soporte</h3>
         <p class="text-muted mb-0">
-            Gestiona tus conversaciones con el equipo
+            Gestiona tus tickets activos
         </p>
     </div>
 
-    <a href="/support/create" class="btn btn-client">
-        + Nuevo ticket
-    </a>
+    <div class="d-flex gap-2">
+        <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+            ← Regresar
+        </a>
+
+        <a href="{{ route('support.history') }}" class="btn btn-outline-dark">
+            Historial
+        </a>
+
+        <a href="/support/create" class="btn btn-client">
+            + Nuevo ticket
+        </a>
+    </div>
 </div>
 
-{{-- BUSCADOR (visual por ahora) --}}
-<div class="card p-3 mb-3">
-    <input class="form-control input-pro"
-    placeholder="Buscar ticket por asunto...">
+{{-- ACCIONES --}}
+<div class="card p-3 mb-3 d-flex flex-row justify-content-between align-items-center">
+    <span class="text-muted">
+        Puedes archivar los tickets cerrados para limpiar tu bandeja.
+    </span>
+
+    <form method="POST" action="{{ route('support.archiveClosed') }}">
+        @csrf
+        <button class="btn btn-warning">
+            Archivar cerrados
+        </button>
+    </form>
 </div>
 
-{{-- TABLA PRO --}}
+{{-- TABLA --}}
 <div class="card">
 <div class="table-responsive">
 
 <table class="table align-middle mb-0">
-
 <thead class="table-light">
 <tr>
 <th>Asunto</th>
 <th>Prioridad</th>
 <th>Estado</th>
-<th>Último mensaje</th>
 <th></th>
 </tr>
 </thead>
 
 <tbody>
 
-@forelse($tickets as $t)
+@forelse($tickets->whereNull('archived_at') as $t)
 
-<tr class="ticket-row">
-
+<tr>
 <td>
-<div class="fw-bold">{{ $t->subject }}</div>
-<small class="text-muted">
-#{{ $t->id }} • {{ $t->created_at->format('d M Y') }}
-</small>
+<strong>{{ $t->subject }}</strong><br>
+<small class="text-muted">#{{ $t->id }}</small>
 </td>
 
 <td>
-<span class="badge bg-{{
-$t->priority=='alta'?'danger':
-($t->priority=='media'?'warning':'secondary')
-}}">
-{{ ucfirst($t->priority) }}
-</span>
+<span class="badge bg-secondary">{{ ucfirst($t->priority) }}</span>
 </td>
 
 <td>
@@ -71,45 +79,26 @@ $t->status=='cerrado'?'success':
 </span>
 </td>
 
-<td>
-{{ optional($t->messages->last())->message ?? 'Sin mensajes' }}
-</td>
-
 <td class="text-end">
-<a href="/support/{{ $t->id }}"
-class="btn btn-sm btn-outline-dark">
+<a href="/support/{{ $t->id }}" class="btn btn-sm btn-outline-dark">
 Abrir
 </a>
 </td>
-
 </tr>
 
 @empty
-
 <tr>
-<td colspan="5" class="text-center py-5 text-muted">
-No tienes tickets aún
+<td colspan="4" class="text-center text-muted py-4">
+Sin tickets activos
 </td>
 </tr>
-
 @endforelse
 
 </tbody>
-
 </table>
 
 </div>
 </div>
+
 </div>
-
-<style>
-.ticket-row:hover{
-    background:#f9fafb;
-    cursor:pointer;
-}
-.dark .ticket-row:hover{
-    background:#0e1424;
-}
-</style>
-
 @endsection

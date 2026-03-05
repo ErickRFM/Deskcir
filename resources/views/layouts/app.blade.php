@@ -21,59 +21,167 @@
 
 <!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap Icons (por si se usan en otras vistas) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- 🔥 GOOGLE MATERIAL SYMBOLS -->
+<link rel="stylesheet"
+href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:
+opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 <!-- Tailwind compilado -->
 @vite(['resources/css/app.css','resources/js/app.js'])
+
+<style>
+
+/* 🔧 alineación iconos navbar */
+.material-symbols-outlined{
+font-size:20px;
+vertical-align:middle;
+margin-right:4px;
+}
+
+/* navbar limpio */
+.navbar .nav-link{
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+</style>
 
 </head>
 
 <body class="transition-colors duration-300">
 
-{{-- ===== NAVBAR ===== --}}
-<nav class="navbar navbar-expand-lg shadow-sm">
+{{-- ================= NAVBAR ================= --}}
+<nav class="navbar navbar-expand-lg shadow-sm bg-light">
 <div class="container">
 
 <a class="navbar-brand d-flex align-items-center gap-2" href="/store">
-    <img src="{{ asset('img/logo.png') }}" style="height:30px" alt="Deskcir">
+<img src="{{ asset('img/logo.png') }}" style="height:30px" alt="Deskcir">
 </a>
 
 <ul class="navbar-nav ms-auto align-items-center gap-2">
 
 <li class="nav-item">
-<a class="nav-link" href="/store">🛒 Tienda</a>
+<a class="nav-link" href="/store">
+<span class="material-symbols-outlined">store</span>
+Tienda
+</a>
 </li>
 
 <li class="nav-item">
-<a class="nav-link" href="/cart">🛍 Carrito</a>
+<a class="nav-link" href="/cart">
+<span class="material-symbols-outlined">shopping_cart</span>
+Carrito
+</a>
 </li>
 
 @auth
 
 <li class="nav-item dropdown">
-<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+
+<a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+data-bs-toggle="dropdown">
+
+<span class="material-symbols-outlined">
+account_circle
+</span>
+
 {{ auth()->user()->name }}
+
 </a>
 
-<ul class="dropdown-menu">
+<ul class="dropdown-menu dropdown-menu-end">
 
 @if(auth()->user()->role->name=='admin')
-<li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Panel Admin</a></li>
-@endif
-
-@if(auth()->user()->role->name=='technician')
-<li><a class="dropdown-item" href="/technician">Panel Técnico</a></li>
-@endif
-
-@if(auth()->user()->role->name=='client')
-<li><a class="dropdown-item" href="/client">Mi Cuenta</a></li>
-@endif
 
 <li>
+<a class="dropdown-item d-flex align-items-center gap-2"
+href="{{ route('admin.dashboard') }}">
+
+<span class="material-symbols-outlined">
+dashboard
+</span>
+
+Panel Admin
+
+</a>
+</li>
+
+<li>
+<a class="dropdown-item d-flex align-items-center gap-2"
+href="{{ route('admin.products.index') }}">
+
+<span class="material-symbols-outlined">
+inventory_2
+</span>
+
+Productos
+
+</a>
+</li>
+
+@endif
+
+
+@if(auth()->user()->role->name=='technician')
+
+<li>
+<a class="dropdown-item d-flex align-items-center gap-2"
+href="/technician">
+
+<span class="material-symbols-outlined">
+build
+</span>
+
+Panel Técnico
+
+</a>
+</li>
+
+@endif
+
+
+@if(auth()->user()->role->name=='client')
+
+<li>
+<a class="dropdown-item d-flex align-items-center gap-2"
+href="/client">
+
+<span class="material-symbols-outlined">
+support_agent
+</span>
+
+Mi Cuenta
+
+</a>
+</li>
+
+@endif
+
+
+<li><hr class="dropdown-divider"></li>
+
+<li>
+
 <form method="POST" action="/logout">
 @csrf
-<button class="dropdown-item text-danger">Cerrar sesión</button>
+
+<button class="dropdown-item text-danger d-flex align-items-center gap-2">
+
+<span class="material-symbols-outlined">
+logout
+</span>
+
+Cerrar sesión
+
+</button>
+
 </form>
+
 </li>
 
 </ul>
@@ -81,79 +189,98 @@
 
 @else
 
-<li>
-<a class="btn btn-outline-secondary" href="/login">Login</a>
+<li class="nav-item">
+<a class="btn btn-outline-secondary d-flex align-items-center gap-1"
+href="/login">
+
+<span class="material-symbols-outlined">
+login
+</span>
+
+Login
+
+</a>
 </li>
 
-<li>
-<a class="btn btn-warning" href="/register">Registro</a>
+<li class="nav-item">
+<a class="btn btn-warning d-flex align-items-center gap-1"
+href="/register">
+
+<span class="material-symbols-outlined">
+person_add
+</span>
+
+Registro
+
+</a>
 </li>
 
 @endauth
 
 </ul>
+
 </div>
 </nav>
+
 
 <!-- 🌙 BOTÓN DARK MODE -->
 <button onclick="toggleDark()" 
 id="btnDark"
 class="btn btn-dark shadow"
 style="position:fixed;bottom:20px;right:20px;z-index:999">
+
 🌙
+
 </button>
 
-<div class="container py-4">
+
+<div class="container-fluid py-4">
+<div class="row justify-content-center">
+<div class="col-12 col-xxl-10 col-xl-11 col-lg-11">
+
 @yield('content')
+
 </div>
+</div>
+</div>
+
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+
 <!-- 🌙 CONTROLADOR DARK MODE -->
 <script>
-function toggleDark() {
-    const html = document.documentElement;
-    const isDark = html.classList.toggle('dark');
 
-    localStorage.setItem('modo', isDark ? 'dark' : 'light');
-    updateDarkIcon(isDark);
+function toggleDark() {
+
+const html = document.documentElement;
+
+const isDark = html.classList.toggle('dark');
+
+localStorage.setItem('modo', isDark ? 'dark' : 'light');
+
+updateDarkIcon(isDark);
+
 }
 
 function updateDarkIcon(isDark) {
-    const btn = document.getElementById('btnDark');
-    if (!btn) return;
-    btn.innerHTML = isDark ? '☀️' : '🌙';
+
+const btn = document.getElementById('btnDark');
+
+if (!btn) return;
+
+btn.innerHTML = isDark ? '☀️' : '🌙';
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    updateDarkIcon(document.documentElement.classList.contains('dark'));
+
+updateDarkIcon(document.documentElement.classList.contains('dark'));
+
 });
-</script>
 
-<!-- SWEETALERT -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-@if(session('success'))
-<script>
-Swal.fire({
-icon:'success',
-title:'¡Listo!',
-text:"{{ session('success') }}",
-confirmButtonColor:'#ffc107'
-})
 </script>
-@endif
-
-@if(session('error'))
-<script>
-Swal.fire({
-icon:'error',
-title:'Oops...',
-text:"{{ session('error') }}"
-})
-</script>
-@endif
 
 @stack('scripts')
 

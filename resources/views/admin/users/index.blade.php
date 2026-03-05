@@ -4,78 +4,122 @@
 <div class="container py-4">
 
     {{-- HEADER --}}
-    <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+      <h3 class="fw-bold mt-2">Gestión de Usuarios</h3>
+
+      <div class="d-flex gap-3">
 
         {{-- BOTÓN REGRESAR --}}
-        <a href="javascript:history.back()" class="btn btn-outline-secondary mb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
             ← Regresar
         </a>
 
-        <h3 class="mb-3">Gestión de Usuarios</h3>
-
-        <a href="{{ route('admin.users.create') }}" class="btn btn-warning">
-            ➕ Nuevo usuario
+        <a href="{{ route('admin.users.create') }}" class="btn btn-deskcir py-2">
+            Nuevo usuario
         </a>
 
+      </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table align-middle mt-3">
 
-            <thead class="table-dark">
-                <tr>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Rol</th>
-                    <th class="text-center">Acciones</th>
-                </tr>
-            </thead>
+    {{-- CARD TABLA --}}
+    <div class="card shadow-sm border-0">
 
-            <tbody>
+        <div class="card-body p-0">
 
-            @foreach($users as $u)
-            <tr>
+            <div class="table-responsive">
 
-                <td class="py-3">
-                    {{ $u->name }}
-                </td>
+                <table class="table align-middle mb-0">
 
-                <td class="py-3">
-                    {{ $u->email }}
-                </td>
+                    <thead class="table-dark">
+                        <tr>
+                            <th class="px-4">Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th class="text-center px-4">Acciones</th>
+                        </tr>
+                    </thead>
 
-                <td class="py-3">
-                    {{ $u->role->name ?? 'sin rol' }}
-                </td>
+                    <tbody>
 
-                <td class="text-center py-3">
+                    @foreach($users as $u)
+                    <tr>
 
-                    <a href="{{ route('admin.users.edit',$u->id) }}"
-                       class="btn btn-sm btn-primary">
-                        ✏️
-                    </a>
+                        {{-- NOMBRE --}}
+                        <td class="px-4 py-3 fw-semibold">
+                            {{ $u->name }}
+                        </td>
 
-                    <form action="{{ route('admin.users.destroy',$u->id) }}"
-                          method="POST"
-                          class="d-inline">
+                        {{-- EMAIL --}}
+                        <td class="py-3 text-muted">
+                            {{ $u->email }}
+                        </td>
 
-                        @csrf
-                        @method('DELETE')
+                        {{-- ROL --}}
+                        <td class="py-3">
 
-                        <button class="btn btn-sm btn-danger">
-                            🗑️
-                        </button>
+                            @if($u->role)
 
-                    </form>
+                                <span class="badge bg-secondary">
+                                    {{ ucfirst($u->role->name) }}
+                                </span>
 
-                </td>
+                            @else
 
-            </tr>
-            @endforeach
+                                <span class="badge bg-warning text-dark">
+                                    Sin rol
+                                </span>
 
-            </tbody>
+                            @endif
 
-        </table>
+                        </td>
+
+                        {{-- ACCIONES --}}
+                        <td class="text-center py-3 px-4">
+
+                            <div class="d-flex justify-content-center gap-2">
+
+                                <a href="{{ route('admin.users.edit',$u->id) }}"
+                                   class="btn btn-sm btn-primary">
+
+                                    <span class="material-symbols-outlined">
+                                        edit
+                                    </span>
+
+                                </a>
+
+                                <form action="{{ route('admin.users.destroy',$u->id) }}"
+                                      method="POST">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <button class="btn btn-sm btn-danger">
+
+                                        <span class="material-symbols-outlined">
+                                            delete
+                                        </span>
+
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                    @endforeach
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>

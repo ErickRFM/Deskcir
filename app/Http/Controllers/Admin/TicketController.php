@@ -5,47 +5,64 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
-use App\Models\User;
+use App\Models\User; // 👈 IMPORTANTE (para traer técnicos)
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class TicketController extends Controller
 {
+    // ===============================
+    // LISTADO
+    // ===============================
     public function index()
     {
-        $tickets = Ticket::with('user')
+        $tickets = Ticket::with(['user','technician'])
             ->latest()
             ->get();
 
         return view('admin.tickets.index', compact('tickets'));
     }
 
+    // ===============================
+    // VER TICKET
+    // ===============================
     public function show($id)
     {
-        $ticket = Ticket::with('messages.user','user')
+        $ticket = Ticket::with(['messages.user','user','technician'])
             ->findOrFail($id);
 
-        $tecnicos = User::whereHas('role', function($q){
+        // 👇 traer usuarios con rol técnico
+        $technicians = User::whereHas('role', function($q){
             $q->where('name','technician');
         })->get();
 
-        return view('admin.tickets.show', compact('ticket','tecnicos'));
+        return view('admin.tickets.show', compact('ticket','technicians'));
     }
 
+    // ===============================
+    // ACTUALIZAR STATUS / PRIORIDAD
+    // ===============================
     public function updateStatus(Request $request, $id)
     {
         $ticket = Ticket::findOrFail($id);
 
         $ticket->update([
-            'status'      => $request->status,
-            'assigned_to' => $request->assigned_to,
-            'priority'    => $request->priority
+            'status'   => $request->status,
+            'priority' => $request->priority
         ]);
+
+        // si también mandan técnico desde update
+        if($request->filled('technician_id')){
+            $ticket->update([
+                'technician_id' => $request->technician_id
+            ]);
+        }
 
         return back()->with('success','Ticket actualizado');
     }
 
-    // ✅ TU MÉTODO NUEVO INTEGRADO
+    // ===============================
+    // RESPONDER COMO ADMIN
+    // ===============================
     public function reply(Request $r, $id)
     {
         $r->validate([
@@ -55,8 +72,7 @@ class TicketController extends Controller
         $file = null;
 
         if($r->hasFile('file')){
-            $file = $r->file('file')
-                ->store('tickets','public');
+            $file = $r->file('file')->store('tickets','public');
         }
 
         TicketMessage::create([
@@ -70,15 +86,21 @@ class TicketController extends Controller
         return back()->with('success','Respuesta enviada');
     }
 
+    // ===============================
+    // ASIGNAR TÉCNICO (VERSIÓN FINAL)
+    // ===============================
     public function assign(Request $request, $id)
     {
-        $ticket = Ticket::findOrFail($id);
-
-        $ticket->update([
-            'assigned_to' => $request->user_id,
-            'status'      => 'en_proceso'
+        $request->validate([
+            'technician_id' => 'required|exists:users,id'
         ]);
 
-        return back()->with('success','Técnico asignado');
+        $ticket = Ticket::findOrFail($id);
+
+        $ticket->technician_id = $request->technician_id;
+        $ticket->status = 'pendiente'; // queda pendiente hasta que el técnico lo tome
+        $ticket->save();
+
+        return back()->with('success','Ticket asignado correctamente');
     }
 }

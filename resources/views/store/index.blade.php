@@ -51,6 +51,35 @@
 
     {{-- PRODUCTOS --}}
     <div class="col-lg-9 col-md-8">
+        {{-- BUSCADOR --}}
+<div class="store-search mb-4">
+
+    <form method="GET" action="{{ url()->current() }}">
+        <div class="search-box">
+
+            <input
+                type="text"
+                name="q"
+                value="{{ request('q') }}"
+                class="search-input"
+                placeholder="Buscar productos...">
+
+            <button class="search-btn">
+                <i class="bi bi-search"></i>
+            </button>
+
+        </div>
+    </form>
+
+    {{-- CONTADOR --}}
+    @if(request('q'))
+        <div class="search-result-text">
+            {{ $totalResults ?? 0 }} resultados para
+            <strong>"{{ request('q') }}"</strong>
+        </div>
+    @endif
+
+</div>
 
         @forelse($categories as $category)
 

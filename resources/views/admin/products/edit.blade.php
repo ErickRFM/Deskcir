@@ -9,7 +9,7 @@
 <div class="d-flex justify-content-between mb-3">
 <h3>Editar producto</h3>
 
-<button onclick="history.back()" class="btn btn-outline-secondary">
+<button onclick="history.back()" class="btn btn-outline-deskcir py-2">
 ← Regresar
 </button>
 </div>
@@ -153,18 +153,13 @@ class="d-flex flex-wrap gap-2"></div>
 
 
 {{-- BOTONES --}}
-<div class="mt-4 pt-3 border-top text-center">
 
-<div class="d-flex gap-3 justify-content-center">
+<div class="d-flex gap-3">
 
-<button type="submit" class="btn btn-warning px-5 py-2">
+<button type="submit" class="btn btn-deskcir py-2">
 Guardar cambios
 </button>
 
-<a href="{{ route('admin.products.index') }}"
-class="btn btn-secondary px-5 py-2">
-Cancelar
-</a>
 
 </div>
 

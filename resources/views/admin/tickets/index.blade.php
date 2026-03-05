@@ -5,14 +5,19 @@
 <div class="container py-4">
 
     {{-- HEADER --}}
-    <div class="mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="mb-3">Tickets de Soporte</h3>
 
-        {{-- BOTÓN REGRESAR --}}
-        <a href="javascript:history.back()" class="btn btn-outline-secondary mb-3">
-            ← Regresar
-        </a>
+        <div class="d-flex gap-3">
 
-        <h3 class="mb-3">🎫 Tickets de Soporte</h3>
+            {{-- BOTÓN REGRESAR --}}
+           <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
+              ← Regresar
+          </a>
+        
+        </div>
+
+        
 
     </div>
 
@@ -62,7 +67,7 @@
 
                 <td class="text-center py-3">
                     <a href="{{ route('admin.tickets.show', $t->id) }}"
-                       class="btn btn-sm btn-dark">
+                       class="btn btn-deskcir py-1">
                         Gestionar
                     </a>
                 </td>

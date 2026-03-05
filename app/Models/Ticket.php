@@ -27,6 +27,10 @@ class Ticket extends Model
 
     public function technician()
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+    return $this->belongsTo(User::class, 'technician_id');
+    }
+    public function checklist()
+    {
+    return $this->hasOne(TicketChecklist::class);
     }
 }

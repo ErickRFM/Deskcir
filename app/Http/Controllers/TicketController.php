@@ -28,24 +28,23 @@ class TicketController extends Controller
     // GUARDAR ticket
     public function store(Request $r)
     {
-        $r->validate([
-            'subject' => 'required|string|max:255',
-            'description' => 'required|string',
-            'priority' => 'nullable|string'
-        ]);
+    $r->validate([
+        'subject' => 'required|string|max:255',
+        'description' => 'required|string',
+        'priority' => 'nullable|in:alta,media,baja'
+    ]);
 
-       $ticket = Ticket::create([
-         'user_id' => auth()->id(),
-         'subject' => $r->subject,
-         'description' => $r->description,
-         'priority' => $r->priority,
-         'status' => 'abierto'
-        ]);
+    $ticket = Ticket::create([
+        'user_id' => auth()->id(),
+        'subject' => $r->subject,
+        'description' => $r->description,
+        'priority' => strtolower($r->priority) ?? 'media'
+        // 👇 NO ponemos status, la BD lo pone como 'pendiente'
+    ]);
 
-        return redirect('/support')
-            ->with('success','Ticket creado 🔥');
+    return redirect('/support')
+        ->with('success','Ticket creado 🔥');
     }
-
     // VER ticket con mensajes
     public function show($id)
     {

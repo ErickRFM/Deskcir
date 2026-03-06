@@ -39,33 +39,32 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Eliminar .env del repo
+# eliminar .env del repo
 RUN rm -f .env
 
-# Instalar dependencias Laravel
+# instalar dependencias Laravel
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
     --no-interaction \
     --prefer-dist
 
-# Instalar dependencias frontend
+# dependencias frontend
 RUN npm install
 
-# Compilar Vite
+# compilar Vite
 RUN npm run build
 
-# Configurar Apache para Laravel
+# configurar Apache para Laravel
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
  && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
  && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
  && a2enconf servername
 
-# Permisos Laravel
-RUN chown -R www-data:www-data /var/www/html/storage \
-    /var/www/html/bootstrap/cache
+# permisos Laravel
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Config PHP para ver errores en logs
+# errores PHP
 RUN echo "display_errors=On" >> /usr/local/etc/php/php.ini \
  && echo "display_startup_errors=On" >> /usr/local/etc/php/php.ini \
  && echo "error_reporting=E_ALL" >> /usr/local/etc/php/php.ini \
@@ -73,35 +72,45 @@ RUN echo "display_errors=On" >> /usr/local/etc/php/php.ini \
 
 EXPOSE 80
 
-CMD ["sh","-c","\
-echo '===== LARAVEL START ====='; \
-cd /var/www/html; \
-php artisan config:clear; \
-php artisan cache:clear; \
-php artisan route:clear; \
-php artisan view:clear; \
-php artisan storage:link || true; \
-php artisan migrate --force --no-interaction || true; \
+CMD sh -c "
+echo '===== LARAVEL START ====='
+cd /var/www/html
 
-echo '===== CREATE ADMIN USER ====='; \
-php -r \"require 'vendor/autoload.php'; \
-\$app = require 'bootstrap/app.php'; \
-\$kernel = \$app->make(Illuminate\\Contracts\\Console\\Kernel::class); \
-\$kernel->bootstrap(); \
-if(!App\\Models\\User::where('email','admin@deskcir.com')->exists()){ \
-    App\\Models\\User::create([ \
-        'name'=>'Admin', \
-        'email'=>'admin@deskcir.com', \
-        'password'=>Illuminate\\Support\\Facades\\Hash::make('Admin12345'), \
-        'role_id'=>1 \
-    ]); \
-    echo 'ADMIN CREATED'; \
-}else{ \
-    echo 'ADMIN EXISTS'; \
-}\"; \
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
 
-php artisan config:cache; \
-php artisan route:cache; \
-php artisan view:cache; \
-echo '===== APACHE START ====='; \
-apache2-foreground"]
+php artisan storage:link || true
+
+php artisan migrate --force --no-interaction || true
+
+echo '===== CREATE ADMIN USER ====='
+
+php -r \"
+require 'vendor/autoload.php';
+\$app = require 'bootstrap/app.php';
+\$kernel = \$app->make(Illuminate\\\\Contracts\\\\Console\\\\Kernel::class);
+\$kernel->bootstrap();
+
+if(!App\\\\Models\\\\User::where('email','admin@deskcir.com')->exists()){
+    App\\\\Models\\\\User::create([
+        'name' => 'Admin',
+        'email' => 'admin@deskcir.com',
+        'password' => Illuminate\\\\Support\\\\Facades\\\\Hash::make('Admin12345'),
+        'role_id' => 1
+    ]);
+    echo 'ADMIN CREATED';
+}else{
+    echo 'ADMIN EXISTS';
+}
+\"
+
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+echo '===== APACHE START ====='
+
+apache2-foreground
+"

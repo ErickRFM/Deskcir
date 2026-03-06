@@ -13,24 +13,67 @@ php artisan storage:link || true
 
 php artisan migrate --force --no-interaction || true
 
-echo "===== CREATE ADMIN USER ====="
+echo "===== CREATE DEFAULT USERS ====="
 
 php -r "
 require 'vendor/autoload.php';
+
 \$app = require 'bootstrap/app.php';
 \$kernel = \$app->make(Illuminate\Contracts\Console\Kernel::class);
 \$kernel->bootstrap();
 
-if(!App\Models\User::where('email','admin@deskcir.com')->exists()){
-    App\Models\User::create([
-        'name' => 'Admin',
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+/*
+|--------------------------------
+| ADMIN
+|--------------------------------
+*/
+if(!User::where('email','admin@deskcir.com')->exists()){
+    User::create([
+        'name' => 'Administrador',
         'email' => 'admin@deskcir.com',
-        'password' => Illuminate\Support\Facades\Hash::make('Admin12345'),
+        'password' => Hash::make('Admin12345'),
+        'role_id' => 1
+    ]);
+    echo 'ADMIN CREATED\n';
+}else{
+    echo 'ADMIN EXISTS\n';
+}
+
+/*
+|--------------------------------
+| TECNICO
+|--------------------------------
+*/
+if(!User::where('email','tec@deskcir.com')->exists()){
+    User::create([
+        'name' => 'Tecnico',
+        'email' => 'tec@deskcir.com',
+        'password' => Hash::make('12345678'),
+        'role_id' => 2
+    ]);
+    echo 'TECH CREATED\n';
+}else{
+    echo 'TECH EXISTS\n';
+}
+
+/*
+|--------------------------------
+| CLIENTE
+|--------------------------------
+*/
+if(!User::where('email','cliente@deskcir.com')->exists()){
+    User::create([
+        'name' => 'Cliente',
+        'email' => 'cliente@deskcir.com',
+        'password' => Hash::make('12345678'),
         'role_id' => 3
     ]);
-    echo 'ADMIN CREATED';
+    echo 'CLIENT CREATED\n';
 }else{
-    echo 'ADMIN EXISTS';
+    echo 'CLIENT EXISTS\n';
 }
 "
 

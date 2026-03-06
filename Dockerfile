@@ -37,9 +37,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
+# Copiar proyecto
 COPY . .
 
-# Eliminar .env del repo
+# Eliminar .env si vino en el repo
 RUN rm -f .env
 
 # Instalar dependencias Laravel
@@ -62,46 +63,18 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
  && a2enconf servername
 
 # Permisos Laravel
-RUN chown -R www-data:www-data /var/www/html/storage \
-    /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Config PHP para ver errores en logs
+# Config PHP para ver errores
 RUN echo "display_errors=On" >> /usr/local/etc/php/php.ini \
  && echo "display_startup_errors=On" >> /usr/local/etc/php/php.ini \
  && echo "error_reporting=E_ALL" >> /usr/local/etc/php/php.ini \
  && echo "log_errors=On" >> /usr/local/etc/php/php.ini
 
+# Copiar script de arranque
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 80
 
-CMD ["sh","-c","\
-echo '===== LARAVEL START ====='; \
-cd /var/www/html; \
-php artisan config:clear; \
-php artisan cache:clear; \
-php artisan route:clear; \
-php artisan view:clear; \
-php artisan storage:link || true; \
-php artisan migrate --force --no-interaction || true; \
-
-echo '===== CREATE ADMIN USER ====='; \
-php -r \"require 'vendor/autoload.php'; \
-\$app = require 'bootstrap/app.php'; \
-\$kernel = \$app->make(Illuminate\\Contracts\\Console\\Kernel::class); \
-\$kernel->bootstrap(); \
-if(!App\\Models\\User::where('email','admin@deskcir.com')->exists()){ \
-    App\\Models\\User::create([ \
-        'name'=>'Admin', \
-        'email'=>'admin@deskcir.com', \
-        'password'=>Illuminate\\Support\\Facades\\Hash::make('Admin12345'), \
-        'role_id'=>1 \
-    ]); \
-    echo 'ADMIN CREATED'; \
-}else{ \
-    echo 'ADMIN EXISTS'; \
-}\"; \
-
-php artisan config:cache; \
-php artisan route:cache; \
-php artisan view:cache; \
-echo '===== APACHE START ====='; \
-apache2-foreground"]
+CMD ["/start.sh"]

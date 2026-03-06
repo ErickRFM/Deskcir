@@ -34,7 +34,7 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# 🔴 IMPORTANTE: eliminar .env del repo
+# ðŸ”´ IMPORTANTE: eliminar .env del repo
 RUN rm -f .env
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist

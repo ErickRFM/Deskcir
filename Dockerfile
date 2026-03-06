@@ -1,73 +1,81 @@
-#!/bin/sh
+FROM php:8.2-apache
 
-echo "===== LARAVEL START ====="
+RUN a2enmod rewrite
 
-cd /var/www/html
+# Dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    zip \
+    unzip \
+    nodejs \
+    npm \
+    libzip-dev \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    libonig-dev \
+    libxml2-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
+# Extensiones PHP
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo \
+        pdo_mysql \
+        zip \
+        xml \
+        gd \
+        intl \
+        bcmath \
+        exif \
+        opcache
 
-php artisan storage:link || true
-php artisan migrate --force --no-interaction || true
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-echo "===== CREATE DEFAULT USERS ====="
+WORKDIR /var/www/html
 
-php -r "
-require 'vendor/autoload.php';
+# Copiar proyecto
+COPY . .
 
-\$app = require 'bootstrap/app.php';
-\$kernel = \$app->make(Illuminate\Contracts\Console\Kernel::class);
-\$kernel->bootstrap();
+# Eliminar .env si vino en el repo
+RUN rm -f .env
 
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+# Instalar dependencias Laravel
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --prefer-dist
 
-/*
-ADMIN
-*/
-if(!User::where('email','admin@deskcir.com')->exists()){
-User::create([
-'name' => 'Admin',
-'email' => 'admin@deskcir.com',
-'password' => Hash::make('Admin12345'),
-'role_id' => 1
-]);
-echo 'ADMIN CREATED\n';
-}
+# Instalar dependencias frontend
+RUN npm install
 
-/*
-TECHNICIAN
-*/
-if(!User::where('email','tech@deskcir.com')->exists()){
-User::create([
-'name' => 'Technician',
-'email' => 'tech@deskcir.com',
-'password' => Hash::make('Tech12345'),
-'role_id' => 2
-]);
-echo 'TECH CREATED\n';
-}
+# Compilar Vite
+RUN npm run build
 
-/*
-CLIENT
-*/
-if(!User::where('email','client@deskcir.com')->exists()){
-User::create([
-'name' => 'Client',
-'email' => 'client@deskcir.com',
-'password' => Hash::make('Client12345'),
-'role_id' => 3
-]);
-echo 'CLIENT CREATED\n';
-}
-"
+# Configurar Apache para Laravel
+RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
+ && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
+ && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
+ && a2enconf servername
 
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+# Permisos Laravel
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-echo "===== STARTING APACHE ====="
+# Config PHP para ver errores
+RUN echo "display_errors=On" >> /usr/local/etc/php/php.ini \
+ && echo "display_startup_errors=On" >> /usr/local/etc/php/php.ini \
+ && echo "error_reporting=E_ALL" >> /usr/local/etc/php/php.ini \
+ && echo "log_errors=On" >> /usr/local/etc/php/php.ini
 
+# Copiar script de arranque
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+EXPOSE 80
+
+CMD ["/start.sh"]
 apache2-foreground

@@ -2,7 +2,7 @@ FROM php:8.2-apache
 
 RUN a2enmod rewrite
 
-# instalar dependencias del sistema
+# Dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# extensiones php
+# Extensiones PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo \
@@ -32,45 +32,49 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         exif \
         opcache
 
-# composer
+# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
 COPY . .
 
-# eliminar .env
+# Eliminar .env del repo
 RUN rm -f .env
 
-# instalar dependencias laravel
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# Instalar dependencias Laravel
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --prefer-dist
 
-# 🔥 instalar dependencias frontend
+# Instalar dependencias frontend
 RUN npm install
 
-# 🔥 compilar vite
+# Compilar Vite
 RUN npm run build
 
-# configurar apache
+# Configurar Apache para Laravel
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
-    && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
-    && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
-    && a2enconf servername
+ && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
+ && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
+ && a2enconf servername
 
-# permisos
+# Permisos Laravel
 RUN chown -R www-data:www-data /var/www/html/storage \
     /var/www/html/bootstrap/cache
 
-# mostrar errores php
-RUN echo "display_errors = On" >> /usr/local/etc/php/php.ini \
- && echo "display_startup_errors = On" >> /usr/local/etc/php/php.ini \
- && echo "error_reporting = E_ALL" >> /usr/local/etc/php/php.ini \
- && echo "log_errors = On" >> /usr/local/etc/php/php.ini
+# Config PHP para ver errores en logs
+RUN echo "display_errors=On" >> /usr/local/etc/php/php.ini \
+ && echo "display_startup_errors=On" >> /usr/local/etc/php/php.ini \
+ && echo "error_reporting=E_ALL" >> /usr/local/etc/php/php.ini \
+ && echo "log_errors=On" >> /usr/local/etc/php/php.ini
 
 EXPOSE 80
 
-CMD ["sh", "-c", "\
-echo '===== LARAVEL DEBUG START ====='; \
+CMD ["sh","-c","\
+echo '===== LARAVEL START ====='; \
 cd /var/www/html; \
 php artisan config:clear; \
 php artisan cache:clear; \
@@ -78,5 +82,8 @@ php artisan route:clear; \
 php artisan view:clear; \
 php artisan storage:link || true; \
 php artisan migrate --force --no-interaction || true; \
-echo '===== STARTING APACHE ====='; \
+php artisan config:cache; \
+php artisan route:cache; \
+php artisan view:cache; \
+echo '===== APACHE START ====='; \
 apache2-foreground"]

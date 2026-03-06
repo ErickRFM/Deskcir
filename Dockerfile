@@ -34,18 +34,23 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# ðŸ”´ IMPORTANTE: eliminar .env del repo
+# eliminar .env del repo
 RUN rm -f .env
 
+# instalar dependencias
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
+# configurar apache para Laravel
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
     && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
     && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
     && a2enconf servername
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# permisos laravel
+RUN chown -R www-data:www-data /var/www/html/storage \
+    /var/www/html/bootstrap/cache
 
+# activar errores php
 RUN echo "display_errors = On" >> /usr/local/etc/php/php.ini \
  && echo "display_startup_errors = On" >> /usr/local/etc/php/php.ini \
  && echo "error_reporting = E_ALL" >> /usr/local/etc/php/php.ini \

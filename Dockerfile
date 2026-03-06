@@ -40,7 +40,7 @@ WORKDIR /var/www/html
 # Copiar proyecto
 COPY . .
 
-# Eliminar .env si vino en el repo
+# Eliminar .env
 RUN rm -f .env
 
 # Instalar dependencias Laravel
@@ -50,13 +50,11 @@ RUN composer install \
     --no-interaction \
     --prefer-dist
 
-# Instalar dependencias frontend
+# Frontend
 RUN npm install
-
-# Compilar Vite
 RUN npm run build
 
-# Configurar Apache para Laravel
+# Config Apache
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
  && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
  && echo 'ServerName localhost' > /etc/apache2/conf-available/servername.conf \
@@ -65,17 +63,16 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 # Permisos Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Config PHP para ver errores
+# PHP debug
 RUN echo "display_errors=On" >> /usr/local/etc/php/php.ini \
  && echo "display_startup_errors=On" >> /usr/local/etc/php/php.ini \
  && echo "error_reporting=E_ALL" >> /usr/local/etc/php/php.ini \
  && echo "log_errors=On" >> /usr/local/etc/php/php.ini
 
-# Copiar script de arranque
+# Script de inicio
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 EXPOSE 80
 
 CMD ["/start.sh"]
-apache2-foreground

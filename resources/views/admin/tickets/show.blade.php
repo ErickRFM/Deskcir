@@ -69,7 +69,7 @@
                     <div class="col-md-4">
                         <label class="form-label">Estado</label>
                         <select name="status" class="form-select">
-                            <option value="pendiente" {{ $ticket->status=='pendiente'?'selected':'' }}>Pendiente</option>
+                            <option value="abierto" {{ $ticket->status=='abierto'?'selected':'' }}>Pendiente</option>
                             <option value="en_proceso" {{ $ticket->status=='en_proceso'?'selected':'' }}>En proceso</option>
                             <option value="cerrado" {{ $ticket->status=='cerrado'?'selected':'' }}>Cerrado</option>
                         </select>
@@ -191,4 +191,6 @@
 }
 </style>
 @endsection
+
+
 

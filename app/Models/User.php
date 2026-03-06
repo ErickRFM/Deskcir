@@ -8,40 +8,30 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-use App\Models\Role;
-
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
         'avatar',
         'role_id',
+        'wallet_balance',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'wallet_balance' => 'decimal:2',
     ];
 
-    // Relación: un usuario pertenece a un rol
     public function role()
     {
         return $this->belongsTo(Role::class);
@@ -49,6 +39,11 @@ class User extends Authenticatable
 
     public function assignedTickets()
     {
-    return $this->hasMany(Ticket::class, 'technician_id');
+        return $this->hasMany(Ticket::class, 'technician_id');
+    }
+
+    public function walletTransactions()
+    {
+        return $this->hasMany(WalletTransaction::class);
     }
 }

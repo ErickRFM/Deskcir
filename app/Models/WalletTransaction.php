@@ -5,27 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Card extends Model
+class WalletTransaction extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'mp_id',
-        'brand',
-        'last4',
-        'alias',
-        'is_default',
-        'exp_month',
-        'exp_year',
+        'order_id',
+        'type',
+        'amount',
+        'reference',
+        'status',
     ];
 
     protected $casts = [
-        'is_default' => 'boolean',
+        'amount' => 'decimal:2',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }

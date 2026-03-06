@@ -1,146 +1,424 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
+
+@section('title', 'Checkout')
 
 @section('content')
-
-<div class="container py-4">
-<div class="row">
-
-<!-- ================= FORMULARIO ================= -->
-<div class="col-md-8">
-
-<h3 class="mb-3">?? Finalizar compra</h3>
-
-<form method="POST" action="/checkout">
-@csrf
-
-<div class="card p-3 mb-3">
-<h5> Datos de env?o</h5>
-
-<input name="address" class="form-control mb-2" placeholder="Direcci?n" required>
-<input name="city" class="form-control mb-2" placeholder="Ciudad" required>
-<input name="postal_code" class="form-control mb-2" placeholder="C?digo postal" required>
-<input name="phone" class="form-control mb-2" placeholder="Tel?fono" required>
-</div>
-
-<div class="card p-3 mb-3">
-<h5> M?todo de pago</h5>
-
-<select name="payment_method" id="metodo" class="form-control">
-<option value="card">Tarjeta</option>
-<option value="transfer">Transferencia</option>
-<option value="cash">Efectivo</option>
-<option value="bitcoin">Bitcoin</option>
-</select>
-</div>
-
-<!-- ========== TARJETA ========== -->
-<div id="cardBox" class="card p-3 mb-3 d-none">
-<h5> Datos de tarjeta</h5>
-
-<input class="form-control mb-2" placeholder="N?mero de tarjeta">
-<input class="form-control mb-2" placeholder="Nombre del titular">
-
-<div class="row">
-<div class="col">
-<input class="form-control" placeholder="MM/YY">
-</div>
-
-<div class="col">
-<input class="form-control" placeholder="CVV">
-</div>
-</div>
-</div>
-
-<!-- ========== TRANSFERENCIA ========== -->
-<div id="transferBox" class="card p-3 mb-3 d-none">
-<h5>Transferencia</h5>
-
-<p>CLABE: <b>012345678901234567</b></p>
-<p>Banco: BANAMEX</p>
-<p>Referencia: <b>#{{ rand(1000,9999) }}</b></p>
-
-<small>Tu pedido se liberar? al confirmar pago</small>
-</div>
-
-<!-- ========== BITCOIN ========== -->
-<div id="btcBox" class="card p-3 mb-3 d-none">
-<h5>? Bitcoin</h5>
-
-<p>Direcci?n:</p>
-<code>bc1qdeskcirficticia12345</code>
-
-<p class="mt-2">Red: Bitcoin</p>
-<p>Tiempo l?mite: 30 min</p>
-</div>
-
-<button class="btn btn-success w-100">
- Confirmar compra
-</button>
-
-</form>
-
-</div>
-
-<!-- ================= RESUMEN ================= -->
-<div class="col-md-4">
-
-<div class="card p-3">
-<h5> Resumen</h5>
-
 @php
-$cart = session('cart', []);
-$total = 0;
+    $walletBalance = (float) (auth()->user()->wallet_balance ?? 0);
+    $defaultCardId = optional($cards->firstWhere('is_default', true))->id;
 @endphp
 
-@foreach($cart as $item)
+<div class="container py-4 checkout-pro">
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-<p>
-{{ $item['name'] }} x {{ $item['qty'] }}
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
 
-<span class="float-end">
-${{ $item['price'] * $item['qty'] }}
-</span>
-</p>
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0 ps-3">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-@php
-$total += $item['price'] * $item['qty'];
-@endphp
+    <div class="checkout-hero mb-4">
+        <div class="checkout-hero__bg"></div>
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3 position-relative">
+            <div>
+                <span class="checkout-kicker">DESKCIR CHECKOUT</span>
+                <h2 class="fw-bold mb-1 d-flex align-items-center gap-2 mt-2">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                    Finalizar compra
+                </h2>
+                <p class="mb-0 text-light-emphasis">Configura entrega, pago y confirma en segundos.</p>
+            </div>
+            <div class="checkout-hero__actions d-flex align-items-center gap-2 flex-wrap">
+                <a href="{{ route('wallet.index') }}" class="btn btn-outline-deskcir d-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                    Billetera y tarjetas
+                </a>
+                <a href="/cart" class="btn btn-outline-light d-flex align-items-center gap-1">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Carrito
+                </a>
+            </div>
+        </div>
+    </div>
 
-@endforeach
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <form method="POST" action="{{ route('checkout.store') }}" id="checkoutForm">
+                @csrf
 
-<hr>
+                <div class="card checkout-card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined">local_shipping</span>
+                            Entrega
+                        </h5>
 
-<h4>Total: ${{ $total }}</h4>
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check card-radio p-3 border rounded-3">
+                                    <input class="form-check-input" type="radio" name="delivery_type" id="deliveryShipping" value="shipping" {{ old('delivery_type', 'shipping') === 'shipping' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="deliveryShipping">
+                                        <strong>Envio a domicilio</strong>
+                                        <small class="d-block text-muted">Llega a tu direccion</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check card-radio p-3 border rounded-3">
+                                    <input class="form-check-input" type="radio" name="delivery_type" id="deliveryPickup" value="pickup" {{ old('delivery_type') === 'pickup' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="deliveryPickup">
+                                        <strong>Punto de entrega</strong>
+                                        <small class="d-block text-muted">Recoge en sede Deskcir</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
 
-</div>
-</div>
+                        <div id="shippingFields" class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label">Direccion</label>
+                                <input name="address" class="form-control" value="{{ old('address') }}" placeholder="Calle, numero, colonia">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ciudad</label>
+                                <input name="city" class="form-control" value="{{ old('city') }}" placeholder="Ciudad">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Codigo postal</label>
+                                <input name="postal_code" class="form-control" value="{{ old('postal_code') }}" placeholder="00000">
+                            </div>
+                        </div>
 
-</div>
+                        <div id="pickupFields" class="row g-2 d-none">
+                            <div class="col-12">
+                                <label class="form-label">Punto de entrega</label>
+                                <select class="form-select" name="pickup_point">
+                                    <option value="">Selecciona un punto</option>
+                                    @foreach($pickupPoints as $point)
+                                        <option value="{{ $point }}" {{ old('pickup_point') === $point ? 'selected' : '' }}>{{ $point }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-2 mt-1">
+                            <div class="col-md-6">
+                                <label class="form-label">Telefono de contacto</label>
+                                <input name="phone" class="form-control" value="{{ old('phone') }}" placeholder="10 digitos" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Notas de entrega</label>
+                                <input name="delivery_notes" class="form-control" value="{{ old('delivery_notes') }}" placeholder="Referencias, horario, etc.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card checkout-card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined">credit_card</span>
+                            Metodo de pago
+                        </h5>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check card-radio p-3 border rounded-3 h-100">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="paySavedCard" value="card_saved" {{ old('payment_method') === 'card_saved' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="paySavedCard">
+                                        <strong>Tarjeta guardada</strong>
+                                        <small class="d-block text-muted">Usa una tarjeta existente</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check card-radio p-3 border rounded-3 h-100">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payNewCard" value="card_new" {{ old('payment_method', 'card_new') === 'card_new' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="payNewCard">
+                                        <strong>Nueva tarjeta</strong>
+                                        <small class="d-block text-muted">Captura una tarjeta nueva</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check card-radio p-3 border rounded-3 h-100">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payTransfer" value="transfer" {{ old('payment_method') === 'transfer' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="payTransfer">
+                                        <strong>Transferencia</strong>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check card-radio p-3 border rounded-3 h-100">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payCash" value="cash" {{ old('payment_method') === 'cash' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="payCash">
+                                        <strong>Efectivo</strong>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check card-radio p-3 border rounded-3 h-100">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payWallet" value="wallet" {{ old('payment_method') === 'wallet' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="payWallet">
+                                        <strong>Billetera</strong>
+                                        <small class="d-block text-muted">Saldo: ${{ number_format($walletBalance, 2) }}</small>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-check card-radio p-3 border rounded-3 h-100">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="payBitcoin" value="bitcoin" {{ old('payment_method') === 'bitcoin' ? 'checked' : '' }}>
+                                    <label class="form-check-label w-100" for="payBitcoin">
+                                        <strong>Bitcoin</strong>
+                                        <small class="d-block text-muted">Pago en cripto con referencia</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="savedCardBox" class="payment-box d-none">
+                            @if($cards->isEmpty())
+                                <div class="alert alert-warning mb-0 d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                                    <span>No tienes tarjetas guardadas.</span>
+                                    <a href="{{ route('wallet.index') }}" class="btn btn-sm btn-deskcir">Agregar tarjeta</a>
+                                </div>
+                            @else
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong>Selecciona tarjeta</strong>
+                                    <a href="{{ route('wallet.index') }}" class="small">Administrar tarjetas</a>
+                                </div>
+                                @foreach($cards as $card)
+                                    <label class="saved-card-item mb-2 p-2 border rounded-3 d-flex align-items-center justify-content-between gap-2">
+                                        <span class="form-check d-flex align-items-center gap-2 mb-0">
+                                            <input class="form-check-input" type="radio" name="saved_card_id" value="{{ $card->id }}" {{ (string) old('saved_card_id', $defaultCardId) === (string) $card->id ? 'checked' : '' }}>
+                                            <span>
+                                                <strong>{{ $card->alias ?: ($card->brand . ' ' . $card->last4) }}</strong>
+                                                <small class="d-block text-muted">
+                                                    {{ $card->brand }} •••• {{ $card->last4 }}
+                                                    @if($card->exp_month && $card->exp_year)
+                                                        | {{ str_pad((string) $card->exp_month, 2, '0', STR_PAD_LEFT) }}/{{ $card->exp_year }}
+                                                    @endif
+                                                </small>
+                                            </span>
+                                        </span>
+                                        @if($card->is_default)
+                                            <span class="badge rounded-pill text-bg-info">Predeterminada</span>
+                                        @endif
+                                    </label>
+                                @endforeach
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" value="1" name="make_default_card" id="makeDefaultSaved">
+                                    <label class="form-check-label small" for="makeDefaultSaved">Marcar seleccionada como predeterminada</label>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div id="newCardBox" class="payment-box d-none">
+                            <div class="row g-2">
+                                <div class="col-md-8">
+                                    <label class="form-label">Numero de tarjeta</label>
+                                    <input name="card_number" class="form-control" value="{{ old('card_number') }}" placeholder="4111 1111 1111 1111">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Titular</label>
+                                    <input name="card_holder" class="form-control" value="{{ old('card_holder') }}" placeholder="Nombre completo">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Mes</label>
+                                    <input name="card_exp_month" type="number" min="1" max="12" class="form-control" value="{{ old('card_exp_month') }}" placeholder="MM">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">Ano</label>
+                                    <input name="card_exp_year" type="number" min="2024" max="2100" class="form-control" value="{{ old('card_exp_year') }}" placeholder="AAAA">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">CVV</label>
+                                    <input name="card_cvv" class="form-control" value="{{ old('card_cvv') }}" placeholder="123">
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="1" name="save_card" id="saveCard" {{ old('save_card') ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="saveCard">Guardar tarjeta</label>
+                                    </div>
+                                </div>
+                                <div class="col-12 form-check ms-1">
+                                    <input class="form-check-input" type="checkbox" value="1" name="make_default_card" id="makeDefaultNew" {{ old('make_default_card') ? 'checked' : '' }}>
+                                    <label class="form-check-label small" for="makeDefaultNew">Marcar como predeterminada</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="transferBox" class="payment-box d-none">
+                            <div class="alert alert-info mb-0">
+                                <div><strong>Banco:</strong> BBVA</div>
+                                <div><strong>CLABE:</strong> 012180001234567890</div>
+                                <div><strong>Referencia:</strong> DESKCIR-{{ now()->format('His') }}</div>
+                            </div>
+                        </div>
+
+                        <div id="cashBox" class="payment-box d-none">
+                            <div class="alert alert-secondary mb-0">Pago contra entrega o en punto de retiro.</div>
+                        </div>
+
+                        <div id="walletBox" class="payment-box d-none">
+                            <div class="alert {{ $walletBalance >= $summary['total'] ? 'alert-success' : 'alert-warning' }} mb-0 d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                                <span>
+                                    Saldo actual: <strong>${{ number_format($walletBalance, 2) }}</strong>.
+                                    @if($walletBalance < $summary['total'])
+                                        Saldo insuficiente para este pedido.
+                                    @endif
+                                </span>
+                                <a href="{{ route('wallet.index') }}" class="btn btn-sm btn-deskcir">Recargar</a>
+                            </div>
+                        </div>
+
+                        <div id="bitcoinBox" class="payment-box d-none">
+                            <div class="alert alert-warning mb-0">
+                                <div><strong>Red:</strong> Bitcoin</div>
+                                <div><strong>Wallet:</strong> bc1qdeskcirficticia12345</div>
+                                <div><strong>Memo:</strong> DSK-{{ now()->format('His') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-success btn-lg">Confirmar compra</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card checkout-card border-0 shadow-sm position-sticky mb-3" style="top: 20px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined">receipt_long</span>
+                        Resumen
+                    </h5>
+
+                    @foreach($cart as $item)
+                        <div class="d-flex justify-content-between gap-2 mb-2 small">
+                            <span>{{ $item['name'] }} x {{ $item['qty'] }}</span>
+                            <strong>${{ number_format($item['price'] * $item['qty'], 2) }}</strong>
+                        </div>
+                    @endforeach
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between small mb-1"><span>Subtotal</span><span id="subtotalValue">${{ number_format($summary['subtotal'], 2) }}</span></div>
+                    <div class="d-flex justify-content-between small mb-1"><span>Envio</span><span id="shippingValue">${{ number_format($summary['shipping_fee'], 2) }}</span></div>
+                    <div class="d-flex justify-content-between small mb-1"><span>Servicio</span><span id="serviceValue">${{ number_format($summary['service_fee'], 2) }}</span></div>
+                    <div class="d-flex justify-content-between small mb-2"><span>Descuento</span><span id="discountValue">-${{ number_format($summary['discount'], 2) }}</span></div>
+
+                    <div class="d-flex justify-content-between fs-4 fw-bold pt-2 border-top">
+                        <span>Total</span>
+                        <span id="totalValue">${{ number_format($summary['total'], 2) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card checkout-card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-2 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined">account_balance_wallet</span>
+                        Recarga rapida
+                    </h6>
+                    <p class="small text-muted mb-3">Recarga tu billetera sin salir de checkout.</p>
+
+                    <form method="POST" action="{{ route('wallet.topup') }}" class="quick-topup-form">
+                        @csrf
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            <button type="button" class="btn btn-sm btn-outline-deskcir quick-amount" data-value="200">+$200</button>
+                            <button type="button" class="btn btn-sm btn-outline-deskcir quick-amount" data-value="500">+$500</button>
+                            <button type="button" class="btn btn-sm btn-outline-deskcir quick-amount" data-value="1000">+$1000</button>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input name="amount" id="quickTopupAmount" type="number" min="50" step="0.01" class="form-control" placeholder="Monto">
+                            <button class="btn btn-deskcir" type="submit">Recargar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-const metodo = document.getElementById('metodo')
+(function () {
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const deliveryRadios = document.querySelectorAll('input[name="delivery_type"]');
 
-const cardBox = document.getElementById('cardBox')
-const transferBox = document.getElementById('transferBox')
-const btcBox = document.getElementById('btcBox')
+    const paymentBoxes = {
+        card_saved: document.getElementById('savedCardBox'),
+        card_new: document.getElementById('newCardBox'),
+        transfer: document.getElementById('transferBox'),
+        cash: document.getElementById('cashBox'),
+        wallet: document.getElementById('walletBox'),
+        bitcoin: document.getElementById('bitcoinBox')
+    };
 
-metodo.addEventListener('change', () => {
+    const shippingFields = document.getElementById('shippingFields');
+    const pickupFields = document.getElementById('pickupFields');
 
-cardBox.classList.add('d-none')
-transferBox.classList.add('d-none')
-btcBox.classList.add('d-none')
+    const subtotal = {{ (float) $summary['subtotal'] }};
+    const service = {{ (float) $summary['service_fee'] }};
+    const discount = {{ (float) $summary['discount'] }};
 
-if(metodo.value === 'card')
-cardBox.classList.remove('d-none')
+    const shippingValue = document.getElementById('shippingValue');
+    const totalValue = document.getElementById('totalValue');
 
-if(metodo.value === 'transfer')
-transferBox.classList.remove('d-none')
+    function currency(value) {
+        return '$' + value.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
 
-if(metodo.value === 'bitcoin')
-btcBox.classList.remove('d-none')
+    function refreshPaymentUI() {
+        const selected = document.querySelector('input[name="payment_method"]:checked')?.value;
 
-})
+        Object.keys(paymentBoxes).forEach((key) => {
+            if (!paymentBoxes[key]) return;
+            paymentBoxes[key].classList.toggle('d-none', key !== selected);
+        });
+    }
+
+    function refreshDeliveryUI() {
+        const selected = document.querySelector('input[name="delivery_type"]:checked')?.value;
+        const isPickup = selected === 'pickup';
+
+        if (shippingFields) shippingFields.classList.toggle('d-none', isPickup);
+        if (pickupFields) pickupFields.classList.toggle('d-none', !isPickup);
+
+        const shipping = isPickup ? 0 : 79;
+        const total = Math.max(0, subtotal + shipping + service - discount);
+
+        if (shippingValue) shippingValue.textContent = currency(shipping);
+        if (totalValue) totalValue.textContent = currency(total);
+    }
+
+    paymentRadios.forEach((radio) => radio.addEventListener('change', refreshPaymentUI));
+    deliveryRadios.forEach((radio) => radio.addEventListener('change', refreshDeliveryUI));
+
+    document.querySelectorAll('.quick-amount').forEach((btn) => {
+        btn.addEventListener('click', function () {
+            const input = document.getElementById('quickTopupAmount');
+            if (!input) return;
+            input.value = this.dataset.value;
+            input.focus();
+        });
+    });
+
+    refreshPaymentUI();
+    refreshDeliveryUI();
+})();
 </script>
-
 @endsection

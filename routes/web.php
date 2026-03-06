@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use App\Models\Role;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Technician\ChecklistController;
 
@@ -14,7 +15,8 @@ use App\Http\Controllers\{
     ReportController,
     CartController,
     CheckoutController,
-    CardController
+    CardController,
+    WalletController
 };
 
 use App\Http\Controllers\Auth\PasswordController;
@@ -47,6 +49,7 @@ Route::get('/auth/google', fn() =>
 Route::get('/auth/google/callback', function () {
 
     $googleUser = Socialite::driver('google')->user();
+    $clientRoleId = Role::query()->firstOrCreate(['name' => 'client'])->id;
 
     $user = User::firstOrCreate(
         ['email' => $googleUser->email],
@@ -54,8 +57,14 @@ Route::get('/auth/google/callback', function () {
             'name' => $googleUser->name,
             'password' => bcrypt(str()->random(16)),
             'email_verified_at' => now(),
+            'role_id' => $clientRoleId,
         ]
     );
+
+    if (empty($user->role_id)) {
+        $user->role_id = $clientRoleId;
+        $user->save();
+    }
 
     auth()->login($user);
 
@@ -88,8 +97,12 @@ Route::delete('/products/image/{id}',
 |--------------------------------------------------------------------------
 */
 
-Route::post('/cards/save', [CardController::class, 'save'])->middleware('auth');
-Route::delete('/cards/{id}', [CardController::class, 'delete'])->middleware('auth');
+Route::middleware('auth')->group(function () {
+    Route::post('/cards/save', [CardController::class, 'save'])->name('cards.save');
+    Route::put('/cards/{id}', [CardController::class, 'update'])->name('cards.update');
+    Route::delete('/cards/{id}', [CardController::class, 'delete'])->name('cards.delete');
+    Route::delete('/cards', [CardController::class, 'clear'])->name('cards.clear');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -105,8 +118,16 @@ Route::post('/cart/add/{id}', [StoreController::class, 'addToCart']);
 Route::get('/cart', [CartController::class, 'index']);
 Route::post('/cart/remove/{id}', [CartController::class, 'remove']);
 
-Route::get('/checkout', [CheckoutController::class, 'index']);
-Route::post('/checkout', [CheckoutController::class, 'store']);
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/order/{id}', [CheckoutController::class, 'show'])->name('checkout.show');
+});
+Route::middleware('auth')->group(function () {
+    Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
+    Route::post('/wallet/topup', [WalletController::class, 'topup'])->name('wallet.topup');
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -130,7 +151,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile',[ProfileController::class,'update'])->name('profile.update');
     Route::delete('/profile',[ProfileController::class,'destroy'])->name('profile.destroy');
 
-    Route::put('/password/update',[PasswordController::class,'update'])->name('password.update');
+    Route::put('/password/update',[PasswordController::class,'update'])->name('password.update.legacy');
 
     Route::get('/support',[TicketController::class,'index']);
     Route::get('/support/create',[TicketController::class,'create']);
@@ -290,6 +311,10 @@ require __DIR__.'/admin.php';
 require __DIR__.'/client.php';
 require __DIR__.'/technician.php';
 require __DIR__.'/store.php';
+
+
+
+
 
 
 

@@ -16,14 +16,16 @@ class CategorySeeder extends Seeder
             'Refacciones',
             'Cables',
             'Accesorios',
-            'Celulares'
+            'Celulares',
         ];
 
-        foreach ($categories as $category) {
-            Category::create([
-                'name' => $category,
-                'slug' => Str::slug($category)
-            ]);
+        foreach ($categories as $categoryName) {
+            $slug = Str::slug($categoryName);
+
+            Category::updateOrCreate(
+                ['slug' => $slug],
+                ['name' => $categoryName]
+            );
         }
     }
 }

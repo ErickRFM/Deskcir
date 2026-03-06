@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
+
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>@yield('title','Deskcir')</title>
 
-<!-- ?? ACTIVAR DARK MODE ANTES DE QUE CARGUE TODO -->
 <script>
 (function () {
     const theme = localStorage.getItem('modo');
@@ -19,271 +20,205 @@
 })();
 </script>
 
-<!-- Bootstrap -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- Bootstrap Icons (por si se usan en otras vistas) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-<!-- ?? GOOGLE MATERIAL SYMBOLS -->
-<link rel="stylesheet"
-href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:
-opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-<!-- Tailwind compilado -->
 @vite(['resources/css/app.css','resources/js/app.js'])
-
-<style>
-
-/* ?? alineaci?n iconos navbar */
-.material-symbols-outlined{
-font-size:20px;
-vertical-align:middle;
-margin-right:4px;
-}
-
-/* navbar limpio */
-.navbar .nav-link{
-display:flex;
-align-items:center;
-gap:6px;
-}
-
-</style>
-
 </head>
 
 <body class="transition-colors duration-300">
+@php
+    $isStorePage = request()->is('store*');
+    $roleName = optional(optional(auth()->user())->role)->name;
+@endphp
 
-{{-- ================= NAVBAR ================= --}}
-<nav class="navbar navbar-expand-lg shadow-sm bg-light">
-<div class="container">
+<nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-light sticky-top">
+    <div class="container nav-shell">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/store">
+            <img src="{{ asset('img/logo.png') }}" style="height:30px" alt="Deskcir">
+        </a>
 
-<a class="navbar-brand d-flex align-items-center gap-2" href="/store">
-<img src="{{ asset('img/logo.png') }}" style="height:30px" alt="Deskcir">
-</a>
+        <button
+            class="navbar-toggler nav-hamburger"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Abrir menu"
+        >
+            <span class="bi bi-list fs-3 lh-1"></span>
+        </button>
 
-<ul class="navbar-nav ms-auto align-items-center gap-2">
+        <div class="collapse navbar-collapse nav-collapse-shell" id="mainNavbar">
+            @if($isStorePage)
+                <form method="GET" action="/store" class="nav-store-search" role="search">
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ request('q', '') }}"
+                        class="nav-store-search-input"
+                        placeholder="Buscar producto por nombre o descripcion..."
+                        aria-label="Buscar producto"
+                    >
 
-<li class="nav-item">
-<a class="nav-link" href="/store">
-<span class="material-symbols-outlined">store</span>
-Tienda
-</a>
-</li>
+                    @if(request()->filled('quick'))
+                        <input type="hidden" name="quick" value="{{ request('quick') }}">
+                    @endif
 
-<li class="nav-item">
-<a class="nav-link" href="/cart">
-<span class="material-symbols-outlined">shopping_cart</span>
-Carrito
-</a>
-</li>
+                    <button class="nav-store-search-btn" type="submit" aria-label="Buscar">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            @endif
 
-@auth
+            <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-2 nav-main-links">
+                <li class="nav-item">
+                    <a class="nav-link" href="/store">
+                        <span class="material-symbols-outlined">store</span>
+                        Tienda
+                    </a>
+                </li>
 
-<li class="nav-item dropdown">
+                <li class="nav-item">
+                    <a class="nav-link" href="/cart">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        Carrito
+                    </a>
+                </li>
 
-<a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
-data-bs-toggle="dropdown">
+                @auth
+                    @if($roleName === 'admin')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                                <span class="material-symbols-outlined">admin_panel_settings</span>
+                                Administrador
+                            </a>
+                        </li>
+                    @endif
+                    <li class="nav-item dropdown">
+                        <a
+                            class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                            data-bs-toggle="dropdown"
+                            role="button"
+                            aria-expanded="false"
+                        >
+                            <span class="material-symbols-outlined">account_circle</span>
+                            {{ auth()->user()->name }}
+                        </a>
 
-<span class="material-symbols-outlined">
-account_circle
-</span>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if($roleName === 'admin')
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dashboard') }}">
+                                        <span class="material-symbols-outlined">dashboard</span>
+                                        Panel Admin
+                                    </a>
+                                </li>
 
-{{ auth()->user()->name }}
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.products.index') }}">
+                                        <span class="material-symbols-outlined">inventory_2</span>
+                                        Productos
+                                    </a>
+                                </li>
+                            @endif
 
-</a>
+                            @if($roleName === 'technician')
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="/technician">
+                                        <span class="material-symbols-outlined">build</span>
+                                        Panel Tecnico
+                                    </a>
+                                </li>
+                            @endif
 
-<ul class="dropdown-menu dropdown-menu-end">
+                            @if($roleName === 'client')
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="/client">
+                                        <span class="material-symbols-outlined">support_agent</span>
+                                        Mi cuenta
+                                    </a>
+                                </li>
+                            @endif
 
-@if(auth()->user()->role->name=='admin')
+                            <li><hr class="dropdown-divider"></li>
 
-<li>
-<a class="dropdown-item d-flex align-items-center gap-2"
-href="{{ route('admin.dashboard') }}">
+                            <li>
+                                <form method="POST" action="/logout">
+                                    @csrf
+                                    <button class="dropdown-item text-danger d-flex align-items-center gap-2">
+                                        <span class="material-symbols-outlined">logout</span>
+                                        Cerrar sesion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                @else
+                    <li class="nav-item">
+                        <a class="btn btn-outline-deskcir d-flex align-items-center justify-content-center gap-1" href="/login">
+                            <span class="material-symbols-outlined">login</span>
+                            Login
+                        </a>
+                    </li>
 
-<span class="material-symbols-outlined">
-dashboard
-</span>
-
-Panel Admin
-
-</a>
-</li>
-
-<li>
-<a class="dropdown-item d-flex align-items-center gap-2"
-href="{{ route('admin.products.index') }}">
-
-<span class="material-symbols-outlined">
-inventory_2
-</span>
-
-Productos
-
-</a>
-</li>
-
-@endif
-
-
-@if(auth()->user()->role->name=='technician')
-
-<li>
-<a class="dropdown-item d-flex align-items-center gap-2"
-href="/technician">
-
-<span class="material-symbols-outlined">
-build
-</span>
-
-Panel Técnico
-
-</a>
-</li>
-
-@endif
-
-
-@if(auth()->user()->role->name=='client')
-
-<li>
-<a class="dropdown-item d-flex align-items-center gap-2"
-href="/client">
-
-<span class="material-symbols-outlined">
-support_agent
-</span>
-
-Mi Cuenta
-
-</a>
-</li>
-
-@endif
-
-
-<li><hr class="dropdown-divider"></li>
-
-<li>
-
-<form method="POST" action="/logout">
-@csrf
-
-<button class="dropdown-item text-danger d-flex align-items-center gap-2">
-
-<span class="material-symbols-outlined">
-logout
-</span>
-
-Cerrar sesi?n
-
-</button>
-
-</form>
-
-</li>
-
-</ul>
-</li>
-
-@else
-
-<li class="nav-item">
-<a class="btn btn-outline-secondary d-flex align-items-center gap-1"
-href="/login">
-
-<span class="material-symbols-outlined">
-login
-</span>
-
-Login
-
-</a>
-</li>
-
-<li class="nav-item">
-<a class="btn btn-warning d-flex align-items-center gap-1"
-href="/register">
-
-<span class="material-symbols-outlined">
-person_add
-</span>
-
-Registro
-
-</a>
-</li>
-
-@endauth
-
-</ul>
-
-</div>
+                    <li class="nav-item">
+                        <a class="btn btn-deskcir d-flex align-items-center justify-content-center gap-1" href="/register">
+                            <span class="material-symbols-outlined">person_add</span>
+                            Registro
+                        </a>
+                    </li>
+                @endauth
+            </ul>
+        </div>
+    </div>
 </nav>
 
-
-<!-- ?? BOT?N DARK MODE -->
-<button onclick="toggleDark()" 
-id="btnDark"
-class="btn btn-dark shadow"
-style="position:fixed;bottom:20px;right:20px;z-index:999">
-
-??
-
+<button
+    onclick="toggleDark()"
+    id="btnDark"
+    class="btn btn-dark shadow app-theme-toggle"
+    aria-label="Cambiar tema"
+>
+    <i class="bi bi-moon-fill"></i>
 </button>
 
-
-<div class="container-fluid py-4">
-<div class="row justify-content-center">
-<div class="col-12 col-xxl-10 col-xl-11 col-lg-11">
-
-@yield('content')
-
-</div>
-</div>
+<div class="container-fluid app-shell py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xxl-10 col-xl-11 col-lg-11">
+            @yield('content')
+        </div>
+    </div>
 </div>
 
-
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-
-<!-- ?? CONTROLADOR DARK MODE -->
 <script>
-
 function toggleDark() {
-
-const html = document.documentElement;
-
-const isDark = html.classList.toggle('dark');
-
-localStorage.setItem('modo', isDark ? 'dark' : 'light');
-
-updateDarkIcon(isDark);
-
+    const html = document.documentElement;
+    const isDark = html.classList.toggle('dark');
+    localStorage.setItem('modo', isDark ? 'dark' : 'light');
+    updateDarkIcon(isDark);
 }
 
 function updateDarkIcon(isDark) {
+    const btn = document.getElementById('btnDark');
+    if (!btn) return;
 
-const btn = document.getElementById('btnDark');
-
-if (!btn) return;
-
-btn.innerHTML = isDark ? '??' : '??';
-
+    btn.innerHTML = isDark
+        ? '<i class="bi bi-sun-fill"></i>'
+        : '<i class="bi bi-moon-fill"></i>';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-
-updateDarkIcon(document.documentElement.classList.contains('dark'));
-
+    updateDarkIcon(document.documentElement.classList.contains('dark'));
 });
-
 </script>
 
 @stack('scripts')
-
 </body>
+
 </html>
 

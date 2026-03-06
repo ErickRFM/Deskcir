@@ -34,6 +34,12 @@ WORKDIR /var/www/html
 
 COPY . .
 
+# Limpia controladores legacy mal ubicados si aun existen en alguna rama antigua
+RUN rm -f \
+    /var/www/html/app/Http/Controllers/ProductController.php \
+    /var/www/html/app/Http/Controllers/TechnicianChecklistController.php \
+    /var/www/html/app/Http/Controllers/Technician/DashboardController.php
+
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
 RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
@@ -43,8 +49,6 @@ RUN sed -i 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-RUN chmod +x /var/www/html/docker/start.sh
-
 EXPOSE 80
 
-CMD ["/var/www/html/docker/start.sh"]
+CMD ["sh", "-lc", "cd /var/www/html && php artisan storage:link || true && php artisan migrate --force --no-interaction && php artisan config:cache && php artisan route:cache || true && php artisan view:cache || true && exec apache2-foreground"]

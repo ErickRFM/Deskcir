@@ -26,7 +26,7 @@ if(!App\Models\User::where('email','admin@deskcir.com')->exists()){
         'name' => 'Admin',
         'email' => 'admin@deskcir.com',
         'password' => Illuminate\Support\Facades\Hash::make('Admin12345'),
-        'role_id' => 1
+        'role_id' => 3
     ]);
     echo 'ADMIN CREATED';
 }else{

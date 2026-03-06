@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use App\Models\Role;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Technician\ChecklistController;
 
 use App\Http\Controllers\{
@@ -25,6 +25,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\{
     SalesController,
+    UserController,
     ReportController as AdminReportController,
     TicketController as AdminTicketController
 };
@@ -85,12 +86,6 @@ Route::get('/', fn() => redirect('/store'));
 |--------------------------------------------------------------------------
 */
 
-Route::resource('admin/products', ProductController::class);
-
-Route::delete('/products/image/{id}',
-    [ProductController::class,'deleteImage']
-)->name('admin.products.image.delete');
-
 /*
 |--------------------------------------------------------------------------
 | MERCADO PAGO
@@ -135,7 +130,9 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', fn() => redirect('/store'))->middleware(['auth']);
+Route::get('/dashboard', fn() => redirect('/store'))
+    ->middleware(['auth'])
+    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
@@ -175,11 +172,19 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->prefix('admin')->group(function(){
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
 
     // DASHBOARD ADMIN
     Route::get('/', [AdminController::class,'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard', [AdminController::class,'dashboard']);
+
+    // USUARIOS
+    Route::resource('/users', UserController::class)->names('admin.users');
+
+    // PRODUCTOS
+    Route::resource('/products', ProductController::class)->names('admin.products');
+    Route::delete('/products/image/{id}', [ProductController::class,'deleteImage'])
+        ->name('admin.products.image.delete');
 
     // VENTAS
     Route::get('/sales',[SalesController::class,'index']);
@@ -226,7 +231,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function(){
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->prefix('technician')->group(function(){
+Route::middleware(['auth', 'role:technician'])->prefix('technician')->group(function(){
 
     Route::get('/',[TechnicianController::class,'dashboard'])->name('technician.dashboard');
 
@@ -307,10 +312,7 @@ Route::middleware('auth')->group(function(){
 */
 
 require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
 require __DIR__.'/client.php';
-require __DIR__.'/technician.php';
-require __DIR__.'/store.php';
 
 
 

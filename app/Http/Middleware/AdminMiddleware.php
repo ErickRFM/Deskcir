@@ -16,7 +16,7 @@ class AdminMiddleware
             abort(403);
         }
 
-        $roleName = optional($user->role)->name;
+        $roleName = strtolower((string) optional($user->role)->name);
 
         if ($roleName !== 'admin') {
             abort(403);

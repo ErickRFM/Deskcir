@@ -11,7 +11,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -35,18 +37,38 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string', 'in:admin,technician,client', 'exists:roles,name'],
+            'role' => ['required', 'string'],
         ]);
 
-        $roleId = Role::query()
-            ->where('name', $request->role)
-            ->value('id');
+        $roleRaw = Str::lower(trim((string) $request->input('role')));
+
+        $aliases = [
+            'admin' => ['admin', 'administrador', '1'],
+            'technician' => ['technician', 'tecnico', 'técnico', '2'],
+            'client' => ['client', 'cliente', '3'],
+        ];
+
+        $canonicalRole = null;
+        foreach ($aliases as $canonical => $validInputs) {
+            if (in_array($roleRaw, $validInputs, true)) {
+                $canonicalRole = $canonical;
+                break;
+            }
+        }
+
+        if (!$canonicalRole) {
+            throw ValidationException::withMessages([
+                'role' => 'El rol seleccionado no es valido.',
+            ]);
+        }
+
+        $role = Role::query()->firstOrCreate(['name' => $canonicalRole]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => (int) $roleId,
+            'role_id' => (int) $role->id,
         ]);
 
         event(new Registered($user));

@@ -173,7 +173,7 @@ Guardar cambios
 <script>
 function eliminarImagen(id){
 
-fetch('/products/image/'+id,{
+fetch('{{ url('/admin/products/image') }}/'+id,{
 method:'POST',
 headers:{
 'X-CSRF-TOKEN':'{{ csrf_token() }}',
@@ -207,3 +207,4 @@ previewContainer.appendChild(img)
 </script>
 
 @endsection
+

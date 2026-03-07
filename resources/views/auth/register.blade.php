@@ -116,6 +116,30 @@
 
 </div>
 
+<div class="mb-3">
+
+    <label for="role_id" class="form-label">
+        Rol
+    </label>
+
+    <select
+        id="role_id"
+        name="role_id"
+        class="form-control input-pro"
+        required>
+        <option value="3" {{ old('role_id', '3') == '3' ? 'selected' : '' }}>Cliente</option>
+        <option value="2" {{ old('role_id') == '2' ? 'selected' : '' }}>Tecnico</option>
+        <option value="1" {{ old('role_id') == '1' ? 'selected' : '' }}>Admin</option>
+    </select>
+
+    @error('role_id')
+    <small class="text-danger fw-bold">
+        {{ $message }}
+    </small>
+    @enderror
+
+</div>
+
 <div class="text-start mt-2">
     <a href="{{ route('login') }}" class="link-pro">
         Ya tengo cuenta
@@ -301,3 +325,4 @@ transform:none;
 </style>
 
 @endsection
+

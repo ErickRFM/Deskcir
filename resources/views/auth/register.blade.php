@@ -21,7 +21,7 @@
         </div>
     @endif
 
-<form method="POST" action="{{ route('register') }}">
+<form method="POST" action="{{ route('register', [], false) }}">
 @csrf
 
 {{-- NOMBRE --}}
@@ -118,21 +118,21 @@
 
 <div class="mb-3">
 
-    <label for="role_id" class="form-label">
+    <label for="role" class="form-label">
         Rol
     </label>
 
     <select
-        id="role_id"
-        name="role_id"
+        id="role"
+        name="role"
         class="form-control input-pro"
         required>
-        <option value="3" {{ old('role_id', '3') == '3' ? 'selected' : '' }}>Cliente</option>
-        <option value="2" {{ old('role_id') == '2' ? 'selected' : '' }}>Tecnico</option>
-        <option value="1" {{ old('role_id') == '1' ? 'selected' : '' }}>Admin</option>
+        <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>Cliente</option>
+        <option value="technician" {{ old('role') == 'technician' ? 'selected' : '' }}>Tecnico</option>
+        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
     </select>
 
-    @error('role_id')
+    @error('role')
     <small class="text-danger fw-bold">
         {{ $message }}
     </small>

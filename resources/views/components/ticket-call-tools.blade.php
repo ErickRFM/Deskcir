@@ -87,6 +87,8 @@
 (function () {
     const wrapper = document.querySelector('[data-ticket-call="{{ $uid }}"]');
     if (!wrapper) return;
+    if (wrapper.dataset.callInitialized === '1') return;
+    wrapper.dataset.callInitialized = '1';
 
     const zone = wrapper.querySelector('[data-call-zone]');
     const localVideo = wrapper.querySelector('[data-call-local]');
@@ -113,9 +115,12 @@
     let stream = null;
     let pendingOffer = null;
     let pendingMode = 'call';
+    let pendingOfferId = null;
     let lastSignalId = 0;
     const pendingIce = [];
     const pageStartedAt = Date.now();
+    const processedSignalIds = new Set();
+    const dismissedOfferIds = new Set();
 
     const config = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
@@ -203,6 +208,7 @@
         if (reset) {
             pendingOffer = null;
             pendingMode = 'call';
+            pendingOfferId = null;
         }
     }
 
@@ -260,10 +266,21 @@
         }
 
         if (mode === 'screen') {
-            return await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+            const canShareScreen = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia);
+            if (!canShareScreen) {
+                throw new Error('screen-share-not-supported');
+            }
+
+            return await navigator.mediaDevices.getDisplayMedia({
+                video: { frameRate: { ideal: 24, max: 30 } },
+                audio: false
+            });
         }
 
-        return await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        return await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 24, max: 30 } }
+        });
     }
 
     async function createOffer(mode) {
@@ -287,17 +304,39 @@
     async function handleSignal(e) {
         if (!e || e.user_id == {{ auth()->id() }}) return;
 
-        if (e.id && e.id > lastSignalId) {
-            lastSignalId = e.id;
+        const signalId = Number(e.id || 0);
+        if (signalId) {
+            if (signalId > lastSignalId) {
+                lastSignalId = signalId;
+            }
+
+            if (processedSignalIds.has(signalId)) {
+                return;
+            }
+            processedSignalIds.add(signalId);
+
+            if (processedSignalIds.size > 300) {
+                const firstId = processedSignalIds.values().next().value;
+                if (firstId) {
+                    processedSignalIds.delete(firstId);
+                }
+            }
         }
 
         if (e.type === 'offer') {
             if (!isFreshOffer(e)) {
                 return;
             }
+            if (signalId && dismissedOfferIds.has(signalId)) {
+                return;
+            }
+            if (signalId && pendingOfferId === signalId && modal.classList.contains('is-open')) {
+                return;
+            }
 
             pendingOffer = e.data;
             pendingMode = e.request_mode || 'call';
+            pendingOfferId = signalId || null;
 
             if (pendingMode === 'screen') {
                 showModal('screen', 'Solicitud de pantalla', 'Te quieren compartir pantalla. Aceptar ahora?');
@@ -361,6 +400,7 @@
         try {
             stream = await getStreamByMode(mode, false);
             localVideo.srcObject = stream;
+            localVideo.play?.().catch(() => {});
 
             const peer = ensurePeer();
             stream.getTracks().forEach((track) => peer.addTrack(track, stream));
@@ -368,7 +408,11 @@
             await createOffer(mode);
             notify(mode === 'screen' ? 'Solicitud de pantalla enviada.' : 'Solicitud de videollamada enviada.', 'success');
         } catch (err) {
-            notify('No se pudo iniciar la sesion. Revisa permisos de camara/pantalla.', 'danger');
+            if (mode === 'screen' && err?.message === 'screen-share-not-supported') {
+                notify('Este dispositivo o navegador no permite compartir pantalla aqui.', 'warning');
+            } else {
+                notify('No se pudo iniciar la sesion. Revisa permisos de camara/pantalla.', 'danger');
+            }
             closeConnection();
         }
     }
@@ -399,6 +443,10 @@
 
         const offerData = pendingOffer;
         const offerMode = pendingMode;
+        const offerId = pendingOfferId;
+        if (offerId) {
+            dismissedOfferIds.add(offerId);
+        }
 
         hideModal();
         zone.classList.remove('d-none');
@@ -463,6 +511,9 @@
 
     modalAccept.addEventListener('click', acceptIncoming);
     modalRejectBtns.forEach((btn) => btn.addEventListener('click', () => {
+        if (pendingOfferId) {
+            dismissedOfferIds.add(pendingOfferId);
+        }
         hideModal();
         notify('Solicitud rechazada.', 'warning');
     }));
@@ -624,3 +675,4 @@
     color: #a8b6cc !important;
 }
 </style>
+

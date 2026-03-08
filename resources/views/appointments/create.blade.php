@@ -10,7 +10,7 @@
             <h4 class="fw-bold mb-1">Agendar servicio tecnico</h4>
             <p class="text-muted mb-0">Ticket #{{ $ticket->id }} - {{ $ticket->subject }}</p>
         </div>
-        <a href="/support/{{ $ticket->id }}#agenda-tecnica" class="btn btn-outline-light btn-sm">Volver al ticket</a>
+        <a href="/support/{{ $ticket->id }}#agenda-tecnica" class="btn btn-outline-secondary btn-sm">Volver al ticket</a>
     </div>
 
     @if ($errors->any())
@@ -78,10 +78,23 @@
 </div>
 
 <style>
+.schedule-create {
+    --schedule-bg: #ffffff;
+    --schedule-border: #dbe3ee;
+    --schedule-text: #0f172a;
+    --schedule-muted: #64748b;
+    --schedule-input-bg: #ffffff;
+    --schedule-input-text: #0f172a;
+    --schedule-input-border: #c9d5e5;
+    --schedule-focus: #0e9ab8;
+    --schedule-panel-bg: #f8fbff;
+}
+
 .schedule-create .schedule-card {
-    background: #0f1b34;
-    border: 1px solid #233454 !important;
-    box-shadow: none;
+    background: var(--schedule-bg);
+    border: 1px solid var(--schedule-border) !important;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
 }
 
 .schedule-create .form-label,
@@ -89,29 +102,34 @@
 .schedule-create h6,
 .schedule-create li,
 .schedule-create p {
-    color: #dbe7ff;
+    color: var(--schedule-text);
 }
 
 .schedule-create .text-muted {
-    color: #9fb2d4 !important;
+    color: var(--schedule-muted) !important;
 }
 
 .schedule-create .form-control-dark {
-    background: #081227;
-    border: 1px solid #2c436a;
-    color: #ecf3ff;
+    background: var(--schedule-input-bg);
+    border: 1px solid var(--schedule-input-border);
+    color: var(--schedule-input-text);
+    border-radius: 10px;
 }
 
 .schedule-create .form-control-dark:focus {
-    background: #081227;
-    color: #ecf3ff;
-    border-color: #2bb8d6;
-    box-shadow: none;
+    background: var(--schedule-input-bg);
+    color: var(--schedule-input-text);
+    border-color: var(--schedule-focus);
+    box-shadow: 0 0 0 0.2rem rgba(14, 154, 184, 0.18);
+}
+
+.schedule-create .form-control-dark::placeholder {
+    color: #7c8ba1;
 }
 
 .schedule-info {
-    background: #081227;
-    border: 1px solid #223453;
+    background: var(--schedule-panel-bg);
+    border: 1px solid var(--schedule-border);
     border-radius: 12px;
     padding: 16px;
 }
@@ -121,5 +139,37 @@
     display: grid;
     gap: .45rem;
 }
+
+@media (max-width: 575.98px) {
+    .schedule-create .card-body {
+        padding: 1rem;
+    }
+
+    .schedule-create .btn {
+        width: 100%;
+    }
+
+    .schedule-create .col-12.d-flex {
+        flex-direction: column-reverse;
+        align-items: stretch !important;
+    }
+}
+
+.dark .schedule-create {
+    --schedule-bg: #0f1b34;
+    --schedule-border: #233454;
+    --schedule-text: #dbe7ff;
+    --schedule-muted: #9fb2d4;
+    --schedule-input-bg: #081227;
+    --schedule-input-text: #ecf3ff;
+    --schedule-input-border: #2c436a;
+    --schedule-focus: #2bb8d6;
+    --schedule-panel-bg: #081227;
+}
+
+.dark .schedule-create .form-control-dark::placeholder {
+    color: #6f89b0;
+}
 </style>
 @endsection
+

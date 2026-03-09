@@ -6,6 +6,7 @@ use App\Models\RtcSignal;
 use App\Models\Ticket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Events\WebRTCSignal;
 
 class WebRTCController extends Controller
 {
@@ -26,98 +27,124 @@ class WebRTCController extends Controller
             $data['request_mode'] ?? 'call'
         );
 
-        return response()->json(['ok' => true, 'id' => $signal->id]);
+        // broadcast opcional (no rompe polling)
+        broadcast(new WebRTCSignal([
+            'id'=>$signal->id,
+            'ticket_id'=>$data['ticket_id'],
+            'type'=>'offer',
+            'data'=>$data['offer'],
+            'user_id'=>auth()->id(),
+            'request_mode'=>$data['request_mode'] ?? 'call'
+        ]))->toOthers();
+
+        return response()->json(['ok'=>true,'id'=>$signal->id]);
     }
 
     public function answer(Request $r): JsonResponse
     {
         $data = $r->validate([
-            'ticket_id' => ['required', 'integer', 'exists:tickets,id'],
-            'answer' => ['required', 'array'],
+            'ticket_id'=>['required','integer','exists:tickets,id'],
+            'answer'=>['required','array'],
         ]);
 
-        $this->authorizeTicket((int) $data['ticket_id']);
+        $this->authorizeTicket((int)$data['ticket_id']);
 
         $signal = $this->storeSignal(
-            (int) $data['ticket_id'],
+            (int)$data['ticket_id'],
             'answer',
             $data['answer']
         );
 
-        return response()->json(['ok' => true, 'id' => $signal->id]);
+        broadcast(new WebRTCSignal([
+            'id'=>$signal->id,
+            'ticket_id'=>$data['ticket_id'],
+            'type'=>'answer',
+            'data'=>$data['answer'],
+            'user_id'=>auth()->id()
+        ]))->toOthers();
+
+        return response()->json(['ok'=>true,'id'=>$signal->id]);
     }
 
     public function ice(Request $r): JsonResponse
     {
-        $data = $r->validate([
-            'ticket_id' => ['required', 'integer', 'exists:tickets,id'],
-            'candidate' => ['required', 'array'],
+        $data=$r->validate([
+            'ticket_id'=>['required','integer','exists:tickets,id'],
+            'candidate'=>['required','array'],
         ]);
 
-        $this->authorizeTicket((int) $data['ticket_id']);
+        $this->authorizeTicket((int)$data['ticket_id']);
 
-        $signal = $this->storeSignal(
-            (int) $data['ticket_id'],
+        $signal=$this->storeSignal(
+            (int)$data['ticket_id'],
             'ice',
             $data['candidate']
         );
 
-        return response()->json(['ok' => true, 'id' => $signal->id]);
+        broadcast(new WebRTCSignal([
+            'id'=>$signal->id,
+            'ticket_id'=>$data['ticket_id'],
+            'type'=>'ice',
+            'data'=>$data['candidate'],
+            'user_id'=>auth()->id()
+        ]))->toOthers();
+
+        return response()->json(['ok'=>true,'id'=>$signal->id]);
     }
 
     public function poll(Request $r): JsonResponse
     {
-        $data = $r->validate([
-            'ticket_id' => ['required', 'integer', 'exists:tickets,id'],
-            'after_id' => ['nullable', 'integer', 'min:0'],
+        $data=$r->validate([
+            'ticket_id'=>['required','integer','exists:tickets,id'],
+            'after_id'=>['nullable','integer','min:0'],
         ]);
 
-        $ticketId = (int) $data['ticket_id'];
-        $afterId = (int) ($data['after_id'] ?? 0);
+        $ticketId=(int)$data['ticket_id'];
+        $afterId=(int)($data['after_id'] ?? 0);
 
         $this->authorizeTicket($ticketId);
 
-        $signals = RtcSignal::query()
-            ->where('ticket_id', $ticketId)
-            ->where('id', '>', $afterId)
-            ->where('sender_id', '!=', auth()->id())
+        $signals=RtcSignal::query()
+            ->where('ticket_id',$ticketId)
+            ->where('id','>',$afterId)
+            ->where('sender_id','!=',auth()->id())
             ->orderBy('id')
             ->limit(60)
-            ->get(['id', 'type', 'payload', 'sender_id', 'request_mode', 'created_at']);
+            ->get(['id','type','payload','sender_id','request_mode','created_at']);
 
         return response()->json([
-            'ok' => true,
-            'signals' => $signals->map(fn (RtcSignal $signal) => [
-                'id' => $signal->id,
-                'type' => $signal->type,
-                'data' => $signal->payload,
-                'user_id' => $signal->sender_id,
-                'request_mode' => $signal->request_mode,
-                'created_at' => $signal->created_at?->toISOString(),
-            ])->values(),
+            'ok'=>true,
+            'signals'=>$signals->map(fn($s)=>[
+                'id'=>$s->id,
+                'type'=>$s->type,
+                'data'=>$s->payload,
+                'user_id'=>$s->sender_id,
+                'request_mode'=>$s->request_mode,
+                'created_at'=>$s->created_at?->toISOString()
+            ])
         ]);
     }
 
-    private function storeSignal(int $ticketId, string $type, array $payload, ?string $requestMode = null): RtcSignal
+    private function storeSignal(int $ticketId,string $type,array $payload,?string $requestMode=null):RtcSignal
     {
         return RtcSignal::create([
-            'ticket_id' => $ticketId,
-            'sender_id' => auth()->id(),
-            'type' => $type,
-            'payload' => $payload,
-            'request_mode' => $requestMode,
+            'ticket_id'=>$ticketId,
+            'sender_id'=>auth()->id(),
+            'type'=>$type,
+            'payload'=>$payload,
+            'request_mode'=>$requestMode
         ]);
     }
 
-    private function authorizeTicket(int $ticketId): void
+    private function authorizeTicket(int $ticketId):void
     {
-        $ticket = Ticket::findOrFail($ticketId);
-        $user = auth()->user();
+        $ticket=Ticket::findOrFail($ticketId);
+        $user=auth()->user();
 
-        $isOwner = (int) $ticket->user_id === (int) $user->id;
-        $isTechnician = (int) $ticket->technician_id === (int) $user->id;
-        $isAdmin = $user->role?->name === 'admin';
+        $isOwner=(int)$ticket->user_id === (int)$user->id;
+        $isTechnician=(int)$ticket->technician_id === (int)$user->id;
+        $isAdmin=$user->role?->name === 'admin';
 
-        abort_unless($isOwner || $isTechnician || $isAdmin, 403);
+        abort_unless($isOwner || $isTechnician || $isAdmin,403);
     }
 }

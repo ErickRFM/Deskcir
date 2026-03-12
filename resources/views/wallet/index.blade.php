@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Billetera Deskcir')
 
@@ -31,7 +31,7 @@
             </div>
             <a href="{{ route('checkout.index') }}" class="btn btn-outline-light d-flex align-items-center gap-1">
                 <span class="material-symbols-outlined">shopping_cart_checkout</span>
-                Ir a checkout
+                Ir a compra
             </a>
         </div>
     </div>
@@ -119,8 +119,8 @@
                             <input name="exp_year" type="number" min="2024" max="2100" class="form-control form-control-sm">
                         </div>
                         <div class="col-12 form-check ms-1">
-                            <input class="form-check-input" type="checkbox" value="1" name="is_default" id="newCardDefault">
-                            <label class="form-check-label small" for="newCardDefault">Tarjeta predeterminada</label>
+                            <input class="form-check-input" type="checkbox" value="1" name="is_default" id="newCardPredeterminada">
+                            <label class="form-check-label small" for="newCardPredeterminada">Tarjeta predeterminada</label>
                         </div>
                         <div class="col-12 d-grid">
                             <button class="btn btn-deskcir btn-sm">Guardar tarjeta</button>
@@ -132,11 +132,11 @@
                             <div class="d-flex align-items-center justify-content-between mb-2">
                                 <div>
                                     <strong>{{ $card->alias ?: ($card->brand . ' ' . $card->last4) }}</strong>
-                                    <div class="small text-muted">{{ $card->brand }} •••• {{ $card->last4 }}</div>
+                                    <div class="small text-muted">{{ $card->brand }} **** {{ $card->last4 }}</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
                                     @if($card->is_default)
-                                        <span class="badge text-bg-info">Default</span>
+                                        <span class="badge text-bg-info">Predeterminada</span>
                                     @endif
                                     <form method="POST" action="{{ route('cards.delete', $card->id) }}" onsubmit="return confirm('Eliminar tarjeta?')">
                                         @csrf
@@ -226,3 +226,5 @@
     </div>
 </div>
 @endsection
+
+

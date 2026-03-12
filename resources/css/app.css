@@ -3411,3 +3411,447 @@ body {
         justify-content: center;
     }
 }
+
+/* ========================= */
+/* ADMIN DASHBOARD           */
+/* ========================= */
+.admin-dashboard-page {
+    --admin-soft: #f6fbfd;
+    --admin-border: #d9e7ef;
+    --admin-text-soft: #617b90;
+}
+
+.admin-dashboard-hero {
+    border-radius: 24px;
+    padding: 1.2rem 1.3rem;
+}
+
+.admin-dashboard-hero__btn {
+    min-width: 140px;
+}
+
+.admin-stat-card,
+.admin-action-card,
+.admin-reports-card {
+    border-radius: 22px !important;
+}
+
+.admin-stat-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: .75rem;
+}
+
+.admin-stat-card__icon,
+.admin-action-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: inline-grid;
+    place-items: center;
+    background: #eef8fc;
+    color: #123a52;
+}
+
+.admin-action-card__icon {
+    margin-bottom: .9rem;
+}
+
+.admin-stat-card__icon.is-success {
+    background: #edf9f2;
+    color: #127a4a;
+}
+
+.admin-stat-card__icon.is-info {
+    background: #eef7ff;
+    color: #0e6db5;
+}
+
+.admin-stat-card__icon.is-primary {
+    background: #eef8fc;
+    color: #00798e;
+}
+
+.admin-stat-card__icon.is-danger {
+    background: #fff1f1;
+    color: #d33c3c;
+}
+
+.admin-report-shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+}
+
+.admin-report-shortcut {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 110px;
+    padding: .65rem .85rem;
+    border-radius: 999px;
+    border: 1px solid var(--admin-border);
+    background: #fff;
+    color: #123a52;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.admin-report-shortcut:hover {
+    background: #eef8fc;
+    color: #00798e;
+}
+
+.admin-mini-metrics {
+    display: grid;
+    gap: .8rem;
+}
+
+.admin-mini-metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--admin-border);
+    background: var(--admin-soft);
+    border-radius: 16px;
+    padding: .85rem .95rem;
+}
+
+.admin-mini-metric span {
+    color: var(--admin-text-soft);
+}
+
+.admin-mini-metric strong {
+    color: #112b40;
+    font-size: 1.05rem;
+}
+
+.admin-trend-list,
+.admin-list-stack {
+    display: grid;
+    gap: .75rem;
+}
+
+.admin-trend-item,
+.admin-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .9rem;
+    border: 1px solid var(--admin-border);
+    border-radius: 16px;
+    background: #fff;
+    color: #16374d;
+    padding: .85rem .95rem;
+    text-decoration: none;
+}
+
+.admin-list-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(9, 35, 52, 0.08);
+}
+
+.admin-trend-item span,
+.admin-list-item span {
+    color: var(--admin-text-soft);
+    display: block;
+}
+
+.admin-list-item strong,
+.admin-trend-item strong {
+    color: #102b40;
+}
+
+.admin-list-item__metric {
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.admin-list-item.is-static,
+.admin-trend-item.is-empty {
+    background: var(--admin-soft);
+}
+
+.dark .admin-report-shortcut,
+.dark .admin-mini-metric,
+.dark .admin-trend-item,
+.dark .admin-list-item,
+.dark .admin-stat-card__icon,
+.dark .admin-action-card__icon {
+    background: #111f33;
+    border-color: #274059;
+    color: #e6f2ff;
+}
+
+.dark .admin-mini-metric span,
+.dark .admin-trend-item span,
+.dark .admin-list-item span {
+    color: #9fb8cd;
+}
+
+.dark .admin-mini-metric strong,
+.dark .admin-list-item strong,
+.dark .admin-trend-item strong,
+.dark .admin-list-item__metric {
+    color: #eef8ff;
+}
+
+.dark .admin-report-shortcut:hover,
+.dark .admin-list-item:hover {
+    background: #143047;
+    color: #7be2ef;
+}
+
+@media (max-width: 991.98px) {
+    .admin-dashboard-hero__btn {
+        flex: 1 1 180px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-trend-item,
+    .admin-list-item,
+    .admin-mini-metric {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-report-shortcut {
+        width: 100%;
+    }
+}
+
+/* ========================= */
+/* GLOBAL RESPONSIVE POLISH  */
+/* ========================= */
+.alert {
+    border-radius: 16px;
+}
+
+.form-control,
+.form-select,
+textarea {
+    border-radius: 14px;
+}
+
+.table-responsive {
+    border-radius: 18px;
+}
+
+@media (max-width: 991.98px) {
+    .app-shell {
+        padding-left: .4rem;
+        padding-right: .4rem;
+    }
+
+    .nav-main-links {
+        padding-top: .5rem;
+        align-items: stretch !important;
+    }
+
+    .nav-main-links .nav-item,
+    .nav-main-links .btn,
+    .nav-main-links .nav-link {
+        width: 100%;
+    }
+
+    .nav-main-links .nav-link,
+    .nav-main-links .btn {
+        justify-content: center;
+    }
+
+    .dropdown-menu {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .app-shell {
+        padding-top: .85rem !important;
+        padding-left: .15rem;
+        padding-right: .15rem;
+    }
+
+    .deskcir-ai {
+        right: 10px;
+        left: 10px;
+        bottom: 88px;
+    }
+
+    .deskcir-ai__panel {
+        width: calc(100vw - 20px);
+        max-height: calc(100dvh - 108px);
+        border-radius: 20px;
+    }
+
+    .deskcir-ai__header {
+        padding: 1rem 1rem .75rem;
+        align-items: flex-start;
+    }
+
+    .deskcir-ai__header-actions {
+        flex-shrink: 0;
+    }
+
+    .deskcir-ai__expand,
+    .deskcir-ai__close {
+        width: 44px;
+        height: 44px;
+    }
+
+    .deskcir-ai__quick {
+        padding: .8rem 1rem 0;
+        gap: .5rem;
+    }
+
+    .deskcir-ai__chip {
+        flex: 1 1 calc(50% - .5rem);
+        justify-content: center;
+        min-height: 44px;
+        padding: .7rem .8rem;
+    }
+
+    .deskcir-ai__messages {
+        min-height: 150px;
+        max-height: 34vh;
+        padding: .85rem 1rem;
+    }
+
+    .deskcir-ai__message {
+        padding: .85rem;
+    }
+
+    .deskcir-ai__form {
+        padding: .9rem 1rem 1rem;
+    }
+
+    .deskcir-ai__input {
+        min-height: 96px;
+        max-height: 22vh;
+        font-size: 1rem;
+        padding: .9rem 1rem;
+    }
+
+    .deskcir-ai__hint {
+        font-size: .9rem;
+        line-height: 1.45;
+    }
+
+    .deskcir-ai__send {
+        min-height: 48px;
+    }
+
+    .cart-fab {
+        bottom: 136px;
+    }
+
+    .card,
+    .deskcir-ai-page__chat,
+    .deskcir-ai-side,
+    .support-entry-page .card,
+    .cart-page .card {
+        border-radius: 18px !important;
+    }
+
+    .table thead th,
+    .cart-table thead th,
+    .ticket-workspace .table thead th {
+        font-size: .72rem;
+    }
+
+    .table tbody td,
+    .cart-table tbody td,
+    .ticket-workspace .table tbody td {
+        padding-top: .85rem;
+        padding-bottom: .85rem;
+        font-size: .95rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .deskcir-ai__trigger {
+        width: auto;
+        min-height: 50px;
+        padding: .8rem 1rem;
+        border-radius: 18px;
+    }
+
+    .deskcir-ai__trigger span:last-child {
+        font-size: .95rem;
+    }
+
+    .deskcir-ai__messages {
+        max-height: 28vh;
+    }
+
+    .deskcir-ai__quick {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .deskcir-ai__chip:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+
+    .deskcir-ai__header > div:first-child {
+        min-width: 0;
+    }
+
+    .deskcir-ai__title {
+        font-size: 1.15rem;
+        line-height: 1.2;
+    }
+
+    .deskcir-ai__subtext {
+        font-size: .92rem;
+        line-height: 1.45;
+    }
+
+    .deskcir-ai__label {
+        font-size: .95rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .login-card,
+    .wallet-card,
+    .admin-stat-card,
+    .admin-action-card,
+    .support-choice-card,
+    .support-entry-card,
+    .deskcir-ai-page__chat,
+    .deskcir-ai-side,
+    .card {
+        border-radius: 18px !important;
+    }
+
+    .login-card {
+        width: min(100%, 420px);
+        padding: 1.35rem;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table {
+        min-width: 640px;
+    }
+
+    .wallet-hero,
+    .admin-dashboard-hero,
+    .store-hero,
+    .support-hero,
+    .deskcir-ai-page__hero {
+        border-radius: 22px !important;
+        padding: 1.25rem !important;
+    }
+
+    .btn,
+    .nav-link,
+    .dropdown-item {
+        min-height: 44px;
+    }
+}

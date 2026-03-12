@@ -417,7 +417,7 @@
 
         if (getActiveThreadId() === threadId) {
             setActiveThreadId(nextThreads[0].id);
-            conversation = nextThreads[0].messages?.length ? nextThreads[0].messages.slice(-12) : [seedMessage];
+            conversation = nextThreads[0].messages.length ? nextThreads[0].messages.slice(-12) : [seedMessage];
             currentThreadPill.textContent = nextThreads[0].title || 'Chat actual';
             renderConversation();
         }
@@ -566,3 +566,4 @@
 })();
 </script>
 @endpush
+

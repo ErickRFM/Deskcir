@@ -1,6 +1,6 @@
 <h2>Informe de Servicio</h2>
 
-<p><strong>Diagn?stico:</strong></p>
+<p><strong>Diagnostico:</strong></p>
 <p>{{ $ticket->report->diagnosis }}</p>
 
 <p><strong>Acciones realizadas:</strong></p>

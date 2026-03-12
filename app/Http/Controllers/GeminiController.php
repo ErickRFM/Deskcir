@@ -10,13 +10,6 @@ class GeminiController extends Controller
 {
     public function preguntar(Request $request)
     {
-        if (! $request->user()) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Necesitas iniciar sesion para usar el asistente.',
-            ], 401);
-        }
-
         $validated = $request->validate([
             'mensaje' => ['required', 'string', 'max:4000'],
             'contexto' => ['nullable', 'string', 'max:1000'],
@@ -25,13 +18,13 @@ class GeminiController extends Controller
             'historial.*.text' => ['required_with:historial', 'string', 'max:4000'],
         ]);
 
-        $apiKey = config('services.gemini.api_key');
+        $apiKey = $this->resolveGeminiApiKey();
         $model = config('services.gemini.model', 'gemini-2.5-flash');
         $timeout = max((int) config('services.gemini.timeout', 20), 1);
 
         if (blank($apiKey)) {
             throw ValidationException::withMessages([
-                'mensaje' => 'Gemini no esta configurado todavia en este entorno.',
+                'mensaje' => 'Gemini no esta configurado todavia en este entorno. En produccion configura GEMINI_API_KEY en Render y reinicia el servicio.',
             ]);
         }
 
@@ -112,5 +105,29 @@ class GeminiController extends Controller
             'message' => $text ?: 'No llego contenido util desde Gemini.',
         ]);
     }
-}
 
+    private function resolveGeminiApiKey(): ?string
+    {
+        $candidates = [
+            config('services.gemini.api_key'),
+            env('GEMINI_API_KEY'),
+            env('GOOGLE_API_KEY'),
+            getenv('GEMINI_API_KEY') ?: null,
+            getenv('GOOGLE_API_KEY') ?: null,
+            $_ENV['GEMINI_API_KEY'] ?? null,
+            $_ENV['GOOGLE_API_KEY'] ?? null,
+            $_SERVER['GEMINI_API_KEY'] ?? null,
+            $_SERVER['GOOGLE_API_KEY'] ?? null,
+        ];
+
+        foreach ($candidates as $candidate) {
+            $candidate = is_string($candidate) ? trim($candidate) : null;
+
+            if (filled($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+}

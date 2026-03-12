@@ -10,9 +10,9 @@
 
         <div class="d-flex gap-3">
 
-            {{-- BOT?N REGRESAR --}}
+            {{-- BOTON REGRESAR --}}
             <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-                ? Regresar
+                Regresar
             </a>
 
         </div>
@@ -41,7 +41,7 @@
                     <input name="name"
                            class="form-control"
                            value="{{ $user->name }}"
-                           placeholder="Ej: Juan P?rez">
+                           placeholder="Ej: Juan Perez">
 
                 </div>
 
@@ -65,13 +65,13 @@
                 <div class="col-md-6">
 
                     <label class="form-label fw-semibold">
-                        Contrase?a
+                        Contrasena
                     </label>
 
                     <input name="password"
                            type="password"
                            class="form-control"
-                           placeholder="Nueva contrase?a (opcional)">
+                           placeholder="Nueva contrasena (opcional)">
 
                 </div>
 
@@ -101,7 +101,7 @@
             </div>
 
 
-            {{-- BOT?N --}}
+            {{-- BOTON --}}
             <div class="mt-4 d-flex gap-3">
 
                 <button class="btn btn-deskcir px-4 py-2">
@@ -118,3 +118,4 @@
 
 </div>
 @endsection
+

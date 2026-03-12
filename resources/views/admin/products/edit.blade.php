@@ -10,7 +10,7 @@
 <h3>Editar producto</h3>
 
 <button onclick="history.back()" class="btn btn-outline-deskcir py-2">
-? Regresar
+Regresar
 </button>
 </div>
 
@@ -25,7 +25,7 @@
 @endif
 
 
-{{-- ?? FORM PRINCIPAL --}}
+{{-- FORM PRINCIPAL --}}
 <form method="POST"
 action="{{ route('admin.products.update',$product->id) }}"
 enctype="multipart/form-data"
@@ -42,9 +42,9 @@ class="form-control input-pro"
 value="{{ old('name',$product->name) }}">
 </div>
 
-{{-- DESCRIPCI?N --}}
+{{-- DESCRIPCION --}}
 <div class="mb-3">
-<label class="form-label">Descripci?n</label>
+<label class="form-label">Descripcion</label>
 <textarea name="description"
 class="form-control input-pro">{{ old('description',$product->description) }}</textarea>
 </div>
@@ -72,13 +72,13 @@ value="{{ old('stock',$product->stock) }}">
 </div>
 
 
-{{-- CATEGOR?A --}}
+{{-- CATEGORIA --}}
 <div class="mb-4">
-<label>Categor?a</label>
+<label>Categoria</label>
 
 <select name="category_id" class="form-select input-pro">
 
-<option value="">Selecciona categor?a</option>
+<option value="">Selecciona categoria</option>
 
 @foreach($categories as $cat)
 
@@ -95,11 +95,11 @@ value="{{ old('stock',$product->stock) }}">
 </div>
 
 
-{{-- ?? IM?GENES ACTUALES (SIN FORM ANIDADO) --}}
+{{-- IMAGENES ACTUALES (SIN FORM ANIDADO) --}}
 <div class="mb-4">
 
 <label class="form-label fw-bold mb-2">
-Im?genes actuales
+Imagenes actuales
 </label>
 
 <div class="d-flex flex-wrap gap-3">
@@ -115,9 +115,7 @@ class="rounded border shadow-sm">
 <button type="button"
 onclick="eliminarImagen({{ $img->id }})"
 class="btn btn-danger btn-sm position-absolute"
-style="top:-8px;right:-8px;border-radius:50%">
-?
-</button>
+style="top:-8px;right:-8px;border-radius:50%"><span aria-hidden="true">&times;</span></button>
 
 </div>
 
@@ -125,7 +123,7 @@ style="top:-8px;right:-8px;border-radius:50%">
 
 @if($product->images->isEmpty())
 <p class="text-muted">
-Este producto no tiene im?genes
+Este producto no tiene imagenes
 </p>
 @endif
 
@@ -137,7 +135,7 @@ Este producto no tiene im?genes
 <div class="mb-4">
 
 <label class="form-label fw-bold">
-Agregar m?s im?genes
+Agregar mas imagenes
 </label>
 
 <input type="file"
@@ -169,7 +167,7 @@ Guardar cambios
 </div>
 
 
-{{-- ?? SCRIPTS --}}
+{{-- SCRIPTS --}}
 <script>
 function eliminarImagen(id){
 
@@ -207,6 +205,8 @@ previewContainer.appendChild(img)
 </script>
 
 @endsection
+
+
 
 
 

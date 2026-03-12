@@ -1,10 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 
 <style>
-
 body{
 font-family: DejaVu Sans, sans-serif;
 font-size:12px;
@@ -48,98 +47,60 @@ margin:5px;
 border:1px solid #ccc;
 padding:3px;
 }
-
 </style>
-
 </head>
-
 <body>
 
-<h1>Checklist Técnico</h1>
+<h1>Checklist Tecnico</h1>
 
 <div class="section">
 <strong>Ticket:</strong> #{{ $ticket->id }} <br>
 <strong>Cliente:</strong> {{ $ticket->user->name ?? 'Cliente' }}
 </div>
 
-
-{{-- DIAGNOSTICO --}}
 <div class="section">
-
-<div class="title">Diagn?stico realizado</div>
-
+<div class="title">Diagnostico realizado</div>
 <div class="box">
-{{ $checklist->diagnostico_notes ?? 'Sin informaci?n' }}
+{{ $checklist->diagnostico_notes ?? 'Sin informacion' }}
+</div>
 </div>
 
-</div>
-
-
-{{-- REPARACION --}}
 <div class="section">
-
-<div class="title">Reparaci?n aplicada</div>
-
+<div class="title">Reparacion aplicada</div>
 <div class="box">
-{{ $checklist->reparacion_notes ?? 'Sin informaci?n' }}
+{{ $checklist->reparacion_notes ?? 'Sin informacion' }}
+</div>
 </div>
 
-</div>
-
-
-{{-- PRUEBAS --}}
 <div class="section">
-
 <div class="title">Pruebas finales</div>
-
 <div class="box">
-{{ $checklist->pruebas_notes ?? 'Sin informaci?n' }}
+{{ $checklist->pruebas_notes ?? 'Sin informacion' }}
+</div>
 </div>
 
-</div>
-
-
-{{-- ERRORES --}}
+@if(!empty($checklist->errores))
 <div class="section">
-
-<div class="title">Errores detectados</div>
-
-<div class="box">
-{{ $checklist->errores ?? 'Sin informaci?n' }}
+<div class="title">Errores encontrados</div>
+<div class="box">{{ $checklist->errores }}</div>
 </div>
+@endif
 
-</div>
-
-
-{{-- OBSERVACIONES --}}
+@if(!empty($checklist->observaciones))
 <div class="section">
-
-<div class="title">Observaciones técnicas</div>
-
-<div class="box">
-{{ $checklist->observaciones ?? 'Sin informaci?n' }}
+<div class="title">Observaciones</div>
+<div class="box">{{ $checklist->observaciones }}</div>
 </div>
+@endif
 
-</div>
-
-
-{{-- FOTOS --}}
-@if($checklist && $checklist->photos && $checklist->photos->count())
-
+@if($ticket->images && count($ticket->images))
 <div class="section">
-
-<div class="title">Fotos del servicio</div>
-
-@foreach($checklist->photos as $foto)
-
-<img src="{{ public_path('storage/'.$foto->path) }}">
-
+<div class="title">Imagenes</div>
+@foreach($ticket->images as $img)
+    <img src="{{ public_path('storage/'.$img->path) }}" alt="imagen">
 @endforeach
-
 </div>
-
 @endif
 
 </body>
 </html>
-

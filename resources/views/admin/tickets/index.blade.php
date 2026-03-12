@@ -3,27 +3,18 @@
 @section('content')
 
 <div class="container py-4">
-
-    {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h3 class="mb-3">Tickets de Soporte</h3>
 
         <div class="d-flex gap-3">
-
-            {{-- BOT?N REGRESAR --}}
            <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-              ? Regresar
+              Regresar
           </a>
-        
         </div>
-
-        
-
     </div>
 
     <div class="table-responsive">
         <table class="table table-hover align-middle mt-3">
-
             <thead class="table-dark">
                 <tr>
                     <th>Usuario</th>
@@ -35,18 +26,10 @@
             </thead>
 
             <tbody>
-
             @forelse($tickets as $t)
             <tr>
-
-                <td class="py-3 fw-semibold">
-                    {{ $t->user->name }}
-                </td>
-
-                <td class="py-3">
-                    {{ $t->subject }}
-                </td>
-
+                <td class="py-3 fw-semibold">{{ $t->user->name }}</td>
+                <td class="py-3">{{ $t->subject }}</td>
                 <td class="py-3">
                     <span class="badge bg-{{
                         $t->priority=='alta' ? 'danger' :
@@ -55,7 +38,6 @@
                         {{ ucfirst($t->priority) }}
                     </span>
                 </td>
-
                 <td class="py-3">
                     <span class="badge bg-{{
                         $t->status=='cerrado' ? 'success' :
@@ -64,31 +46,22 @@
                         {{ ucfirst(str_replace('_',' ',$t->status)) }}
                     </span>
                 </td>
-
                 <td class="text-center py-3">
-                    <a href="{{ route('admin.tickets.show', $t->id) }}"
-                       class="btn btn-deskcir py-1">
+                    <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-deskcir py-1">
                         Gestionar
                     </a>
                 </td>
-
             </tr>
-
             @empty
-
             <tr>
                 <td colspan="5" class="text-center py-4 text-muted">
-                    No hay tickets registrados a?n
+                    No hay tickets registrados aun
                 </td>
             </tr>
-
             @endforelse
-
             </tbody>
-
         </table>
     </div>
-
 </div>
 
 @endsection

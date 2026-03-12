@@ -3,21 +3,17 @@
 @section('content')
 
 <div class="container py-4">
-
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Reportes Desckir</h3>
+    <h3>Reportes Deskcir</h3>
 
     <div class="d-flex gap-3">
-            {{-- BOT?N REGRESAR --}}
            <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
-           ? Regresar
+           Regresar
            </a>
     </div>
 </div>
 
-{{-- KPIS --}}
 <div class="row g-4 mt-3">
-
 <div class="col-md-3">
 <div class="card p-3">
 <h6>Ingresos</h6>
@@ -45,19 +41,15 @@
 <h3>{{ $entregados }}</h3>
 </div>
 </div>
-
 </div>
 
-{{-- GRAFICA --}}
 <div class="card p-3 mt-4">
-<h5>Ventas ?ltimos 30 d?as</h5>
-
+<h5>Ventas ultimos 30 dias</h5>
 <canvas id="ventas"></canvas>
 </div>
 
-{{-- TOP --}}
 <div class="card p-3 mt-4">
-<h5>M?s vendidos</h5>
+<h5>Mas vendidos</h5>
 
 @foreach($top as $p)
 <p>{{ $p->name }} - {{ $p->order_items_count }}</p>
@@ -76,41 +68,25 @@ PDF
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-
 new Chart(document.getElementById('ventas'),{
-
-type:'line',
-
-data:{
-
-labels:[
-
-@foreach($dias as $d)
-'{{$d->dia}}',
-@endforeach
-
-],
-
-datasets:[{
-
-label:'Ventas',
-
-data:[
-
-@foreach($dias as $d)
-{{$d->total}},
-@endforeach
-
-]
-
-}]
-
-}
-
+    type:'line',
+    data:{
+        labels:[
+            @foreach($dias as $d)
+            '{{ $d->dia }}',
+            @endforeach
+        ],
+        datasets:[{
+            label:'Ventas',
+            data:[
+                @foreach($dias as $d)
+                {{ $d->total }},
+                @endforeach
+            ]
+        }]
+    }
 })
-
 </script>
 
 @endsection

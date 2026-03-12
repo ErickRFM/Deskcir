@@ -11,7 +11,7 @@
     <h2 class="title">Crear cuenta</h2>
     <p class="subtitle">Unete a Deskcir</p>
 
-    @if(->any())
+    @if($errors->any())
         <div class="alert alert-danger">
             Revisa los datos del formulario
         </div>
@@ -19,13 +19,13 @@
 
     <form method="POST" action="{{ route('register', [], false) }}">
         @csrf
-        <input type="hidden" name="redirect_to" value="{{ old('redirect_to',  ?? request('redirect_to')) }}">
+        <input type="hidden" name="redirect_to" value="{{ old('redirect_to', $redirectTo ?? request('redirect_to')) }}">
 
         <div class="mb-3">
             <label for="name" class="form-label">Nombre</label>
             <input id="name" type="text" name="name" value="{{ old('name') }}" class="form-control input-pro" placeholder="Tu nombre" autocomplete="name" required>
             @error('name')
-            <small class="text-danger fw-bold">{{  }}</small>
+            <small class="text-danger fw-bold">{{ $message }}</small>
             @enderror
         </div>
 
@@ -33,7 +33,7 @@
             <label for="email" class="form-label">Correo electronico</label>
             <input id="email" type="email" name="email" value="{{ old('email') }}" class="form-control input-pro" placeholder="tu@email.com" autocomplete="email" required>
             @error('email')
-            <small class="text-danger fw-bold">{{  }}</small>
+            <small class="text-danger fw-bold">{{ $message }}</small>
             @enderror
         </div>
 
@@ -41,7 +41,7 @@
             <label for="password" class="form-label">Contrasena</label>
             <input id="password" type="password" name="password" class="form-control input-pro" placeholder="Crea una contrasena" autocomplete="new-password" required>
             @error('password')
-            <small class="text-danger fw-bold">{{  }}</small>
+            <small class="text-danger fw-bold">{{ $message }}</small>
             @enderror
         </div>
 
@@ -58,7 +58,7 @@
                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
             </select>
             @error('role')
-            <small class="text-danger fw-bold">{{  }}</small>
+            <small class="text-danger fw-bold">{{ $message }}</small>
             @enderror
         </div>
 

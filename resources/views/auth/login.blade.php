@@ -11,7 +11,7 @@
     <h2 class="title">Bienvenido a Deskcir</h2>
     <p class="subtitle">Accede para continuar</p>
 
-    @if(->any())
+    @if($errors->any())
         <div class="alert alert-danger">
             Credenciales incorrectas
         </div>
@@ -19,7 +19,7 @@
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
-        <input type="hidden" name="redirect_to" value="{{ old('redirect_to',  ?? request('redirect_to')) }}">
+        <input type="hidden" name="redirect_to" value="{{ old('redirect_to', $redirectTo ?? request('redirect_to')) }}">
 
         <div class="mb-3">
             <label class="form-label">Correo electronico</label>
@@ -33,7 +33,7 @@
                 required>
 
             @error('email')
-            <small class="text-danger fw-bold">{{  }}</small>
+            <small class="text-danger fw-bold">{{ $message }}</small>
             @enderror
         </div>
 
@@ -48,7 +48,7 @@
                 required>
 
             @error('password')
-            <small class="text-danger fw-bold">{{  }}</small>
+            <small class="text-danger fw-bold">{{ $message }}</small>
             @enderror
         </div>
 

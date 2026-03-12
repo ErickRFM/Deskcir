@@ -28,6 +28,22 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        RateLimiter::for('gemini', function (Request $request) {
+            $maxAttempts = max((int) env('GEMINI_RATE_LIMIT_PER_MINUTE', 6), 1);
+            $key = $request->user()?->id
+                ? 'gemini:user:'.$request->user()->id
+                : 'gemini:ip:'.$request->ip();
+
+            return Limit::perMinute($maxAttempts)
+                ->by($key)
+                ->response(function () {
+                    return response()->json([
+                        'ok' => false,
+                        'message' => 'Has llegado al limite temporal del asistente. Intenta de nuevo en un minuto.',
+                    ], 429);
+                });
+        });
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')

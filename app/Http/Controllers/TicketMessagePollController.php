@@ -21,7 +21,6 @@ class TicketMessagePollController extends Controller
 
         abort_unless($isOwner || $isTechnician || $isAdmin, 403);
 
-        // Al abrir/pollear el chat, marcar como vistos los mensajes del otro lado.
         $ticket->messages()
             ->where('user_id', '!=', $user->id)
             ->whereNull('seen_at')
@@ -41,7 +40,7 @@ class TicketMessagePollController extends Controller
                     'user_id' => $m->user_id,
                     'user_name' => $m->user?->name ?? 'Usuario',
                     'message' => (string) $m->message,
-                    'file_url' => $m->file ? asset('storage/' . $m->file) : null,
+                    'file_url' => $m->file_url,
                     'time' => $m->created_at?->format('H:i'),
                     'is_me' => (int) $m->user_id === (int) $user->id,
                     'seen' => !is_null($m->seen_at),

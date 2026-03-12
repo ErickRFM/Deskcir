@@ -108,7 +108,7 @@ Im?genes actuales
 
 <div class="position-relative">
 
-<img src="{{ asset('storage/'.$img->path) }}"
+<img src="{{ $img->url }}"
 style="width:140px;height:140px;object-fit:cover"
 class="rounded border shadow-sm">
 
@@ -207,4 +207,7 @@ previewContainer.appendChild(img)
 </script>
 
 @endsection
+
+
+
 

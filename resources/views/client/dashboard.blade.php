@@ -1,10 +1,8 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title','Cliente | Deskcir')
 
 @section('content')
-
-{{-- ?? MENSAJE DE ?XITO --}}
 @if(session('success'))
 <div class="alert alert-success">
     {{ session('success') }}
@@ -13,24 +11,30 @@
 
 <div class="mb-4">
     <h2 class="fw-bold mb-1 text-dark dark:text-white">
-        Hola, {{ auth()->user()->name }} 
+        Hola, {{ auth()->user()->name }}
     </h2>
     <p class="text-muted">
-        Gestiona tus servicios, soporte y compras desde aqu?
+        Gestiona tus servicios, soporte y compras desde aqui.
     </p>
 </div>
 
-{{-- GRID PRINCIPAL --}}
-<div class="row g-4">
+<div class="deskcir-ai-inline-banner mb-4">
+    <div>
+        <p class="deskcir-ai__eyebrow mb-1">Deskcir AI</p>
+        <h3 class="mb-1">Asistencia rapida desde tu panel</h3>
+        <p class="mb-0">Pide ayuda para diagnosticar fallas, redactar mensajes o decidir si conviene soporte presencial.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{{ route('deskcir.ai') }}" class="btn btn-light">Abrir Deskcir AI</a>
+        <a href="/support/create?mode=presencial" class="btn btn-outline-light">Solicitar presencial</a>
+    </div>
+</div>
 
-    {{-- PERFIL --}}
+<div class="row g-4">
     <div class="col-lg-4">
         <div class="card h-100">
             <div class="card-body text-center d-flex flex-column justify-content-center">
-
-                {{-- AVATAR --}}
                 <div class="mb-3 position-relative">
-
                     <img 
                         src="{{ auth()->user()->avatar 
                             ? asset('storage/'.auth()->user()->avatar).'?v='.time()
@@ -38,7 +42,6 @@
                         class="rounded-circle shadow avatar-user"
                     >
 
-                    {{-- BOT?N CAMBIAR FOTO --}}
                     <form method="POST"
                         action="{{ route('profile.avatar') }}"
                         enctype="multipart/form-data">
@@ -52,10 +55,8 @@
                                 onchange="this.form.submit()">
                         </label>
                     </form>
-
                 </div>
 
-                {{-- INFO --}}
                 <div class="mb-3">
                     <h5 class="fw-bold mb-0 text-dark dark:text-white">
                         {{ auth()->user()->name }}
@@ -66,28 +67,23 @@
                     </p>
                 </div>
 
-                {{-- BOT?N --}}
                 <div class="mt-3 px-3">
                     <a href="/profile" class="btn btn-client w-100 py-2">
                         Editar perfil
                     </a>
                 </div>
-
             </div>
         </div>
     </div>
 
-    {{-- ACCIONES --}}
     <div class="col-lg-8">
         <div class="row g-4">
-
-            {{-- TIENDA --}}
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">Tienda</h5>
                         <p class="text-muted mb-3">
-                            Compra productos tecnol?gicos
+                            Compra productos tecnologicos
                         </p>
                         <a href="/store" class="btn btn-client">
                             Ir a tienda
@@ -96,13 +92,12 @@
                 </div>
             </div>
 
-            {{-- SOPORTE --}}
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">Soporte</h5>
                         <p class="text-muted mb-3">
-                            Reporta fallas y chatea con técnicos
+                            Reporta fallas y chatea con tecnicos
                         </p>
                         <a href="/support" class="btn btn-client">
                             Solicitar soporte
@@ -111,7 +106,34 @@
                 </div>
             </div>
 
-            {{-- HISTORIAL --}}
+            <div class="col-md-6">
+                <div class="card card-action h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">Deskcir AI</h5>
+                        <p class="text-muted mb-3">
+                            Diagnosticos iniciales y ayuda para redactar respuestas
+                        </p>
+                        <a href="{{ route('deskcir.ai') }}" class="btn btn-client-outline">
+                            Abrir asistente
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card card-action h-100">
+                    <div class="card-body">
+                        <h5 class="fw-bold mb-1">Soporte presencial</h5>
+                        <p class="text-muted mb-3">
+                            Registra una visita o recepcion de equipo
+                        </p>
+                        <a href="/support/create?mode=presencial" class="btn btn-client-outline">
+                            Registrar solicitud
+                        </a>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
@@ -126,16 +148,15 @@
                 </div>
             </div>
 
-            {{-- SEGURIDAD --}}
             <div class="col-md-6">
                 <div class="card card-action h-100">
                     <div class="card-body">
                         <h5 class="fw-bold mb-1">Seguridad</h5>
                         <p class="text-muted mb-3">
-                            Cambia tu contrase?a
+                            Cambia tu contrasena
                         </p>
                         <a href="/profile#password" class="btn btn-client-outline">
-                            Cambiar contrase?a
+                            Cambiar contrasena
                         </a>
                     </div>
                 </div>
@@ -147,4 +168,3 @@
 </div>
 
 @endsection
-

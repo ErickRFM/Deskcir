@@ -156,8 +156,8 @@ class="form-control">
             @foreach($checklist->photos as $photo)
                 <div class="col-6 col-md-3 col-lg-2">
                     <div class="checklist-photo-card">
-                        <a href="{{ asset('storage/'.$photo->path) }}" target="_blank" rel="noopener" class="d-block checklist-photo-thumb">
-                            <img src="{{ asset('storage/'.$photo->path) }}" alt="Foto servicio" class="img-fluid rounded">
+                        <a href="{{ $photo->url }}" target="_blank" rel="noopener" class="d-block checklist-photo-thumb">
+                            <img src="{{ $photo->url }}" alt="Foto servicio" class="img-fluid rounded">
                         </a>
 
                         <button type="button"
@@ -471,4 +471,8 @@ Limpiar todo
 }
 </style>
 @endsection
+
+
+
+
 

@@ -1,6 +1,13 @@
 <div class="ticket-chat card border-0 shadow-sm">
-    <div class="card-body p-0">
+    <div class="ticket-chat__toolbar">
+        <div>
+            <p class="ticket-chat__eyebrow mb-1">Conversacion del ticket</p>
+            <h6 class="ticket-chat__title mb-0">Seguimiento en tiempo real</h6>
+        </div>
+        <span class="ticket-chat__badge">{{ $ticket->messages->count() }} mensajes</span>
+    </div>
 
+    <div class="card-body p-0">
         <div class="ticket-chat__messages" id="chatBox-{{ $ticket->id }}" data-last-id="{{ optional($ticket->messages->last())->id ?? 0 }}">
             @forelse($ticket->messages as $m)
                 @php
@@ -16,8 +23,9 @@
 
                         <p class="ticket-chat__text mb-0">{{ $m->message }}</p>
 
-                        @if($m->file)
-                            <a href="{{ asset('storage/'.$m->file) }}" class="ticket-chat__file" target="_blank" rel="noopener">
+                        @if($m->file_url)
+                            <a href="{{ $m->file_url }}" class="ticket-chat__file" target="_blank" rel="noopener">
+                                <span class="material-symbols-outlined">attach_file</span>
                                 Ver archivo adjunto
                             </a>
                         @endif
@@ -46,22 +54,17 @@
                 <div class="ticket-chat__actions">
                     <label class="ticket-chat__attach" title="Adjuntar archivo">
                         <input type="file" name="file" hidden>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M16.5 6.5v9.75a4.25 4.25 0 1 1-8.5 0V5.75a2.75 2.75 0 1 1 5.5 0V15a1.25 1.25 0 1 1-2.5 0V7.5h-2V15a3.25 3.25 0 1 0 6.5 0V5.75a4.75 4.75 0 0 0-9.5 0v10.5a6.25 6.25 0 1 0 12.5 0V6.5h-2Z"/>
-                        </svg>
+                        <span class="material-symbols-outlined">upload_file</span>
                         Adjuntar
                     </label>
 
                     <button type="submit" class="ticket-chat__send">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="m3.4 20.4 17.5-7.5c.7-.3.7-1.3 0-1.6L3.4 3.8c-.7-.3-1.4.4-1.2 1.1l1.7 6.2c.1.4.5.7.9.7h7.2v1.5H4.8c-.4 0-.8.3-.9.7l-1.7 6.2c-.2.7.5 1.4 1.2 1.1Z"/>
-                        </svg>
+                        <span class="material-symbols-outlined">send</span>
                         Enviar
                     </button>
                 </div>
             </div>
         </form>
-
     </div>
 </div>
 
@@ -113,9 +116,9 @@
     function appendMessage(m) {
         const isMe = Number(m.user_id) === meId;
         const rowCls = isMe ? 'ticket-chat__row is-me' : 'ticket-chat__row is-them';
-        const fileHtml = m.file_url ? `<a href="${m.file_url}" class="ticket-chat__file" target="_blank" rel="noopener">Ver archivo adjunto</a>` : '';
+        const fileHtml = m.file_url ? `<a href="${m.file_url}" class="ticket-chat__file" target="_blank" rel="noopener"><span class="material-symbols-outlined">attach_file</span>Ver archivo adjunto</a>` : '';
         const statusHtml = isMe ? renderStatus(!!m.seen, m.id) : '';
-        const msgHtml = (m.message || '').replace(/\n/g, '<br>');
+        const msgHtml = escapeHtml(m.message || '').replace(/\n/g, '<br>');
 
         const html = `
             <div class="${rowCls}" data-message-id="${m.id}">
@@ -190,12 +193,48 @@
 </script>
 
 <style>
+.ticket-chat {
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.18) !important;
+}
+
+.ticket-chat__toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1rem .85rem;
+    border-bottom: 1px solid #e5edf5;
+    background: linear-gradient(135deg, #f8fbff, #eef8fc);
+}
+
+.ticket-chat__eyebrow {
+    font-size: .72rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #00798e;
+}
+
+.ticket-chat__title {
+    font-weight: 800;
+    color: #10263a;
+}
+
+.ticket-chat__badge {
+    border-radius: 999px;
+    padding: .35rem .7rem;
+    background: #dff4f8;
+    color: #0a6778;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
 .ticket-chat__messages {
     max-height: 58vh;
     overflow-y: auto;
     padding: 18px;
-    background: #f5f7fb;
-    border-radius: 14px 14px 0 0;
+    background: linear-gradient(180deg, #f5f8fc 0%, #eef4f7 100%);
 }
 
 .ticket-chat__row {
@@ -214,18 +253,21 @@
 .ticket-chat__bubble {
     max-width: 78%;
     padding: 12px 14px;
-    border-radius: 14px;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.06);
 }
 
 .ticket-chat__row.is-me .ticket-chat__bubble {
-    background: #00798e;
+    background: linear-gradient(135deg, #00798e, #0a93ac);
     color: #fff;
+    border-bottom-right-radius: 6px;
 }
 
 .ticket-chat__row.is-them .ticket-chat__bubble {
     background: #ffffff;
     color: #111827;
+    border: 1px solid #dde7ef;
+    border-bottom-left-radius: 6px;
 }
 
 .ticket-chat__meta {
@@ -244,11 +286,17 @@
 }
 
 .ticket-chat__file {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
     margin-top: 8px;
     font-size: 12px;
     color: inherit;
     text-decoration: underline;
+}
+
+.ticket-chat__file .material-symbols-outlined {
+    font-size: 16px;
 }
 
 .ticket-chat__status {
@@ -276,7 +324,6 @@
 .ticket-chat__form {
     border-top: 1px solid #e5e7eb;
     background: #fff;
-    border-radius: 0 0 14px 14px;
 }
 
 .ticket-chat__composer {
@@ -287,9 +334,9 @@
     width: 100%;
     min-height: 84px;
     resize: vertical;
-    border: 1px solid #d1d5db;
-    border-radius: 12px;
-    padding: 10px 12px;
+    border: 1px solid #d1dce5;
+    border-radius: 14px;
+    padding: 12px 14px;
 }
 
 .ticket-chat__actions {
@@ -300,48 +347,60 @@
     gap: 12px;
 }
 
+.ticket-chat__attach,
+.ticket-chat__send {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
 .ticket-chat__attach {
     font-size: 13px;
     color: #374151;
     border: 1px solid #d1d5db;
-    border-radius: 10px;
-    padding: 8px 10px;
+    padding: 8px 12px;
     cursor: pointer;
     background: #f9fafb;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
 }
 
 .ticket-chat__send {
     border: 0;
-    border-radius: 10px;
-    padding: 8px 16px;
+    padding: 10px 18px;
     background: #00798e;
     color: #fff;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+}
+
+.dark .ticket-chat__toolbar {
+    background: linear-gradient(135deg, #0f1a2e, #102038);
+    border-bottom-color: #223047;
+}
+
+.dark .ticket-chat__title,
+.dark .ticket-chat__badge {
+    color: #e8f2ff;
+}
+
+.dark .ticket-chat__badge {
+    background: rgba(0, 121, 142, 0.18);
 }
 
 .dark .ticket-chat__messages {
-    background: #0c1324;
+    background: linear-gradient(180deg, #0c1324 0%, #0b1729 100%);
 }
 
 .dark .ticket-chat__row.is-them .ticket-chat__bubble {
     background: #1b2336;
     color: #e5e7eb;
+    border-color: #263045;
 }
 
-.dark .ticket-chat__form {
-    border-top-color: #263045;
-    background: #0f172a;
-}
-
+.dark .ticket-chat__empty,
+.dark .ticket-chat__form,
 .dark .ticket-chat__composer textarea,
 .dark .ticket-chat__attach {
-    background: #0b1220;
+    background: #0f172a;
     border-color: #263045;
     color: #e5e7eb;
 }

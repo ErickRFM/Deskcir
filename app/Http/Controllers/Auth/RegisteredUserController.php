@@ -18,19 +18,13 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'redirectTo' => $this->sanitizeRedirect($request->query('redirect_to')),
+        ]);
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -38,13 +32,14 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string'],
+            'redirect_to' => ['nullable', 'string', 'max:500'],
         ]);
 
         $roleRaw = Str::lower(trim((string) $request->input('role')));
 
         $aliases = [
             'admin' => ['admin', 'administrador', '1'],
-            'technician' => ['technician', 'tecnico', 'técnico', '2'],
+            'technician' => ['technician', 'tecnico', '2'],
             'client' => ['client', 'cliente', '3'],
         ];
 
@@ -56,7 +51,7 @@ class RegisteredUserController extends Controller
             }
         }
 
-        if (!$canonicalRole) {
+        if (! $canonicalRole) {
             throw ValidationException::withMessages([
                 'role' => 'El rol seleccionado no es valido.',
             ]);
@@ -72,9 +67,24 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
-
         Auth::login($user);
 
+        $redirectTo = $this->sanitizeRedirect($request->input('redirect_to'));
+        if ($redirectTo) {
+            return redirect($redirectTo);
+        }
+
         return redirect(RouteServiceProvider::HOME);
+    }
+
+    private function sanitizeRedirect(?string $redirectTo): ?string
+    {
+        $redirectTo = trim((string) $redirectTo);
+
+        if ($redirectTo === '' || ! str_starts_with($redirectTo, '/')) {
+            return null;
+        }
+
+        return $redirectTo;
     }
 }

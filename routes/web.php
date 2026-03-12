@@ -22,7 +22,6 @@ use App\Http\Controllers\{
 
 use App\Http\Controllers\Auth\PasswordController;
 
-// ADMIN
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\{
     SalesController,
@@ -31,25 +30,17 @@ use App\Http\Controllers\Admin\{
     TicketController as AdminTicketController
 };
 
-// TECHNICIAN
 use App\Http\Controllers\Technician\{
     TechnicianController,
     TechnicianTicketController,
     TechnicianChecklistController
 };
 
-/*
-|--------------------------------------------------------------------------
-| LOGIN GOOGLE
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/auth/google', fn() =>
     Socialite::driver('google')->redirect()
 )->name('google.login');
 
 Route::get('/auth/google/callback', function () {
-
     $googleUser = Socialite::driver('google')->user();
     $clientRoleId = Role::query()->firstOrCreate(['name' => 'client'])->id;
 
@@ -73,47 +64,22 @@ Route::get('/auth/google/callback', function () {
     return redirect('/store');
 });
 
-/*
-|--------------------------------------------------------------------------
-| HOME
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/', fn() => redirect('/store'));
 
-/*
-|--------------------------------------------------------------------------
-| GEMINI IA
-|--------------------------------------------------------------------------
-*/
+Route::middleware(['throttle:gemini'])->group(function () {
+    Route::post('/gemini', [GeminiController::class, 'preguntar']);
+});
 
-Route::post('/gemini', [GeminiController::class, 'preguntar']);
+Route::view('/deskcir-ai', 'gemini')->name('deskcir.ai');
 Route::view('/gemini-test', 'gemini');
 
-/*
-|--------------------------------------------------------------------------
-| PRODUCTOS ADMIN
-|--------------------------------------------------------------------------
-*/
-
-/*
-|--------------------------------------------------------------------------
-| MERCADO PAGO
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware('auth')->group(function () {
+
     Route::post('/cards/save', [CardController::class, 'save'])->name('cards.save');
     Route::put('/cards/{id}', [CardController::class, 'update'])->name('cards.update');
     Route::delete('/cards/{id}', [CardController::class, 'delete'])->name('cards.delete');
     Route::delete('/cards', [CardController::class, 'clear'])->name('cards.clear');
 });
-
-/*
-|--------------------------------------------------------------------------
-| TIENDA
-|--------------------------------------------------------------------------
-*/
 
 Route::get('/store', [StoreController::class, 'index']);
 Route::get('/store/category/{slug}', [StoreController::class, 'category']);
@@ -122,6 +88,8 @@ Route::post('/cart/add/{id}', [StoreController::class, 'addToCart']);
 
 Route::get('/cart', [CartController::class, 'index']);
 Route::post('/cart/remove/{id}', [CartController::class, 'remove']);
+
+Route::get('/support/create',[TicketController::class,'create']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
@@ -134,24 +102,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/wallet/topup', [WalletController::class, 'topup'])->name('wallet.topup');
 });
 
-/*
-|--------------------------------------------------------------------------
-| DASHBOARD GENERAL
-|--------------------------------------------------------------------------
-*/
-
 Route::get('/dashboard', fn() => redirect('/store'))
     ->middleware(['auth'])
     ->name('dashboard');
 
-/*
-|--------------------------------------------------------------------------
-| ZONA AUTENTICADA
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware('auth')->group(function () {
-
     Route::post('/profile/avatar',[ProfileController::class,'avatar'])->name('profile.avatar');
 
     Route::get('/profile',[ProfileController::class,'edit'])->name('profile.edit');
@@ -161,7 +116,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/password/update',[PasswordController::class,'update'])->name('password.update.legacy');
 
     Route::get('/support',[TicketController::class,'index']);
-    Route::get('/support/create',[TicketController::class,'create']);
     Route::post('/support',[TicketController::class,'store']);
     Route::get('/support/{id}',[TicketController::class,'show']);
     Route::post('/support/{id}/message',[TicketController::class,'addMessage']);
@@ -176,14 +130,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reports/{ticket}/pdf',[ReportController::class,'pdf']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
-
     Route::get('/', [AdminController::class,'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard', [AdminController::class,'dashboard']);
 
@@ -212,7 +159,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
         ->name('admin.tickets.status');
 
     Route::prefix('reports')->group(function(){
-
         Route::get('/',[AdminReportController::class,'dashboard']);
         Route::get('/sales',[AdminReportController::class,'sales']);
         Route::get('/products',[AdminReportController::class,'products']);
@@ -223,20 +169,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
     });
 });
 
-/*
-|--------------------------------------------------------------------------
-| TECNICO
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware(['auth', 'role:technician'])->prefix('technician')->group(function(){
-
     Route::get('/',[TechnicianController::class,'dashboard'])->name('technician.dashboard');
 
     Route::get('/tickets',[TechnicianTicketController::class,'index'])->name('technician.tickets');
-
     Route::get('/tickets/{id}',[TechnicianTicketController::class,'show'])->name('technician.tickets.show');
-
     Route::post('/tickets/{id}/reply',[TechnicianTicketController::class,'reply'])->name('technician.tickets.reply');
 
     Route::get('/calendar',[TechnicianController::class,'calendar'])->name('technician.calendar');
@@ -249,7 +186,7 @@ Route::middleware(['auth', 'role:technician'])->prefix('technician')->group(func
         [TechnicianChecklistController::class,'update'])
         ->name('technician.checklist.update');
 
-    Route::post('/checklist/{ticket',
+    Route::post('/checklist/{ticket}',
         [ChecklistController::class,'save'])
         ->name('technician.checklist.save');
 
@@ -260,14 +197,7 @@ Route::middleware(['auth', 'role:technician'])->prefix('technician')->group(func
     Route::match(['post', 'delete'], '/checklist/{ticket}/photo/{photo}',
         [ChecklistController::class,'deletePhoto'])
         ->name('technician.checklist.photo.delete');
-
 });
-
-/*
-|--------------------------------------------------------------------------
-| WEBRTC
-|--------------------------------------------------------------------------
-*/
 
 Route::middleware('auth')->group(function(){
     Route::post('/presence/ping',[App\Http\Controllers\PresenceController::class,'ping']);
@@ -281,27 +211,15 @@ Route::middleware('auth')->group(function(){
     Route::get('/webrtc/poll',[App\Http\Controllers\WebRTCController::class,'poll']);
 });
 
-/*
-|--------------------------------------------------------------------------
-| HISTORIAL SOPORTE
-|--------------------------------------------------------------------------
-*/
-
 Route::middleware('auth')->group(function(){
-
     Route::get('/support/history', [App\Http\Controllers\TicketHistoryController::class,'index'])
         ->name('support.history');
 
     Route::post('/support/archive-closed', [App\Http\Controllers\TicketHistoryController::class,'archiveClosed'])
         ->name('support.archiveClosed');
-
 });
-
-/*
-|--------------------------------------------------------------------------
-| ARCHIVOS EXTRA
-|--------------------------------------------------------------------------
-*/
 
 require __DIR__.'/auth.php';
 require __DIR__.'/client.php';
+
+

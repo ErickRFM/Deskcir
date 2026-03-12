@@ -9,34 +9,32 @@ use Illuminate\Http\Request;
 
 class TechnicianTicketController extends Controller
 {
-    // ==========================================
-    // LISTADO + FILTROS (SOLO TICKETS DEL TÉCNICO)
-    // ==========================================
+    private function ticketDisk(): string
+    {
+        return config('filesystems.default', 'public');
+    }
+
     public function index(Request $request)
     {
         $query = Ticket::with('user')
             ->where('technician_id', auth()->id());
 
-        // 🔎 FILTRO PRIORIDAD
         if ($request->filled('priority')) {
             $query->where('priority', $request->priority);
         }
 
-        // 🔎 FILTRO ESTADO
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // 🔎 BUSCADOR
         if ($request->filled('search')) {
-
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('subject','like',"%{$search}%")
-                  ->orWhereHas('user', function ($u) use ($search) {
-                      $u->where('name','like',"%{$search}%");
-                  });
+                $q->where('subject', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($u) use ($search) {
+                        $u->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -45,12 +43,9 @@ class TechnicianTicketController extends Controller
         return view('technician.tickets.index', compact('tickets'));
     }
 
-    // ==========================================
-    // VER TICKET (PROTEGIDO)
-    // ==========================================
     public function show($id)
     {
-        $ticket = Ticket::where('technician_id', auth()->id()) // 🔐 evita acceso a tickets ajenos
+        $ticket = Ticket::where('technician_id', auth()->id())
             ->findOrFail($id);
 
         $ticket->messages()
@@ -58,39 +53,38 @@ class TechnicianTicketController extends Controller
             ->whereNull('seen_at')
             ->update(['seen_at' => now()]);
 
-        $ticket->load(['messages.user','user','files','checklist']);
+        $ticket->load(['messages.user', 'user', 'files', 'checklist']);
 
         return view('technician.tickets.show', compact('ticket'));
     }
 
-    // ==========================================
-    // RESPONDER TICKET
-    // ==========================================
     public function reply(Request $r, $id)
     {
         $r->validate([
-            'message' => 'required'
+            'message' => 'required',
         ]);
 
-        // 🔐 validar que el ticket pertenece al técnico
         $ticket = Ticket::where('technician_id', auth()->id())
             ->findOrFail($id);
 
         $file = null;
+        $disk = null;
 
         if ($r->hasFile('file')) {
-            $file = $r->file('file')->store('tickets','public');
+            $disk = $this->ticketDisk();
+            $file = $r->file('file')->store('tickets/chat', $disk);
         }
 
         TicketMessage::create([
             'ticket_id' => $ticket->id,
-            'user_id'   => auth()->id(),
-            'message'   => $r->message,
-            'file'      => $file,
+            'user_id' => auth()->id(),
+            'message' => $r->message,
+            'file' => $file,
+            'disk' => $disk,
             'from_role' => 'tecnico',
-            'seen_at'   => null,
+            'seen_at' => null,
         ]);
 
-        return back()->with('success','Respuesta enviada');
+        return back()->with('success', 'Respuesta enviada');
     }
 }

@@ -3,16 +3,20 @@
 namespace App\Http\Controllers\Technician;
 
 use App\Http\Controllers\Controller;
+use App\Models\ChecklistPhoto;
 use App\Models\Ticket;
 use App\Models\TicketChecklist;
-use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Models\ChecklistPhoto;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ChecklistController extends Controller
 {
-    // GUARDAR CHECKLIST
+    private function mediaDisk(): string
+    {
+        return config('filesystems.default', 'public');
+    }
+
     public function save(Request $request, Ticket $ticket)
     {
         abort_unless((int) $ticket->technician_id === (int) auth()->id(), 403);
@@ -33,13 +37,10 @@ class ChecklistController extends Controller
                 'technician_id' => $ticket->technician_id ?? auth()->id(),
                 'diagnostico' => $request->boolean('diagnostico'),
                 'diagnostico_notes' => $validated['diagnostico_notes'] ?? null,
-
                 'reparacion' => $request->boolean('reparacion'),
                 'reparacion_notes' => $validated['reparacion_notes'] ?? null,
-
                 'pruebas' => $request->boolean('pruebas'),
                 'pruebas_notes' => $validated['pruebas_notes'] ?? null,
-
                 'errores' => $validated['errores'] ?? null,
                 'observaciones' => $validated['observaciones'] ?? null,
                 'status' => $validated['status'],
@@ -47,18 +48,19 @@ class ChecklistController extends Controller
         );
 
         if ($request->hasFile('fotos')) {
+            $disk = $this->mediaDisk();
+
             foreach ($request->file('fotos') as $foto) {
-                $path = $foto->store('checklists', 'public');
+                $path = $foto->store('checklists', $disk);
 
                 ChecklistPhoto::create([
                     'ticket_checklist_id' => $checklist->id,
                     'path' => $path,
+                    'disk' => $disk,
                 ]);
             }
         }
 
-        // Mantener sincronizado el estado del ticket con el checklist
-        // usando valores compatibles con el enum de tickets.
         $ticketStatusMap = [
             'diagnostico' => 'en_proceso',
             'reparacion' => 'en_proceso',
@@ -73,7 +75,6 @@ class ChecklistController extends Controller
             ->with('success', 'Checklist guardado correctamente');
     }
 
-    // EXPORTAR PDF
     public function pdf(Ticket $ticket)
     {
         abort_unless((int) $ticket->technician_id === (int) auth()->id(), 403);
@@ -111,8 +112,10 @@ class ChecklistController extends Controller
                 ->with('error', 'La foto ya no existe o ya fue eliminada.');
         }
 
-        if ($photoModel->path && Storage::disk('public')->exists($photoModel->path)) {
-            Storage::disk('public')->delete($photoModel->path);
+        $disk = $photoModel->disk ?: 'public';
+
+        if ($photoModel->path && Storage::disk($disk)->exists($photoModel->path)) {
+            Storage::disk($disk)->delete($photoModel->path);
         }
 
         $photoModel->delete();

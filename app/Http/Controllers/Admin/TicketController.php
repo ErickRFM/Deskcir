@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
+    private function ticketDisk(): string
+    {
+        return config('filesystems.default', 'public');
+    }
+
     public function index()
     {
         $tickets = Ticket::with(['user', 'technician'])
@@ -68,9 +73,11 @@ class TicketController extends Controller
         ]);
 
         $file = null;
+        $disk = null;
 
         if ($request->hasFile('file')) {
-            $file = $request->file('file')->store('tickets', 'public');
+            $disk = $this->ticketDisk();
+            $file = $request->file('file')->store('tickets/chat', $disk);
         }
 
         TicketMessage::create([
@@ -78,6 +85,7 @@ class TicketController extends Controller
             'user_id' => auth()->id(),
             'message' => $request->message,
             'file' => $file,
+            'disk' => $disk,
             'from_role' => 'admin',
             'seen_at' => null,
         ]);

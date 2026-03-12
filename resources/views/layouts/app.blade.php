@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title','Deskcir')</title>
 
 <script>
@@ -29,8 +30,16 @@
 
 <body class="transition-colors duration-300">
 @php
-    $isStorePage = request()->is('store*');
     $roleName = optional(optional(auth()->user())->role)->name;
+    $hideFloatingAi = request()->routeIs('deskcir.ai');
+    $cart = session('cart', []);
+    $cartCount = collect($cart)->sum(fn ($item) => (int) ($item['qty'] ?? 0));
+    $searchValue = trim((string) request('q', ''));
+    $showGlobalSearch = auth()->check() || request()->is('store*') || request()->is('cart') || request()->is('support*') || request()->routeIs('deskcir.ai');
+    $isStoreActive = request()->is('store*');
+    $isCartActive = request()->is('cart') || request()->is('checkout*');
+    $isAiActive = request()->routeIs('deskcir.ai');
+    $isSupportActive = request()->is('support*');
 @endphp
 
 <nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-light sticky-top">
@@ -52,21 +61,16 @@
         </button>
 
         <div class="collapse navbar-collapse nav-collapse-shell" id="mainNavbar">
-            @if($isStorePage)
+            @if($showGlobalSearch)
                 <form method="GET" action="/store" class="nav-store-search" role="search">
                     <input
                         type="text"
                         name="q"
-                        value="{{ request('q', '') }}"
+                        value="{{ $searchValue }}"
                         class="nav-store-search-input"
-                        placeholder="Buscar producto por nombre o descripcion..."
+                        placeholder="Buscar productos o volver rapido a la tienda..."
                         aria-label="Buscar producto"
                     >
-
-                    @if(request()->filled('quick'))
-                        <input type="hidden" name="quick" value="{{ request('quick') }}">
-                    @endif
-
                     <button class="nav-store-search-btn" type="submit" aria-label="Buscar">
                         <i class="bi bi-search"></i>
                     </button>
@@ -75,28 +79,46 @@
 
             <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-2 nav-main-links">
                 <li class="nav-item">
-                    <a class="nav-link" href="/store">
+                    <a class="nav-link {{ $isStoreActive ? 'is-current' : '' }}" href="/store">
                         <span class="material-symbols-outlined">store</span>
                         Tienda
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/cart">
+                    <a class="nav-link {{ $isCartActive ? 'is-current' : '' }}" href="/cart">
                         <span class="material-symbols-outlined">shopping_cart</span>
                         Carrito
+                        @if($cartCount > 0)
+                            <span class="nav-cart-badge">{{ $cartCount }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-ai-link {{ $isAiActive ? 'is-current is-ai-current' : '' }}" href="{{ route('deskcir.ai') }}">
+                        <span class="material-symbols-outlined">auto_awesome</span>
+                        Deskcir AI
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ $isSupportActive ? 'is-current' : '' }}" href="/support/create">
+                        <span class="material-symbols-outlined">support_agent</span>
+                        Solicitar soporte
                     </a>
                 </li>
 
                 @auth
                     @if($roleName === 'admin')
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('admin.*') ? 'is-current' : '' }}" href="{{ route('admin.dashboard') }}">
                                 <span class="material-symbols-outlined">admin_panel_settings</span>
                                 Administrador
                             </a>
                         </li>
                     @endif
+
                     <li class="nav-item dropdown">
                         <a
                             class="nav-link dropdown-toggle d-flex align-items-center gap-2"
@@ -109,6 +131,20 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('deskcir.ai') }}">
+                                    <span class="material-symbols-outlined">auto_awesome</span>
+                                    Abrir Deskcir AI
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="/support/create">
+                                    <span class="material-symbols-outlined">support_agent</span>
+                                    Nuevo soporte
+                                </a>
+                            </li>
+
                             @if($roleName === 'admin')
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.dashboard') }}">
@@ -146,7 +182,7 @@
                             <li><hr class="dropdown-divider"></li>
 
                             <li>
-                                <form method="POST" action="/logout">
+                                <form method="POST" action="/logout" class="logout-form">
                                     @csrf
                                     <button class="dropdown-item text-danger d-flex align-items-center gap-2">
                                         <span class="material-symbols-outlined">logout</span>
@@ -193,6 +229,20 @@
     </div>
 </div>
 
+@if($cartCount > 0 && !$isCartActive)
+    <a href="/cart" class="cart-fab" aria-label="Abrir carrito">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span class="cart-fab__content">
+            <strong>Carrito</strong>
+            <small>{{ $cartCount }} articulo{{ $cartCount === 1 ? '' : 's' }}</small>
+        </span>
+    </a>
+@endif
+
+@if(!$hideFloatingAi)
+    <x-floating-ai-chat />
+@endif
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -214,6 +264,22 @@ function updateDarkIcon(isDark) {
 
 document.addEventListener('DOMContentLoaded', () => {
     updateDarkIcon(document.documentElement.classList.contains('dark'));
+
+    document.querySelectorAll('.logout-form').forEach((form) => {
+        form.addEventListener('submit', () => {
+            Object.keys(localStorage).forEach((key) => {
+                if (key.startsWith('deskcir-ai-')) {
+                    localStorage.removeItem(key);
+                }
+            });
+
+            Object.keys(sessionStorage).forEach((key) => {
+                if (key.startsWith('deskcir-ai-') || key.startsWith('deskcir-support-')) {
+                    sessionStorage.removeItem(key);
+                }
+            });
+        });
+    });
 });
 </script>
 
@@ -221,4 +287,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
-

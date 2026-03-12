@@ -55,7 +55,7 @@
                                 {{-- GALER?A DE IM?GENES --}}
                                 <div class="mb-2">
                                 @foreach($product->images as $img)
-                                    <img src="{{ asset('storage/'.$img->path) }}"
+                                    <img src="{{ $img->url }}"
                                          class="img-fluid mb-1 me-1 rounded"
                                          style="max-width:100px">
                                 @endforeach
@@ -174,3 +174,6 @@ Swal.fire({
 @endif
 
 @endsection
+
+
+

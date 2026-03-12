@@ -10,6 +10,11 @@ use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
+    private function ticketDisk(): string
+    {
+        return config('filesystems.default', 'public');
+    }
+
     public function index()
     {
         $tickets = Ticket::with('technician')
@@ -34,30 +39,46 @@ class TicketController extends Controller
             'subject' => 'required|string|max:255',
             'description' => 'required|string',
             'priority' => 'nullable|in:alta,media,baja',
+            'support_mode' => 'nullable|in:general,presencial',
             'attachments' => 'nullable|array|max:5',
             'attachments.*' => 'file|mimes:jpg,jpeg,png,webp,mp4,mov,avi,webm|max:20480',
         ]);
 
+        $supportMode = $r->input('support_mode', 'general');
+        $subject = trim((string) $r->subject);
+        $description = trim((string) $r->description);
+
+        if ($supportMode === 'presencial') {
+            if (! str_starts_with(mb_strtolower($subject), '[soporte presencial]')) {
+                $subject = '[Soporte presencial] '.$subject;
+            }
+
+            $description = "Modalidad solicitada: soporte presencial.\n\n".$description;
+        }
+
         $ticket = Ticket::create([
             'user_id' => auth()->id(),
-            'subject' => $r->subject,
-            'description' => $r->description,
+            'subject' => $subject,
+            'description' => $description,
             'priority' => strtolower($r->priority) ?? 'media',
         ]);
 
         if ($r->hasFile('attachments')) {
+            $disk = $this->ticketDisk();
+
             foreach ($r->file('attachments') as $file) {
-                $path = $file->store('tickets/evidence', 'public');
+                $path = $file->store('tickets/evidence', $disk);
 
                 TicketFile::create([
                     'ticket_id' => $ticket->id,
                     'path' => $path,
                     'type' => $file->getMimeType() ?? 'application/octet-stream',
+                    'disk' => $disk,
                 ]);
             }
         }
 
-        return redirect('/support')->with('success', 'Ticket creado');
+        return redirect('/support/'.$ticket->id)->with('success', 'Ticket creado');
     }
 
     public function show($id)
@@ -98,9 +119,11 @@ class TicketController extends Controller
         }
 
         $path = null;
+        $disk = null;
 
         if ($r->hasFile('file')) {
-            $path = $r->file('file')->store('tickets', 'public');
+            $disk = $this->ticketDisk();
+            $path = $r->file('file')->store('tickets/chat', $disk);
         }
 
         TicketMessage::create([
@@ -108,6 +131,7 @@ class TicketController extends Controller
             'user_id' => auth()->id(),
             'message' => $r->message,
             'file' => $path,
+            'disk' => $disk,
             'seen_at' => null,
         ]);
 

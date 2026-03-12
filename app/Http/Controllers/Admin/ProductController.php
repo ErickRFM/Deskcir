@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    private function mediaDisk(): string
+    {
+        return 's3';
+    }
+
     public function index()
     {
         $products = Product::with('images', 'category')->get();
@@ -30,7 +35,7 @@ class ProductController extends Controller
     {
         $img = ProductImage::findOrFail($id);
 
-        Storage::disk('public')->delete($img->path);
+        Storage::disk($img->disk ?: $this->mediaDisk())->delete($img->path);
         $img->delete();
 
         return back()->with('success', 'Imagen eliminada');
@@ -67,12 +72,15 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('images')) {
+            $disk = $this->mediaDisk();
+
             foreach ($request->file('images') as $img) {
-                $path = $img->store('products', 'public');
+                $path = $img->store('products', $disk);
 
                 ProductImage::create([
                     'product_id' => $product->id,
                     'path' => $path,
+                    'disk' => $disk,
                 ]);
             }
         }
@@ -115,12 +123,15 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('images')) {
+            $disk = $this->mediaDisk();
+
             foreach ($request->file('images') as $img) {
-                $path = $img->store('products', 'public');
+                $path = $img->store('products', $disk);
 
                 ProductImage::create([
                     'product_id' => $product->id,
                     'path' => $path,
+                    'disk' => $disk,
                 ]);
             }
         }
@@ -135,7 +146,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         foreach ($product->images as $img) {
-            Storage::disk('public')->delete($img->path);
+            Storage::disk($img->disk ?: $this->mediaDisk())->delete($img->path);
             $img->delete();
         }
 

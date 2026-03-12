@@ -3,10 +3,7 @@
 @section('content')
 
 <div class="login-wrapper">
-
 <div class="login-card">
-
-    <!-- LOGO -->
     <div class="logo-zone">
         <img src="{{ asset('img/logo.png') }}" class="login-logo" alt="Deskcir">
     </div>
@@ -14,90 +11,67 @@
     <h2 class="title">Bienvenido a Deskcir</h2>
     <p class="subtitle">Accede para continuar</p>
 
-    {{-- MENSAJES DE ERROR --}}
-    @if($errors->any())
+    @if(->any())
         <div class="alert alert-danger">
             Credenciales incorrectas
         </div>
     @endif
 
     <form method="POST" action="{{ route('login') }}">
-    @csrf
+        @csrf
+        <input type="hidden" name="redirect_to" value="{{ old('redirect_to',  ?? request('redirect_to')) }}">
 
-    {{-- CORREO --}}
-    <div class="mb-3">
+        <div class="mb-3">
+            <label class="form-label">Correo electronico</label>
+            <input
+                type="email"
+                name="email"
+                value="{{ old('email') }}"
+                class="form-control input-pro"
+                placeholder="tu@email.com"
+                autocomplete="email"
+                required>
 
-        <label class="form-label">Correo electrónico</label>
+            @error('email')
+            <small class="text-danger fw-bold">{{  }}</small>
+            @enderror
+        </div>
 
-        <input
-            type="email"
-            name="email"
-            value="{{ old('email') }}"
-            class="form-control input-pro"
-            placeholder="tu@email.com"
-            autocomplete="email"
-            required>
+        <div class="mb-2">
+            <label class="form-label">Contrasena</label>
+            <input
+                type="password"
+                name="password"
+                class="form-control input-pro"
+                placeholder="Tu contrasena"
+                autocomplete="current-password"
+                required>
 
-        @error('email')
-        <small class="text-danger fw-bold">
-            {{ $message }}
-        </small>
-        @enderror
+            @error('password')
+            <small class="text-danger fw-bold">{{  }}</small>
+            @enderror
+        </div>
 
-    </div>
+        <div class="mt-2 text-start">
+            <a href="/register{{ request('redirect_to') ? '?redirect_to='.urlencode(request('redirect_to')) : '' }}" class="link-pro">
+                Crear cuenta
+            </a>
+        </div>
 
-    {{-- PASSWORD --}}
-    <div class="mb-2">
-
-        <label class="form-label">Contraseña</label>
-
-        <input
-            type="password"
-            name="password"
-            class="form-control input-pro"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            required>
-
-        @error('password')
-        <small class="text-danger fw-bold">
-            {{ $message }}
-        </small>
-        @enderror
-
-    </div>
-
-    {{-- LINK REGISTRO --}}
-    <div class="mt-2 text-start">
-        <a href="/register" class="link-pro">
-            Crear cuenta
-        </a>
-    </div>
-
-    {{-- BOTON LOGIN --}}
-    <button type="submit" class="btn-login mt-3">
-        Iniciar sesión
-    </button>
-
+        <button type="submit" class="btn-login mt-3">
+            Iniciar sesion
+        </button>
     </form>
 
-    {{-- GOOGLE --}}
     <div class="mt-3">
-        <a href="{{ route('google.login') }}"
-           class="btn btn-client-outline w-100">
+        <a href="{{ route('google.login') }}" class="btn btn-client-outline w-100">
             Continuar con Google
         </a>
     </div>
-
 </div>
 </div>
 
 <style>
-
-/* =============================
-   WRAPPER CENTRADO
-============================= */
-
 .login-wrapper{
 min-height:calc(100vh - 120px);
 display:flex;
@@ -106,18 +80,12 @@ justify-content:center;
 padding:40px 20px;
 }
 
-/* =============================
-   CARD
-============================= */
-
 .login-card{
 background:white;
 padding:34px;
 border-radius:22px;
 width:420px;
-
 box-shadow:0 6px 14px rgba(0,0,0,.10);
-
 animation:fade .6s ease;
 }
 
@@ -125,10 +93,6 @@ animation:fade .6s ease;
 background:#0b1220;
 border:1px solid #1f293f;
 }
-
-/* =============================
-   LOGO
-============================= */
 
 .logo-zone{
 text-align:center;
@@ -139,10 +103,6 @@ margin-bottom:12px;
 height:35px;
 filter:drop-shadow(0 10px 10px rgba(0,0,0,.15));
 }
-
-/* =============================
-   TEXTOS
-============================= */
 
 .title{
 font-weight:800;
@@ -174,10 +134,6 @@ color:#9ca3af;
 color:#e5e7eb !important;
 }
 
-/* =============================
-   INPUTS
-============================= */
-
 .input-pro{
 border-radius:12px;
 padding:11px 12px;
@@ -197,19 +153,13 @@ border:1px solid #1f293f;
 color:white;
 }
 
-/* =============================
-   BOTÓN
-============================= */
-
 .btn-login{
 width:100%;
 padding:12px;
 border-radius:14px;
 border:none;
-
 background:#00798E;
 color:white;
-
 font-weight:600;
 transition:.25s;
 }
@@ -218,10 +168,6 @@ transition:.25s;
 transform:translateY(-2px);
 background:#00687a;
 }
-
-/* =============================
-   LINK
-============================= */
 
 .link-pro{
 color:#00798E;
@@ -233,10 +179,6 @@ text-decoration:none;
 text-decoration:underline;
 }
 
-/* =============================
-   ANIMACIÓN
-============================= */
-
 @keyframes fade{
 from{
 opacity:0;
@@ -246,9 +188,7 @@ to{
 opacity:1;
 transform:none;
 }
-
 }
-
 </style>
 
 @endsection

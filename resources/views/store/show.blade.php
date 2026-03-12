@@ -7,11 +7,11 @@
     $gallery = collect();
 
     if ($product->images && $product->images->count()) {
-        $gallery = $product->images->map(fn($img) => asset('storage/' . ltrim($img->path, '/')));
+        $gallery = $product->images->map(fn($img) => $img->url);
     }
 
     if ($gallery->isEmpty() && !empty($product->image)) {
-        $gallery = collect([asset('storage/' . ltrim($product->image, '/'))]);
+        $gallery = collect([$product->image_url]);
     }
 
     $mainImage = $gallery->first();
@@ -111,8 +111,8 @@
                 @forelse($relatedProducts as $item)
                     @php
                         $relatedImage = $item->images->count()
-                            ? asset('storage/' . ltrim($item->images->first()->path, '/'))
-                            : (!empty($item->image) ? asset('storage/' . ltrim($item->image, '/')) : null);
+                            ? $item->images->first()->url
+                            : (!empty($item->image) ? $item->image_url : null);
                     @endphp
                     <div class="col-6 col-md-4 col-lg-3">
                         <article class="related-card h-100">
@@ -191,3 +191,4 @@
 })();
 </script>
 @endpush
+

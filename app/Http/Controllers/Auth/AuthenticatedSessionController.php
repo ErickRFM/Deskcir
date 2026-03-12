@@ -11,46 +11,51 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
-    /**
-     * Display the login view.
-     */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.login');
+        return view('auth.login', [
+            'redirectTo' => $this->sanitizeRedirect($request->query('redirect_to')),
+        ]);
     }
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        // Redirección automática por rol
-        if (auth()->user()->role->name == 'admin') {
+        $redirectTo = $this->sanitizeRedirect($request->input('redirect_to'));
+        if ($redirectTo) {
+            return redirect($redirectTo);
+        }
+
+        if (auth()->user()->role->name === 'admin') {
             return redirect('/admin');
         }
 
-        if (auth()->user()->role->name == 'technician') {
+        if (auth()->user()->role->name === 'technician') {
             return redirect('/technician');
         }
 
         return redirect('/client');
     }
 
-    /**
-     * Destroy an authenticated session.
-     */
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/store');
+    }
+
+    private function sanitizeRedirect(?string $redirectTo): ?string
+    {
+        $redirectTo = trim((string) $redirectTo);
+
+        if ($redirectTo === '' || ! str_starts_with($redirectTo, '/')) {
+            return null;
+        }
+
+        return $redirectTo;
     }
 }

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
     use HasFactory;
+    use ResolvesMediaUrls;
 
     protected $fillable = [
         'name',
@@ -15,31 +17,32 @@ class Product extends Model
         'description',
         'price',
         'stock',
-        'category_id'
+        'category_id',
     ];
 
-    // ==============================
-    // 🌄 RELACIONES ACTUALES
-    // ==============================
+    protected $appends = ['image_url'];
 
-    // 👉 Relación con imágenes múltiples
     public function images()
     {
         return $this->hasMany(ProductImage::class);
     }
 
-    // 👉 Relación con categoría
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    // ==============================
-    // 🧾 NUEVO: RELACIÓN CON VENTAS
-    // ==============================
-
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if ($this->relationLoaded('images') && $this->images->isNotEmpty()) {
+            return $this->images->first()?->url;
+        }
+
+        return $this->resolveMediaUrl($this->image ?? null, 'public');
     }
 }

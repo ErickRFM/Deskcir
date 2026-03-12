@@ -1,53 +1,58 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="container py-4 ticket-page">
+@section('title', 'Ticket #' . $ticket->id)
 
+@section('content')
+<div class="ticket-workspace">
     <a href="/support" class="btn btn-outline-secondary btn-sm mb-3 d-inline-flex align-items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="m14 6-6 6 6 6 1.4-1.4L10.8 12l4.6-4.6L14 6Z"/>
-        </svg>
+        <span class="material-symbols-outlined">arrow_back</span>
         Regresar
     </a>
 
-    <section class="card border-0 shadow-sm mb-4">
-        <div class="card-body p-4">
-            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+    <section class="ticket-hero card border-0 shadow-sm mb-4">
+        <div class="card-body p-4 p-lg-5">
+            <div class="ticket-hero__grid">
                 <div>
-                    <h4 class="fw-bold mb-2">{{ $ticket->subject }}</h4>
-                    <div class="d-flex flex-wrap gap-2">
-                        <span class="badge rounded-pill bg-warning text-dark text-uppercase">{{ $ticket->status }}</span>
-                        <span class="badge rounded-pill bg-info text-dark text-uppercase">{{ $ticket->priority ?? 'media' }}</span>
-                        <span class="badge rounded-pill bg-light text-dark border">Ticket #{{ $ticket->id }}</span>
+                    <p class="ticket-hero__eyebrow">Mesa de ayuda</p>
+                    <h1 class="ticket-hero__title">{{ $ticket->subject }}</h1>
+                    <p class="ticket-hero__subtitle mb-3">Tecnico asignado: {{ optional($ticket->technician)->name ?? 'Sin asignar' }}</p>
+                    <div class="ticket-hero__badges">
+                        <span class="badge text-bg-warning text-uppercase">{{ $ticket->status }}</span>
+                        <span class="badge text-bg-info text-uppercase">{{ $ticket->priority ?? 'media' }}</span>
+                        <span class="badge text-bg-light border text-dark">Ticket #{{ $ticket->id }}</span>
                     </div>
                 </div>
 
                 @php $peerName = optional($ticket->technician)->name ?? 'Tecnico'; @endphp
                 <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir mi pantalla" call-label="Llamar tecnico" :peer-user-id="optional($ticket->technician)->id" :peer-label="$peerName" />
             </div>
-
-            <p class="text-muted mb-0 mt-3 small">
-                Tecnico asignado: {{ optional($ticket->technician)->name ?? 'Sin asignar' }}
-            </p>
         </div>
     </section>
 
     @if($ticket->files->count())
         <section class="card border-0 shadow-sm mb-4">
             <div class="card-body p-4">
-                <h6 class="fw-bold mb-3">Evidencia adjunta</h6>
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="material-symbols-outlined text-deskcir">photo_library</span>
+                    <h5 class="mb-0 fw-bold">Evidencia adjunta</h5>
+                </div>
                 <div class="row g-3">
                     @foreach($ticket->files as $file)
                         <div class="col-sm-6 col-lg-4">
-                            <div class="attachment-box h-100">
+                            <div class="ticket-media-card h-100">
                                 @if(str_starts_with($file->type, 'image/'))
-                                    <img src="{{ asset('storage/'.$file->path) }}" class="w-100 rounded" style="height:180px;object-fit:cover;" alt="Adjunto">
+                                    <a href="{{ $file->url }}" target="_blank" rel="noopener">
+                                        <img src="{{ $file->url }}" class="ticket-media-card__image" alt="Adjunto del ticket">
+                                    </a>
                                 @elseif(str_starts_with($file->type, 'video/'))
-                                    <video controls class="w-100 rounded" style="height:180px;object-fit:cover;">
-                                        <source src="{{ asset('storage/'.$file->path) }}" type="{{ $file->type }}">
+                                    <video controls class="ticket-media-card__image">
+                                        <source src="{{ $file->url }}" type="{{ $file->type }}">
                                     </video>
                                 @else
-                                    <a href="{{ asset('storage/'.$file->path) }}" target="_blank" class="btn btn-outline-deskcir w-100">Ver archivo</a>
+                                    <a href="{{ $file->url }}" target="_blank" class="ticket-media-card__file">
+                                        <span class="material-symbols-outlined">draft</span>
+                                        Ver archivo
+                                    </a>
                                 @endif
                             </div>
                         </div>
@@ -57,29 +62,29 @@
         </section>
     @endif
 
-    <section class="card border-0 shadow-sm mb-4" id="agenda-tecnica">
+    <section class="card border-0 shadow-sm mb-4">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                <h6 class="fw-bold mb-0">Agenda de servicio</h6>
-                @php
-                    $appointmentTechnicianId = $ticket->technician_id ?: $ticket->assigned_to;
-                @endphp
+                <div>
+                    <p class="ticket-section__eyebrow mb-1">Agenda</p>
+                    <h5 class="fw-bold mb-0">Servicios programados</h5>
+                </div>
+                @php $appointmentTechnicianId = $ticket->technician_id ?: $ticket->assigned_to; @endphp
                 @if($appointmentTechnicianId)
-                    <a href="{{ route('appointments.create', ['ticket_id' => $ticket->id]) }}" class="btn btn-deskcir btn-sm">Agendar visita o recepcion</a>
+                    <a href="{{ route('appointments.create', ['ticket_id' => $ticket->id]) }}" class="btn btn-deskcir btn-sm d-inline-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined">event_available</span>
+                        Agendar visita o recepcion
+                    </a>
                 @else
-                    <span class="badge rounded-pill bg-secondary">Sin tecnico asignado</span>
+                    <span class="badge bg-secondary-subtle text-secondary-emphasis border">Sin tecnico asignado</span>
                 @endif
             </div>
 
-            <p class="text-muted small mb-3">La agenda se gestiona en una pantalla aparte para visitas presenciales, recepcion y entrega de equipos.</p>
-
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
+            <p class="text-muted small mb-3">La agenda vive en una pantalla separada para visitas, recepcion y entrega de equipos.</p>
 
             @if(isset($appointments) && $appointments->count())
-                <div class="table-responsive mt-2">
-                    <table class="table table-sm align-middle mb-0">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
@@ -112,7 +117,7 @@
                     </table>
                 </div>
             @else
-                <div class="text-muted small">No hay servicios agendados para este ticket.</div>
+                <div class="ticket-empty-box">No hay servicios agendados para este ticket.</div>
             @endif
         </div>
     </section>
@@ -121,19 +126,21 @@
         <x-chat :ticket="$ticket" action="/support/{{ $ticket->id }}/message" />
     </section>
 
-    <section class="card border-0 shadow-sm checklist-summary">
+    <section class="card border-0 shadow-sm">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
-                <h6 class="fw-bold mb-0">Checklist tecnico - Ticket #{{ $ticket->id }}</h6>
-                <span class="badge rounded-pill bg-light text-dark border text-uppercase">{{ optional($ticket->checklist)->progress ?? 'pendiente' }}</span>
+                <div>
+                    <p class="ticket-section__eyebrow mb-1">Checklist tecnico</p>
+                    <h5 class="fw-bold mb-0">Estado de servicio</h5>
+                </div>
+                <span class="badge bg-light text-dark border text-uppercase">{{ optional($ticket->checklist)->progress ?? 'pendiente' }}</span>
             </div>
 
             @php $check = $ticket->checklist; @endphp
-
-            <div class="row g-2">
-                <div class="col-md-4"><div class="check-item {{ $check && $check->diagnostico ? 'is-done' : '' }}">Diagnostico realizado</div></div>
-                <div class="col-md-4"><div class="check-item {{ $check && $check->reparacion ? 'is-done' : '' }}">Reparacion aplicada</div></div>
-                <div class="col-md-4"><div class="check-item {{ $check && $check->pruebas ? 'is-done' : '' }}">Pruebas finales</div></div>
+            <div class="row g-3">
+                <div class="col-md-4"><div class="ticket-check-item {{ $check && $check->diagnostico ? 'is-done' : '' }}">Diagnostico realizado</div></div>
+                <div class="col-md-4"><div class="ticket-check-item {{ $check && $check->reparacion ? 'is-done' : '' }}">Reparacion aplicada</div></div>
+                <div class="col-md-4"><div class="ticket-check-item {{ $check && $check->pruebas ? 'is-done' : '' }}">Pruebas finales</div></div>
             </div>
 
             @if(!$check)
@@ -141,14 +148,90 @@
             @endif
         </div>
     </section>
-
 </div>
 
 <style>
-.attachment-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px; }
-.checklist-summary .check-item { border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; background: #f9fafb; font-size: 14px; }
-.checklist-summary .check-item.is-done { border-color: #0ea5a4; background: rgba(14, 165, 164, 0.1); color: #0f766e; font-weight: 600; }
-.dark .attachment-box { background: #0f172a; border-color: #253049; }
-.dark .checklist-summary .check-item { background: #0f172a; border-color: #253049; color: #d1d5db; }
+.ticket-workspace {
+    --ticket-surface: #ffffff;
+    --ticket-border: #dce7ef;
+}
+.ticket-hero {
+    background: linear-gradient(135deg, #071827 0%, #0d2438 55%, #12344a 100%);
+    color: #edf9ff;
+    border: 1px solid rgba(80, 187, 212, 0.22) !important;
+}
+.ticket-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+    gap: 1.5rem;
+    align-items: start;
+}
+.ticket-hero__eyebrow,
+.ticket-section__eyebrow {
+    font-size: .76rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    font-weight: 800;
+    color: #74d8ee;
+}
+.ticket-hero__title {
+    font-size: clamp(1.7rem, 2.8vw, 2.5rem);
+    font-weight: 800;
+    margin-bottom: .45rem;
+}
+.ticket-hero__subtitle { color: #c2e6f0; }
+.ticket-hero__badges { display: flex; gap: .55rem; flex-wrap: wrap; }
+.ticket-media-card {
+    border: 1px solid var(--ticket-border);
+    border-radius: 18px;
+    overflow: hidden;
+    background: #f7fbfd;
+    min-height: 220px;
+    display: grid;
+    place-items: center;
+}
+.ticket-media-card__image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+.ticket-media-card__file {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: #0f5d6f;
+    font-weight: 700;
+    text-decoration: none;
+}
+.ticket-empty-box {
+    border: 1px dashed #cbd9e3;
+    border-radius: 14px;
+    padding: 1rem;
+    color: #62798d;
+    background: #f8fbfd;
+}
+.ticket-check-item {
+    border: 1px solid #d1dce4;
+    border-radius: 14px;
+    padding: .9rem 1rem;
+    background: #f8fbfd;
+    font-weight: 600;
+}
+.ticket-check-item.is-done {
+    border-color: #62c6d7;
+    background: #eafcff;
+    color: #0a6f81;
+}
+.dark .ticket-media-card,
+.dark .ticket-empty-box,
+.dark .ticket-check-item {
+    background: #0f172a;
+    border-color: #24364c;
+    color: #dce7f5;
+}
+@media (max-width: 991.98px) {
+    .ticket-hero__grid { grid-template-columns: 1fr; }
+}
 </style>
 @endsection

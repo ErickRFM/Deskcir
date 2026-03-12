@@ -135,9 +135,9 @@ Segun historial de carrito y compras
 
 <div class="popular-image">
 
-@if($product->images->count())
+@if($product->image_url)
 
-<img src="{{ asset('storage/'.$product->images->first()->path) }}">
+<img src="{{ $product->images->first()->url }}">
 
 @else
 
@@ -284,9 +284,9 @@ Limpiar filtros
 
 <div class="product-img">
 
-@if($product->images->count())
+@if($product->image_url)
 
-<img src="{{ asset('storage/'.$product->images->first()->path) }}">
+<img src="{{ $product->images->first()->url }}">
 
 @else
 
@@ -365,3 +365,5 @@ Ver catalogo
 </div>
 
 @endsection
+
+

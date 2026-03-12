@@ -3,174 +3,85 @@
 @section('content')
 
 <div class="login-wrapper">
-
 <div class="login-card">
-
-    <!-- LOGO -->
     <div class="logo-zone">
         <img src="{{ asset('img/logo.png') }}" class="login-logo" alt="Deskcir">
     </div>
 
     <h2 class="title">Crear cuenta</h2>
-    <p class="subtitle">Únete a Deskcir</p>
+    <p class="subtitle">Unete a Deskcir</p>
 
-    {{-- ERRORES GENERALES --}}
-    @if($errors->any())
+    @if(->any())
         <div class="alert alert-danger">
             Revisa los datos del formulario
         </div>
     @endif
 
-<form method="POST" action="{{ route('register', [], false) }}">
-@csrf
+    <form method="POST" action="{{ route('register', [], false) }}">
+        @csrf
+        <input type="hidden" name="redirect_to" value="{{ old('redirect_to',  ?? request('redirect_to')) }}">
 
-{{-- NOMBRE --}}
-<div class="mb-3">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input id="name" type="text" name="name" value="{{ old('name') }}" class="form-control input-pro" placeholder="Tu nombre" autocomplete="name" required>
+            @error('name')
+            <small class="text-danger fw-bold">{{  }}</small>
+            @enderror
+        </div>
 
-    <label for="name" class="form-label">
-        Nombre
-    </label>
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electronico</label>
+            <input id="email" type="email" name="email" value="{{ old('email') }}" class="form-control input-pro" placeholder="tu@email.com" autocomplete="email" required>
+            @error('email')
+            <small class="text-danger fw-bold">{{  }}</small>
+            @enderror
+        </div>
 
-    <input
-        id="name"
-        type="text"
-        name="name"
-        value="{{ old('name') }}"
-        class="form-control input-pro"
-        placeholder="Tu nombre"
-        autocomplete="name"
-        required>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contrasena</label>
+            <input id="password" type="password" name="password" class="form-control input-pro" placeholder="Crea una contrasena" autocomplete="new-password" required>
+            @error('password')
+            <small class="text-danger fw-bold">{{  }}</small>
+            @enderror
+        </div>
 
-    @error('name')
-    <small class="text-danger fw-bold">
-        {{ $message }}
-    </small>
-    @enderror
+        <div class="mb-2">
+            <label for="password_confirmation" class="form-label">Confirmar contrasena</label>
+            <input id="password_confirmation" type="password" name="password_confirmation" class="form-control input-pro" placeholder="Repite la contrasena" autocomplete="new-password" required>
+        </div>
 
-</div>
+        <div class="mb-3">
+            <label for="role" class="form-label">Rol</label>
+            <select id="role" name="role" class="form-control input-pro" required>
+                <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>Cliente</option>
+                <option value="technician" {{ old('role') == 'technician' ? 'selected' : '' }}>Tecnico</option>
+                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+            </select>
+            @error('role')
+            <small class="text-danger fw-bold">{{  }}</small>
+            @enderror
+        </div>
 
-{{-- CORREO --}}
-<div class="mb-3">
+        <div class="text-start mt-2">
+            <a href="{{ route('login') }}{{ request('redirect_to') ? '?redirect_to='.urlencode(request('redirect_to')) : '' }}" class="link-pro">
+                Ya tengo cuenta
+            </a>
+        </div>
 
-    <label for="email" class="form-label">
-        Correo electrónico
-    </label>
+        <div class="mt-3 text-center">
+            <button type="submit" class="btn-login">Crear cuenta</button>
+        </div>
+    </form>
 
-    <input
-        id="email"
-        type="email"
-        name="email"
-        value="{{ old('email') }}"
-        class="form-control input-pro"
-        placeholder="tu@email.com"
-        autocomplete="email"
-        required>
-
-    @error('email')
-    <small class="text-danger fw-bold">
-        {{ $message }}
-    </small>
-    @enderror
-
-</div>
-
-{{-- CONTRASEÑA --}}
-<div class="mb-3">
-
-    <label for="password" class="form-label">
-        Contraseña
-    </label>
-
-    <input
-        id="password"
-        type="password"
-        name="password"
-        class="form-control input-pro"
-        placeholder="••••••••"
-        autocomplete="new-password"
-        required>
-
-    @error('password')
-    <small class="text-danger fw-bold">
-        {{ $message }}
-    </small>
-    @enderror
-
-</div>
-
-{{-- CONFIRMAR CONTRASEÑA --}}
-<div class="mb-2">
-
-    <label for="password_confirmation" class="form-label">
-        Confirmar contraseña
-    </label>
-
-    <input
-        id="password_confirmation"
-        type="password"
-        name="password_confirmation"
-        class="form-control input-pro"
-        placeholder="••••••••"
-        autocomplete="new-password"
-        required>
-
-</div>
-
-<div class="mb-3">
-
-    <label for="role" class="form-label">
-        Rol
-    </label>
-
-    <select
-        id="role"
-        name="role"
-        class="form-control input-pro"
-        required>
-        <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>Cliente</option>
-        <option value="technician" {{ old('role') == 'technician' ? 'selected' : '' }}>Tecnico</option>
-        <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-    </select>
-
-    @error('role')
-    <small class="text-danger fw-bold">
-        {{ $message }}
-    </small>
-    @enderror
-
-</div>
-
-<div class="text-start mt-2">
-    <a href="{{ route('login') }}" class="link-pro">
-        Ya tengo cuenta
-    </a>
-</div>
-
-<div class="mt-3 text-center">
-<button type="submit" class="btn-login">
-    Crear cuenta
-</button>
-</div>
-
-</form>
-
-{{-- GOOGLE --}}
-<div class="mt-3">
-    <a href="{{ route('google.login') }}"
-       class="btn btn-client-outline w-100">
-        Registrarse con Google
-    </a>
-</div>
-
+    <div class="mt-3">
+        <a href="{{ route('google.login') }}" class="btn btn-client-outline w-100">
+            Registrarse con Google
+        </a>
+    </div>
 </div>
 </div>
 
 <style>
-
-/* =============================
-   WRAPPER CENTRADO
-============================= */
-
 .login-wrapper{
 min-height:calc(100vh - 120px);
 display:flex;
@@ -179,18 +90,12 @@ justify-content:center;
 padding:40px 20px;
 }
 
-/* =============================
-   CARD
-============================= */
-
 .login-card{
 background:white;
 padding:34px;
 border-radius:22px;
 width:420px;
-
 box-shadow:0 6px 14px rgba(0,0,0,.10);
-
 animation:fade .6s ease;
 }
 
@@ -198,10 +103,6 @@ animation:fade .6s ease;
 background:#0b1220;
 border:1px solid #1f293f;
 }
-
-/* =============================
-   LOGO
-============================= */
 
 .logo-zone{
 text-align:center;
@@ -211,10 +112,6 @@ margin-bottom:10px;
 .login-logo{
 height:35px;
 }
-
-/* =============================
-   TEXTOS
-============================= */
 
 .title{
 font-weight:800;
@@ -234,8 +131,6 @@ color:#0f172a !important;
 font-weight:600;
 }
 
-/* dark mode */
-
 .dark .title{
 color:white;
 }
@@ -247,10 +142,6 @@ color:#e5e7eb !important;
 .dark .subtitle{
 color:#9ca3af;
 }
-
-/* =============================
-   INPUTS
-============================= */
 
 .input-pro{
 border-radius:12px;
@@ -271,10 +162,6 @@ border:1px solid #1f293f;
 color:white;
 }
 
-/* =============================
-   LINK
-============================= */
-
 .link-pro{
 color:#00798E;
 font-weight:500;
@@ -285,19 +172,13 @@ text-decoration:none;
 text-decoration:underline;
 }
 
-/* =============================
-   BOTÓN
-============================= */
-
 .btn-login{
 width:100%;
 padding:12px;
 border-radius:14px;
 border:none;
-
 background:#00798E;
 color:white;
-
 font-weight:600;
 transition:.3s;
 }
@@ -306,10 +187,6 @@ transition:.3s;
 transform:translateY(-2px);
 background:#00687a;
 }
-
-/* =============================
-   ANIMACIÓN
-============================= */
 
 @keyframes fade{
 from{
@@ -321,8 +198,6 @@ opacity:1;
 transform:none;
 }
 }
-
 </style>
 
 @endsection
-

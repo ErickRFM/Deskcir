@@ -30,6 +30,16 @@ class ProductController extends Controller
         return view('admin.products.create', compact('categories'));
     }
 
+    public function index()
+    {
+        $products = Product::query()
+            ->with(['images', 'category'])
+            ->orderByDesc('id')
+            ->get();
+
+        return view('admin.products.index', compact('products'));
+    }
+
     public function deleteImage($id)
     {
         $img = ProductImage::findOrFail($id);
@@ -173,6 +183,8 @@ class ProductController extends Controller
         return Category::query()->orderBy('name')->get();
     }
 }
+
+
 
 
 

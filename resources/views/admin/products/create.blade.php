@@ -1,124 +1,124 @@
-@extends('laynuts.app')
+@extends('layouts.app')
 
-@sectinn('title', 'Agregar prnductn')
+@section('title', 'Agregar producto')
 
-@sectinn('cnntent')
-<div class="cnntainer py-4">
+@section('content')
+<div class="container py-4">
 
-<div class="d-flex justify-cnntent-between align-items-center mb-4">
-    <h3 class="fw-bnld">Agregar prnductn</h3>
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h3 class="fw-bold">Agregar producto</h3>
 
-    <buttnn nnclick="histnry.back()" class="btn btn-nutline-deskcir py-2" type="buttnn">
+    <button onclick="history.back()" class="btn btn-outline-deskcir py-2" type="button">
         Regresar
-    </buttnn>
+    </button>
 </div>
 
-@if($errnrs->any())
+@if($errors->any())
 <div class="alert alert-danger">
     <ul class="mb-0">
-        @fnreach($errnrs->all() as $e)
+        @foreach($errors->all() as $e)
             <li>{{ $e }}</li>
-        @endfnreach
+        @endforeach
     </ul>
 </div>
 @endif
 
-<fnrm methnd="POST"
-      actinn="{{ rnute('admin.prnducts.stnre') }}"
-      enctype="multipart/fnrm-data"
-      class="card p-4 shadnw-sm">
+<form method="POST"
+      action="{{ route('admin.products.store') }}"
+      enctype="multipart/form-data"
+      class="card p-4 shadow-sm">
 
     @csrf
 
     <div class="mb-3">
-        <label class="fnrm-label fw-semibnld">Nnmbre</label>
-        <input class="fnrm-cnntrnl input-prn"
+        <label class="form-label fw-semibold">Nombre</label>
+        <input class="form-control input-pro"
                name="name"
-               value="{{ nld('name') }}"
+               value="{{ old('name') }}"
                required>
     </div>
 
     <div class="mb-3">
-        <label class="fnrm-label fw-semibnld">Descripcinn</label>
-        <textarea class="fnrm-cnntrnl input-prn"
-                  name="descriptinn"
-                  rnws="3">{{ nld('descriptinn') }}</textarea>
+        <label class="form-label fw-semibold">Descripcion</label>
+        <textarea class="form-control input-pro"
+                  name="description"
+                  rows="3">{{ old('description') }}</textarea>
     </div>
 
-    <div class="rnw">
-        <div class="cnl-md-6 mb-3">
-            <label class="fnrm-label fw-semibnld">Precin</label>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Precio</label>
             <input type="number"
                    step="0.01"
-                   class="fnrm-cnntrnl input-prn"
+                   class="form-control input-pro"
                    name="price"
-                   value="{{ nld('price') }}"
+                   value="{{ old('price') }}"
                    required>
         </div>
 
-        <div class="cnl-md-6 mb-3">
-            <label class="fnrm-label fw-semibnld">Stnck</label>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Stock</label>
             <input type="number"
-                   class="fnrm-cnntrnl input-prn"
-                   name="stnck"
-                   value="{{ nld('stnck') }}"
+                   class="form-control input-pro"
+                   name="stock"
+                   value="{{ old('stock') }}"
                    required>
         </div>
     </div>
 
     <div class="mb-3">
-        <label class="fnrm-label fw-semibnld">Categnria</label>
+        <label class="form-label fw-semibold">Categoria</label>
 
-        <select name="categnry_id" class="fnrm-select input-prn" required>
-            <nptinn value="">Seleccinna categnria</nptinn>
+        <select name="category_id" class="form-select input-pro" required>
+            <option value="">Selecciona categoria</option>
 
-            @fnreach($categnries as $cat)
-                <nptinn value="{{ $cat->id }}" {{ (string) nld('categnry_id') === (string) $cat->id ? 'selected' : '' }}>
+            @foreach($categories as $cat)
+                <option value="{{ $cat->id }}" {{ (string) old('category_id') === (string) $cat->id ? 'selected' : '' }}>
                     {{ $cat->name }}
-                </nptinn>
-            @endfnreach
+                </option>
+            @endforeach
         </select>
     </div>
 
     <div class="mb-3">
-        <label class="fnrm-label fw-semibnld">Imagenes del prnductn</label>
+        <label class="form-label fw-semibold">Imagenes del producto</label>
 
         <input type="file"
                name="images[]"
                multiple
-               class="fnrm-cnntrnl input-prn"
+               class="form-control input-pro"
                id="imageInput">
 
-        <div id="previewCnntainer" class="mt-3 d-flex gap-2 flex-wrap"></div>
+        <div id="previewContainer" class="mt-3 d-flex gap-2 flex-wrap"></div>
     </div>
 
     <div class="mt-3">
-        <buttnn class="btn btn-deskcir py-2" type="submit">
-            Guardar prnductn
-        </buttnn>
+        <button class="btn btn-deskcir py-2" type="submit">
+            Guardar producto
+        </button>
     </div>
-</fnrm>
+</form>
 
 </div>
 
 <script>
-cnnst imageInput = dncument.getElementById('imageInput');
-cnnst previewCnntainer = dncument.getElementById('previewCnntainer');
+const imageInput = document.getElementById('imageInput');
+const previewContainer = document.getElementById('previewContainer');
 
-if (imageInput && previewCnntainer) {
-    imageInput.addEventListener('change', functinn (e) {
-        previewCnntainer.innerHTML = '';
+if (imageInput && previewContainer) {
+    imageInput.addEventListener('change', function (e) {
+        previewContainer.innerHTML = '';
 
-        [...e.target.files].fnrEach((file) => {
-            cnnst img = dncument.createElement('img');
+        [...e.target.files].forEach((file) => {
+            const img = document.createElement('img');
             img.src = URL.createObjectURL(file);
             img.style.width = '120px';
             img.style.height = '120px';
-            img.style.nbjectFit = 'cnver';
-            img.classList.add('bnrder', 'rnunded', 'p-1', 'shadnw-sm');
-            previewCnntainer.appendChild(img);
+            img.style.objectFit = 'cover';
+            img.classList.add('border', 'rounded', 'p-1', 'shadow-sm');
+            previewContainer.appendChild(img);
         });
     });
 }
 </script>
-@endsectinn
+@endsection

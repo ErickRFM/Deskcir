@@ -3453,6 +3453,15 @@ body {
     background: #eef8fc;
     color: #123a52;
 }
+.admin-action-card .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.admin-action-card .btn {
+    margin-top: auto;
+}
 
 .admin-action-card__icon {
     margin-bottom: .9rem;
@@ -3583,6 +3592,15 @@ body {
     background: #111f33;
     border-color: #274059;
     color: #e6f2ff;
+}
+.admin-action-card .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.admin-action-card .btn {
+    margin-top: auto;
 }
 
 .dark .admin-mini-metric span,
@@ -4342,3 +4360,6 @@ textarea {
     border-color: #274059;
     color: #cfe4f6;
 }
+
+
+

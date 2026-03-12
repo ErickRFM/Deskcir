@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Technician\ChecklistController;
+use App\Http\Controllers\GeminiController;
 
 use App\Http\Controllers\{
     ProfileController,
@@ -82,6 +83,15 @@ Route::get('/', fn() => redirect('/store'));
 
 /*
 |--------------------------------------------------------------------------
+| GEMINI IA
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/gemini', [GeminiController::class, 'preguntar']);
+Route::view('/gemini-test', 'gemini');
+
+/*
+|--------------------------------------------------------------------------
 | PRODUCTOS ADMIN
 |--------------------------------------------------------------------------
 */
@@ -118,11 +128,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/order/{id}', [CheckoutController::class, 'show'])->name('checkout.show');
 });
+
 Route::middleware('auth')->group(function () {
     Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
     Route::post('/wallet/topup', [WalletController::class, 'topup'])->name('wallet.topup');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -174,23 +184,18 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
 
-    // DASHBOARD ADMIN
     Route::get('/', [AdminController::class,'dashboard'])->name('admin.dashboard');
     Route::get('/dashboard', [AdminController::class,'dashboard']);
 
-    // USUARIOS
     Route::resource('/users', UserController::class)->names('admin.users');
 
-    // PRODUCTOS
     Route::resource('/products', ProductController::class)->names('admin.products');
     Route::delete('/products/image/{id}', [ProductController::class,'deleteImage'])
         ->name('admin.products.image.delete');
 
-    // VENTAS
     Route::get('/sales',[SalesController::class,'index']);
     Route::post('/sales/{id}/status',[SalesController::class,'updateStatus']);
 
-    // TICKETS
     Route::get('/tickets',[AdminTicketController::class,'index'])
         ->name('admin.tickets.index');
 
@@ -206,7 +211,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
     Route::post('/tickets/{id}/status',[AdminTicketController::class,'updateStatus'])
         ->name('admin.tickets.status');
 
-    // REPORTES
     Route::prefix('reports')->group(function(){
 
         Route::get('/',[AdminReportController::class,'dashboard']);
@@ -218,12 +222,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
         Route::get('/export/pdf',[AdminReportController::class,'pdf']);
     });
 });
-
-/*
-|--------------------------------------------------------------------------
-| TECNICO
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------
@@ -251,13 +249,7 @@ Route::middleware(['auth', 'role:technician'])->prefix('technician')->group(func
         [TechnicianChecklistController::class,'update'])
         ->name('technician.checklist.update');
 
-    /*
-    |--------------------------------------------------------------------------
-    | CHECKLIST EXTRA
-    |--------------------------------------------------------------------------
-    */
-
-    Route::post('/checklist/{ticket}',
+    Route::post('/checklist/{ticket',
         [ChecklistController::class,'save'])
         ->name('technician.checklist.save');
 
@@ -277,11 +269,11 @@ Route::middleware(['auth', 'role:technician'])->prefix('technician')->group(func
 |--------------------------------------------------------------------------
 */
 
-
 Route::middleware('auth')->group(function(){
     Route::post('/presence/ping',[App\Http\Controllers\PresenceController::class,'ping']);
     Route::get('/presence/user/{userId}',[App\Http\Controllers\PresenceController::class,'status']);
 });
+
 Route::middleware('auth')->group(function(){
     Route::post('/webrtc/offer',[App\Http\Controllers\WebRTCController::class,'offer']);
     Route::post('/webrtc/answer',[App\Http\Controllers\WebRTCController::class,'answer']);
@@ -313,11 +305,3 @@ Route::middleware('auth')->group(function(){
 
 require __DIR__.'/auth.php';
 require __DIR__.'/client.php';
-
-
-
-
-
-
-
-

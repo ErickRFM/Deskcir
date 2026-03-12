@@ -3855,3 +3855,490 @@ textarea {
         min-height: 44px;
     }
 }
+
+.btn-outline-secondary,
+.btn-outline-dark {
+    border-color: #9fcad4;
+    color: #0b6f81;
+    background: #ffffff;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-dark:hover,
+.btn-outline-secondary:focus,
+.btn-outline-dark:focus {
+    border-color: #0b8396;
+    color: #0b8396;
+    background: #ebfbff;
+}
+
+.deskcir-ai-inline-banner .btn-light:not(.app-theme-toggle),
+.admin-dashboard-hero .btn-light:not(.app-theme-toggle),
+.client-hero .btn-light:not(.app-theme-toggle),
+.technician-hero .btn-light:not(.app-theme-toggle) {
+    background: #ffffff;
+    color: #0b6f81;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.deskcir-ai-inline-banner .btn-light:hover,
+.admin-dashboard-hero .btn-light:hover {
+    background: #ecfbff;
+    color: #075f70;
+}
+
+/* ========================= */
+/* NAV SEARCH POLISH         */
+/* ========================= */
+.nav-store-search {
+    border-color: #cfe3ec;
+    background: #f7fbfe;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.nav-store-search-input::placeholder {
+    color: #7a93a8;
+}
+
+.nav-store-search-btn {
+    border-left: 1px solid #cde0e9;
+}
+
+.dark .nav-store-search {
+    background: #0b1728;
+    border-color: #243b55;
+    box-shadow: inset 0 1px 0 rgba(10, 20, 32, 0.6);
+}
+
+.dark .nav-store-search-input {
+    color: #e8f2ff;
+}
+
+.dark .nav-store-search-input::placeholder {
+    color: #9db4c9;
+}
+
+.dark .nav-store-search-btn {
+    background: linear-gradient(135deg, #0ea5a5, #1dd4d4);
+    color: #07212c;
+    border-left-color: #28455f;
+}
+
+/* ========================= */
+/* BUTTON CONSISTENCY        */
+/* ========================= */
+.btn-deskcir,
+.btn-outline-deskcir,
+.btn-client,
+.btn-client-outline {
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.dark .btn-outline-deskcir {
+    color: #7be2ef;
+    border-color: #2fb7c7;
+}
+
+.dark .btn-outline-deskcir:hover {
+    background: #0f3444;
+    color: #c8f6ff;
+}
+
+/* ========================= */
+/* CLIENT PROFILE CARD       */
+/* ========================= */
+.client-profile-card .card-body {
+    padding: 2.2rem 2rem;
+}
+
+.client-profile-card__media {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .6rem;
+}
+
+.client-profile-card__avatar {
+    width: 118px;
+    height: 118px;
+}
+
+.client-profile-card__upload label {
+    min-width: 160px;
+}
+
+/* ========================= */
+/* WALLET UX UPGRADE         */
+/* ========================= */
+.wallet-method-grid {
+    display: grid;
+    gap: .75rem;
+}
+
+.wallet-method-card {
+    border: 1px solid var(--desk-border);
+    background: #f8fcff;
+    border-radius: 16px;
+    padding: .9rem 1rem;
+    display: grid;
+    gap: .5rem;
+}
+
+.wallet-method-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .8rem;
+}
+
+.wallet-method-card__title {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-weight: 700;
+    color: #143149;
+}
+
+.wallet-method-card__badge {
+    font-size: .72rem;
+    padding: .25rem .55rem;
+    border-radius: 999px;
+    background: #e7f6f8;
+    color: #0b6f81;
+    font-weight: 700;
+}
+
+.wallet-brand-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.wallet-brand-pill {
+    border: 1px solid #cfe3ec;
+    background: #ffffff;
+    color: #1a3b52;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 700;
+    padding: .2rem .55rem;
+}
+
+.wallet-banks {
+    display: grid;
+    gap: .45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wallet-banks li {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: #4a657a;
+    font-weight: 600;
+}
+
+.wallet-steps {
+    display: grid;
+    gap: .6rem;
+}
+
+.wallet-step {
+    display: flex;
+    align-items: flex-start;
+    gap: .65rem;
+    padding: .65rem .7rem;
+    border-radius: 12px;
+    background: #f1f9fc;
+    border: 1px dashed #c4dce8;
+    color: #284559;
+}
+
+.wallet-step .material-symbols-outlined {
+    color: #0b6f81;
+}
+
+.dark .wallet-method-card {
+    background: #101f33;
+    border-color: #274059;
+}
+
+.dark .wallet-method-card__title {
+    color: #e7f2ff;
+}
+
+.dark .wallet-method-card__badge {
+    background: #143047;
+    color: #7be2ef;
+}
+
+.dark .wallet-brand-pill {
+    background: #0f1f34;
+    border-color: #274059;
+    color: #cfe4f6;
+}
+
+.dark .wallet-banks li {
+    color: #9fb7cd;
+}
+
+.dark .wallet-step {
+    background: #0f1f34;
+    border-color: #274059;
+    color: #cfe4f6;
+}
+
+/* ========================= */
+/* CHECKOUT PAY CARDS        */
+/* ========================= */
+.checkout-pay-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: .85rem;
+}
+
+.checkout-pay-card {
+    border: 1px solid #d2e3ec;
+    border-radius: 16px;
+    padding: .95rem 1rem;
+    background: #f8fcff;
+    display: grid;
+    gap: .45rem;
+    cursor: pointer;
+}
+
+.checkout-pay-card input {
+    margin-right: .4rem;
+}
+
+.checkout-pay-card__brand {
+    font-weight: 700;
+    color: #123a52;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.checkout-pay-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+}
+
+.checkout-pay-chip {
+    font-size: .7rem;
+    font-weight: 700;
+    padding: .2rem .5rem;
+    border-radius: 999px;
+    border: 1px solid #cfe3ec;
+    color: #1d3f55;
+    background: #ffffff;
+}
+
+.checkout-brand-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.checkout-brand-chip {
+    border: 1px solid #cfe3ec;
+    background: #ffffff;
+    color: #1a3b52;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 700;
+    padding: .2rem .55rem;
+}
+
+.checkout-note-card {
+    border: 1px solid #cfe3ec;
+    border-radius: 14px;
+    padding: .75rem .85rem;
+    background: #f8fcff;
+    display: grid;
+    gap: .3rem;
+    color: #1d3f55;
+}
+
+.dark .checkout-pay-card,
+.dark .checkout-note-card {
+    background: #101f33;
+    border-color: #274059;
+    color: #dbe9f6;
+}
+
+.dark .checkout-pay-card__brand {
+    color: #e7f2ff;
+}
+
+.dark .checkout-pay-chip,
+.dark .checkout-brand-chip {
+    background: #0f1f34;
+    border-color: #274059;
+    color: #cfe4f6;
+}
+
+/* ========================= */
+/* CASHIER PROFILE           */
+/* ========================= */
+.cashier-profile-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 22px;
+    border: 1px solid #185473;
+    background: linear-gradient(135deg, #071a2a 0%, #0b2a43 52%, #0f3a58 100%);
+    color: #eaf9ff;
+    padding: 1.25rem 1.25rem;
+    box-shadow: 0 18px 38px rgba(5, 23, 35, 0.32);
+}
+
+.cashier-profile-hero__bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 78% 26%, rgba(56, 189, 248, 0.22), transparent 36%),
+        radial-gradient(circle at 18% 76%, rgba(45, 212, 191, 0.2), transparent 32%);
+    pointer-events: none;
+}
+
+.cashier-profile-kicker {
+    font-size: .76rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #9ed8ea;
+}
+
+.cashier-profile-card {
+    background: #ffffff;
+}
+
+.cashier-profile-avatar {
+    width: 86px;
+    height: 86px;
+    border-radius: 24px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto;
+    background: #eef8fc;
+    color: #0b6f81;
+    font-size: 2rem;
+}
+
+.cashier-profile-meta {
+    display: grid;
+    gap: .75rem;
+    margin-top: 1.2rem;
+}
+
+.cashier-profile-meta div {
+    display: flex;
+    justify-content: space-between;
+    gap: .75rem;
+    font-size: .9rem;
+    color: #4a657a;
+}
+
+.cashier-profile-meta strong {
+    color: #112b40;
+}
+
+.cashier-checklist {
+    display: grid;
+    gap: .6rem;
+}
+
+.cashier-checklist__item {
+    display: flex;
+    align-items: flex-start;
+    gap: .6rem;
+    padding: .7rem .8rem;
+    border-radius: 12px;
+    background: #f1f9fc;
+    border: 1px dashed #c4dce8;
+    color: #284559;
+}
+
+.cashier-checklist__item .material-symbols-outlined {
+    color: #0b6f81;
+}
+
+.dark .cashier-profile-card {
+    background: #0f1c2f;
+}
+
+.dark .cashier-profile-avatar {
+    background: #132238;
+    color: #7be2ef;
+}
+
+.dark .cashier-profile-meta div {
+    color: #9fb7cd;
+}
+
+.dark .cashier-profile-meta strong {
+    color: #e7f2ff;
+}
+
+.dark .cashier-checklist__item {
+    background: #0f1f34;
+    border-color: #274059;
+    color: #cfe4f6;
+}
+
+/* ========================= */
+/* TECHNICIAN ACTION CARDS   */
+/* ========================= */
+.technician-dashboard .tech-action-row .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.technician-dashboard .tech-action-row .btn {
+    margin-top: auto;
+}
+
+/* ========================= */
+/* CLIENT WALLET SPOTLIGHT   */
+/* ========================= */
+.client-wallet-spotlight {
+    border-radius: 22px;
+    background: linear-gradient(135deg, #f8fbfe 0%, #eef7fb 55%, #e6f2f8 100%);
+    border: 1px solid #d7e6ef;
+}
+
+.client-wallet-spotlight .text-deskcir {
+    color: #00798e !important;
+}
+
+.client-wallet-spotlight__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.client-wallet-spotlight__tag {
+    border: 1px solid #cfe3ec;
+    border-radius: 999px;
+    padding: .25rem .6rem;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #274559;
+    background: #ffffff;
+}
+
+.dark .client-wallet-spotlight {
+    background: linear-gradient(135deg, #0f1c2f 0%, #102239 55%, #132941 100%);
+    border-color: #274059;
+}
+
+.dark .client-wallet-spotlight__tag {
+    background: #0f1f34;
+    border-color: #274059;
+    color: #cfe4f6;
+}

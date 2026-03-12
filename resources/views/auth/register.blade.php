@@ -56,6 +56,7 @@
                 <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>Cliente</option>
                 <option value="technician" {{ old('role') == 'technician' ? 'selected' : '' }}>Tecnico</option>
                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                <option value="cashier" {{ old('role') == 'cashier' ? 'selected' : '' }}>Caja</option>
             </select>
             @error('role')
             <small class="text-danger fw-bold">{{ $message }}</small>

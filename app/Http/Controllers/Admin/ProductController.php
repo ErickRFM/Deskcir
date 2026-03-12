@@ -14,14 +14,13 @@ class ProductController extends Controller
 {
     private function mediaDisk(): string
     {
-        return 's3';
-    }
+        $defaultDisk = (string) config('filesystems.default', 'public');
 
-    public function index()
-    {
-        $products = Product::with('images', 'category')->get();
+        if ($defaultDisk === 's3' && ! class_exists(\League\Flysystem\AwsS3V3\PortableVisibilityConverter::class)) {
+            return 'public';
+        }
 
-        return view('admin.products.index', compact('products'));
+        return $defaultDisk ?: 'public';
     }
 
     public function create()
@@ -174,3 +173,6 @@ class ProductController extends Controller
         return Category::query()->orderBy('name')->get();
     }
 }
+
+
+

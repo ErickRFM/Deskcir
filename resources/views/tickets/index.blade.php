@@ -23,7 +23,7 @@ Nuevo
 
 <td>
 <a href="/tickets/{{ $t->id }}"
-   class="btn btn-sm btn-dark">
+   class="btn btn-sm btn-deskcir">
 Ver
 </a>
 </td>

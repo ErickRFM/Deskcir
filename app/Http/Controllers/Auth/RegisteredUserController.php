@@ -41,6 +41,7 @@ class RegisteredUserController extends Controller
             'admin' => ['admin', 'administrador', '1'],
             'technician' => ['technician', 'tecnico', '2'],
             'client' => ['client', 'cliente', '3'],
+            'cashier' => ['cashier', 'caja', '4'],
         ];
 
         $canonicalRole = null;

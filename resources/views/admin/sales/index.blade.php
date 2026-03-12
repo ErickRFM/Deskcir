@@ -34,6 +34,7 @@
     <th>#</th>
     <th>Cliente</th>
     <th>Metodo</th>
+    <th>Pago</th>
     <th>Total</th>
     <th>Estado</th>
     <th>Fecha</th>
@@ -61,6 +62,27 @@
 <span class="badge bg-secondary">
     {{ ucfirst($o->payment_method) }}
 </span>
+</td>
+
+<td>
+    @if($o->payment)
+        <form method="POST" action="{{ route('admin.payments.update', $o->payment->id) }}">
+            @csrf
+            @method('PATCH')
+            <select name="status" class="form-select form-select-sm mb-1">
+                <option value="pending" @if($o->payment->status == 'pending') selected @endif>Pendiente</option>
+                <option value="paid" @if($o->payment->status == 'paid') selected @endif>Pagado</option>
+                <option value="failed" @if($o->payment->status == 'failed') selected @endif>Fallido</option>
+                <option value="cancelled" @if($o->payment->status == 'cancelled') selected @endif>Cancelado</option>
+            </select>
+            <button class="btn btn-sm btn-outline-deskcir w-100">Actualizar</button>
+        </form>
+        @if($o->payment->reference)
+            <small class="text-muted d-block mt-1">Ref: {{ $o->payment->reference }}</small>
+        @endif
+    @else
+        <span class="text-muted small">Sin registro</span>
+    @endif
 </td>
 
 <td class="fw-bold text-success">
@@ -97,7 +119,7 @@
 
 </select>
 
-<button class="btn btn-sm btn-dark w-100">
+<button class="btn btn-sm btn-deskcir w-100">
 Guardar
 </button>
 
@@ -122,7 +144,7 @@ Ver
 @empty
 
 <tr>
-<td colspan="7" class="text-center py-4">
+<td colspan="8" class="text-center py-4">
     No hay ventas registradas
 </td>
 </tr>
@@ -144,4 +166,7 @@ Ver
 </div>
 
 @endsection
+
+
+
 

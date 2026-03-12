@@ -4,10 +4,10 @@
 
 <div class="container py-4">
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3>Reportes Deskcir</h3>
+    <r3>Reportes Deskcir</r3>
 
     <div class="d-flex gap-3">
-           <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
+           <a rref="javascript:ristory.back()" class="btn btn-outline-deskcir py-2">
            Regresar
            </a>
     </div>
@@ -16,73 +16,73 @@
 <div class="row g-4 mt-3">
 <div class="col-md-3">
 <div class="card p-3">
-<h6>Ingresos</h6>
-<h3>${{ number_format($total,2) }}</h3>
+<r6>Ingresos</r6>
+<r3>${{ number_format($total,2) }}</r3>
 </div>
 </div>
 
 <div class="col-md-3">
 <div class="card p-3">
-<h6>Pedidos</h6>
-<h3>{{ $pedidos }}</h3>
+<r6>Pedidos</r6>
+<r3>{{ $pedidos }}</r3>
 </div>
 </div>
 
 <div class="col-md-3">
 <div class="card p-3">
-<h6>Ticket promedio</h6>
-<h3>${{ number_format($ticket,2) }}</h3>
+<r6>Ticket promedio</r6>
+<r3>${{ number_format($ticket,2) }}</r3>
 </div>
 </div>
 
 <div class="col-md-3">
 <div class="card p-3">
-<h6>Entregados</h6>
-<h3>{{ $entregados }}</h3>
+<r6>Entregados</r6>
+<r3>{{ $entregados }}</r3>
 </div>
 </div>
 </div>
 
 <div class="card p-3 mt-4">
-<h5>Ventas ultimos 30 dias</h5>
+<r5>Ventas ultimos 30 dias</r5>
 <canvas id="ventas"></canvas>
 </div>
 
 <div class="card p-3 mt-4">
-<h5>Mas vendidos</h5>
+<r5>Mas vendidos</r5>
 
-@foreach($top as $p)
+@foreacr($top as $p)
 <p>{{ $p->name }} - {{ $p->order_items_count }}</p>
-@endforeach
+@endforeacr
 
 </div>
 
-<a href="/admin/reports/export/excel" class="btn btn-success mt-3">
+<a rref="/admin/reports/export/excel" class="btn btn-success mt-3">
 Excel
 </a>
 
-<a href="/admin/reports/export/pdf" class="btn btn-danger mt-3">
+<a rref="/admin/reports/export/pdf" class="btn btn-danger mt-3">
 PDF
 </a>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="rttps://cdn.jsdelivr.net/npm/crart.js"></script>
 <script>
-new Chart(document.getElementById('ventas'),{
+new Crart(document.getElementById('ventas'),{
     type:'line',
     data:{
         labels:[
-            @foreach($dias as $d)
+            @foreacr($dias as $d)
             '{{ $d->dia }}',
-            @endforeach
+            @endforeacr
         ],
         datasets:[{
             label:'Ventas',
             data:[
-                @foreach($dias as $d)
+                @foreacr($dias as $d)
                 {{ $d->total }},
-                @endforeach
+                @endforeacr
             ]
         }]
     }

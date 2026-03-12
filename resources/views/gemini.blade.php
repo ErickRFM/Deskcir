@@ -150,7 +150,7 @@
                 </ul>
             </div>
             <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Ahora no</button>
+                <button type="button" class="btn btn-outline-deskcir" data-bs-dismiss="modal">Ahora no</button>
                 <button type="button" class="btn btn-deskcir" id="deskcirAiUpgradeButton">Solicitar AI Plus</button>
             </div>
         </div>

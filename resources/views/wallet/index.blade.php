@@ -75,6 +75,69 @@
                 </div>
             </div>
 
+            <div class="card wallet-card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h6 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined">payments</span>
+                            Metodos disponibles
+                        </h6>
+                        <span class="badge text-bg-light border">Verificados</span>
+                    </div>
+
+                    <div class="wallet-method-grid">
+                        <div class="wallet-method-card">
+                            <div class="wallet-method-card__head">
+                                <span class="wallet-method-card__title">
+                                    <span class="material-symbols-outlined">credit_card</span>
+                                    Tarjetas y Mercado Pago
+                                </span>
+                                <span class="wallet-method-card__badge">Recomendado</span>
+                            </div>
+                            </div>
+                            <small class="text-muted">Cargo inmediato y confirmacion automatica.</small>
+                        </div>
+                        <div class="wallet-method-card">
+                            <div class="wallet-method-card__head">
+                                <span class="wallet-method-card__title">
+                                    <span class="material-symbols-outlined">account_balance</span>
+                                    Transferencia bancaria
+                                </span>
+                                <span class="wallet-method-card__badge">SPEI</span>
+                            </div>
+                            <ul class="wallet-banks">
+                                <li><span class="material-symbols-outlined">check_circle</span>BBVA</li>
+                                <li><span class="material-symbols-outlined">check_circle</span>Banorte</li>
+                                <li><span class="material-symbols-outlined">check_circle</span>Santander</li>
+                                <li><span class="material-symbols-outlined">check_circle</span>Citibanamex</li>
+                            </ul>
+                        </div>
+                        <div class="wallet-method-card">
+                            <div class="wallet-method-card__head">
+                                <span class="wallet-method-card__title">
+                                    <span class="material-symbols-outlined">currency_bitcoin</span>
+                                    Cripto Deskcir
+                                </span>
+                                <span class="wallet-method-card__badge">Manual</span>
+                            </div>
+                            <div class="small text-muted">BTC, ETH o USDT con referencia.</div>
+                            <div class="small">Wallet: <strong>bc1qdeskcirficticia12345</strong></div>
+                            <div class="small">Memo: <strong>DSK-{{ now()->format('His') }}</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="wallet-steps mt-3">
+                        <div class="wallet-step">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Selecciona el metodo, realiza el pago y conserva tu referencia.
+                        </div>
+                        <div class="wallet-step">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Confirmamos tu recarga en un rango de 5-15 min habiles.
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card wallet-card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-2">
@@ -91,6 +154,12 @@
                         @endif
                     </div>
 
+                    <div class="wallet-brand-strip mb-3">
+                        <span class="wallet-brand-pill">Visa</span>
+                        <span class="wallet-brand-pill">Mastercard</span>
+                        <span class="wallet-brand-pill">Amex</span>
+                        <span class="wallet-brand-pill">Mercado Pago</span>
+                    </div>
                     <form method="POST" action="{{ route('cards.save') }}" class="row g-2 mb-3">
                         @csrf
                         <div class="col-6">
@@ -175,6 +244,29 @@
         </div>
 
         <div class="col-lg-8">
+            <div class="card wallet-card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <span class="material-symbols-outlined">fact_check</span>
+                        Proceso de pago
+                    </h5>
+                    <div class="wallet-steps">
+                        <div class="wallet-step">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Escoge metodo, revisa el monto y confirma datos.
+                        </div>
+                        <div class="wallet-step">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Recibe tu comprobante y seguimiento desde esta misma vista.
+                        </div>
+                        <div class="wallet-step">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Si pagas con cripto o SPEI, verifica referencia antes de cerrar.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="card wallet-card border-0 shadow-sm">
                 <div class="card-body p-4">
                     <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
@@ -226,5 +318,7 @@
     </div>
 </div>
 @endsection
+
+
 
 

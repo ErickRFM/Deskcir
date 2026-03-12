@@ -12,7 +12,7 @@ class SalesController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('user')
+        $orders = Order::with(['user', 'payment'])
             ->orderBy('created_at','desc')
             ->paginate(20);
 

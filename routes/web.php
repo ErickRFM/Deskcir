@@ -21,13 +21,15 @@ use App\Http\Controllers\{
 };
 
 use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\FeedbackController;
 
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\{
     SalesController,
     UserController,
     ReportController as AdminReportController,
-    TicketController as AdminTicketController
+    TicketController as AdminTicketController,
+    PaymentController,
 };
 
 use App\Http\Controllers\Technician\{
@@ -120,6 +122,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/support/{id}',[TicketController::class,'show']);
     Route::post('/support/{id}/message',[TicketController::class,'addMessage']);
 
+    Route::get('/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::get('/feedback/create', [FeedbackController::class, 'create'])->name('feedback.create');
+    Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+
     Route::resource('tickets', TicketController::class);
     Route::post('/tickets/{id}/message',[TicketController::class,'addMessage']);
     Route::get('/tickets/{ticket}/messages/poll', App\Http\Controllers\TicketMessagePollController::class)->name('tickets.messages.poll');
@@ -143,6 +149,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
     Route::get('/sales',[SalesController::class,'index']);
     Route::post('/sales/{id}/status',[SalesController::class,'updateStatus']);
 
+    Route::patch('/payments/{payment}', [PaymentController::class, 'update'])->name('admin.payments.update');
     Route::get('/tickets',[AdminTicketController::class,'index'])
         ->name('admin.tickets.index');
 
@@ -157,6 +164,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
 
     Route::post('/tickets/{id}/status',[AdminTicketController::class,'updateStatus'])
         ->name('admin.tickets.status');
+
+    Route::get('/feedback', [FeedbackController::class, 'index'])->name('admin.feedback.index');
+    Route::patch('/feedback/{feedback}', [FeedbackController::class, 'update'])->name('admin.feedback.update');
 
     Route::prefix('reports')->group(function(){
         Route::get('/',[AdminReportController::class,'dashboard']);
@@ -221,5 +231,11 @@ Route::middleware('auth')->group(function(){
 
 require __DIR__.'/auth.php';
 require __DIR__.'/client.php';
+
+
+
+require __DIR__.'/cashier.php';
+
+
 
 

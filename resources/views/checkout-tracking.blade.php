@@ -1,4 +1,4 @@
-ï»¿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Seguimiento de pedido')
 
@@ -76,9 +76,17 @@
                     <h6 class="fw-bold">Pago</h6>
                     <p class="mb-1">Metodo: <strong>{{ str_replace('_', ' ', $order->payment_method) }}</strong></p>
                     @if($order->card)
-                        <p class="mb-1">Tarjeta: <strong>{{ $order->card->brand }} â€¢â€¢â€¢â€¢ {{ $order->card->last4 }}</strong></p>
+                        <p class="mb-1">Tarjeta: <strong>{{ $order->card->brand }} •••• {{ $order->card->last4 }}</strong></p>
                     @endif
-                    <p class="mb-0">Estado: <strong>{{ ucfirst($order->status) }}</strong></p>
+                    @if($order->payment)
+                    <p class="mb-1">Estado de pago: <strong>{{ ucfirst($order->payment->status) }}</strong></p>
+                    @if($order->payment->reference)
+                        <p class="mb-1">Referencia: <strong>{{ $order->payment->reference }}</strong></p>
+                    @endif
+                    @if($order->payment->paid_at)
+                        <p class="mb-1">Pagado: <strong>{{ $order->payment->paid_at->format('d/m/Y H:i') }}</strong></p>
+                    @endif
+                @endif                <p class="mb-0">Estado: <strong>{{ ucfirst($order->status) }}</strong></p>
                 </div>
             </div>
 
@@ -115,3 +123,4 @@
     </div>
 </div>
 @endsection
+

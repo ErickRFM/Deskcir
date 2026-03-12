@@ -242,7 +242,7 @@ Limpiar todo
         <h5 id="deskcirModalTitle" class="deskcir-modal__title">Confirmar accion</h5>
         <p id="deskcirModalMessage" class="deskcir-modal__text">Deseas continuar?</p>
         <div class="deskcir-modal__actions">
-            <button type="button" class="btn btn-outline-secondary btn-sm" id="deskcirModalCancel">Cancelar</button>
+            <button type="button" class="btn btn-outline-deskcir btn-sm" id="deskcirModalCancel">Cancelar</button>
             <button type="button" class="btn btn-deskcir btn-sm" id="deskcirModalConfirm">Confirmar</button>
         </div>
     </div>

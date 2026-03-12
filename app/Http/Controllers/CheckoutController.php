@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Card;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\WalletTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -72,7 +73,7 @@ class CheckoutController extends Controller
                 ->where('user_id', $user->id)
                 ->first();
 
-            if (!$selectedCard) {
+            if (! $selectedCard) {
                 return back()->withInput()->with('error', 'Selecciona una tarjeta guardada valida.');
             }
 
@@ -82,6 +83,7 @@ class CheckoutController extends Controller
             }
         }
 
+        $cardNumberRaw = null;
         if ($paymentMethod === 'card_new') {
             $request->validate([
                 'card_number' => 'required|string|min:13|max:25',
@@ -90,6 +92,8 @@ class CheckoutController extends Controller
                 'card_exp_year' => 'required|integer|min:2024|max:2100',
                 'card_cvv' => 'required|string|min:3|max:4',
             ]);
+
+            $cardNumberRaw = preg_replace('/\D+/', '', (string) $request->input('card_number'));
 
             if ($request->boolean('save_card')) {
                 if ($request->boolean('make_default_card')) {
@@ -100,8 +104,8 @@ class CheckoutController extends Controller
                     'user_id' => $user->id,
                     'mp_id' => 'manual_' . Str::upper(Str::random(12)),
                     'brand' => $this->detectBrand($request->input('card_number')),
-                    'last4' => substr(preg_replace('/\D+/', '', (string) $request->input('card_number')), -4),
-                    'alias' => 'Tarjeta ' . substr(preg_replace('/\D+/', '', (string) $request->input('card_number')), -4),
+                    'last4' => substr($cardNumberRaw, -4),
+                    'alias' => 'Tarjeta ' . substr($cardNumberRaw, -4),
                     'exp_month' => (int) $request->input('card_exp_month'),
                     'exp_year' => (int) $request->input('card_exp_year'),
                     'is_default' => $request->boolean('make_default_card'),
@@ -120,6 +124,45 @@ class CheckoutController extends Controller
         $city = $validated['delivery_type'] === 'shipping' ? $validated['city'] : 'Entrega en punto';
         $postalCode = $validated['delivery_type'] === 'shipping' ? $validated['postal_code'] : '00000';
 
+        $paymentStatus = in_array($paymentMethod, ['wallet', 'card_saved', 'card_new'], true)
+            ? 'paid'
+            : 'pending';
+
+        $paymentReference = match ($paymentMethod) {
+            'wallet' => 'WLT-' . Str::upper(Str::random(8)),
+            'card_saved', 'card_new' => 'CARD-' . Str::upper(Str::random(8)),
+            'transfer' => 'TRF-' . Str::upper(Str::random(8)),
+            'cash' => 'CASH-' . Str::upper(Str::random(8)),
+            'bitcoin' => 'CRYPTO-' . Str::upper(Str::random(8)),
+            default => null,
+        };
+
+        $paymentMeta = [
+            'channel' => $paymentMethod,
+        ];
+
+        if ($paymentMethod === 'card_saved' && $selectedCard) {
+            $paymentMeta['card_brand'] = $selectedCard->brand;
+            $paymentMeta['card_last4'] = $selectedCard->last4;
+        }
+
+        if ($paymentMethod === 'card_new') {
+            $paymentMeta['card_brand'] = $this->detectBrand((string) $request->input('card_number'));
+            $paymentMeta['card_last4'] = $cardNumberRaw ? substr($cardNumberRaw, -4) : null;
+        }
+
+        if ($paymentMethod === 'transfer') {
+            $paymentMeta['bank'] = 'SPEI';
+        }
+
+        if ($paymentMethod === 'cash') {
+            $paymentMeta['note'] = 'Pago contra entrega o en punto';
+        }
+
+        if ($paymentMethod === 'bitcoin') {
+            $paymentMeta['network'] = 'BTC/ETH/USDT';
+        }
+
         $orderId = null;
 
         DB::transaction(function () use (
@@ -132,6 +175,9 @@ class CheckoutController extends Controller
             $address,
             $city,
             $postalCode,
+            $paymentStatus,
+            $paymentReference,
+            $paymentMeta,
             &$orderId
         ) {
             $order = Order::create([
@@ -164,6 +210,16 @@ class CheckoutController extends Controller
                 ]);
             }
 
+            Payment::create([
+                'order_id' => $order->id,
+                'method' => $paymentMethod,
+                'status' => $paymentStatus,
+                'amount' => $summary['total'],
+                'reference' => $paymentReference,
+                'paid_at' => $paymentStatus === 'paid' ? now() : null,
+                'meta' => $paymentMeta,
+            ]);
+
             if ($paymentMethod === 'wallet') {
                 $user->wallet_balance = (float) $user->wallet_balance - (float) $summary['total'];
                 $user->save();
@@ -190,7 +246,7 @@ class CheckoutController extends Controller
     public function show($id)
     {
         $order = Order::query()
-            ->with(['items.product', 'card'])
+            ->with(['items.product', 'card', 'payment'])
             ->where('user_id', auth()->id())
             ->findOrFail($id);
 

@@ -50,7 +50,7 @@
 
         <div class="d-flex gap-2 flex-wrap">
             <a href="{{ auth()->check() ? '/support' : '/store' }}" class="btn btn-outline-deskcir py-2">Regresar</a>
-            <a href="{{ route('deskcir.ai') }}" class="btn btn-outline-secondary py-2">Abrir Deskcir AI</a>
+            <a href="{{ route('deskcir.ai') }}" class="btn btn-outline-deskcir py-2">Abrir Deskcir AI</a>
         </div>
     </div>
 
@@ -128,7 +128,7 @@
 
                     <div class="d-flex gap-2 flex-wrap">
                         <button type="submit" class="btn btn-deskcir py-2">{{ $isPresencial ? 'Registrar soporte presencial' : 'Crear ticket' }}</button>
-                        <a href="{{ auth()->check() ? '/support' : '/store' }}" class="btn btn-outline-secondary py-2">Cancelar</a>
+                        <a href="{{ auth()->check() ? '/support' : '/store' }}" class="btn btn-outline-deskcir py-2">Cancelar</a>
                     </div>
                 </div>
             </form>

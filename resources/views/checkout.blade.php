@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', 'Checkout')
 
@@ -36,7 +36,14 @@
                     <span class="material-symbols-outlined">shopping_bag</span>
                     Finalizar compra
                 </h2>
-                <p class="mb-0 text-light-emphasis">Configura entrega, pago y confirma en segundos.</p>
+                <p class="mb-2 text-light-emphasis">Configura entrega, pago y confirma en un flujo claro y profesional.</p>
+                <div class="checkout-trust-row">
+                    <span class="checkout-trust-pill">Visa</span>
+                    <span class="checkout-trust-pill">Mastercard</span>
+                    <span class="checkout-trust-pill">Amex</span>
+                    <span class="checkout-trust-pill">Mercado Pago</span>
+                    <span class="checkout-trust-pill">Cripto</span>
+                </div>
             </div>
             <div class="checkout-hero__actions d-flex align-items-center gap-2 flex-wrap">
                 <a href="{{ route('wallet.index') }}" class="btn btn-outline-deskcir d-flex align-items-center gap-1">
@@ -58,36 +65,39 @@
 
                 <div class="card checkout-card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined">local_shipping</span>
-                            Entrega
-                        </h5>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                            <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined">local_shipping</span>
+                                Entrega
+                            </h5>
+                            <span class="badge bg-light text-dark border">Paso 1</span>
+                        </div>
 
-                        <div class="row g-2 mb-3">
+                        <div class="row g-3 mb-3">
                             <div class="col-md-6">
-                                <div class="form-check card-radio p-3 border rounded-3">
+                                <div class="form-check card-radio p-3 border rounded-4 h-100">
                                     <input class="form-check-input" type="radio" name="delivery_type" id="deliveryShipping" value="shipping" {{ old('delivery_type', 'shipping') === 'shipping' ? 'checked' : '' }}>
                                     <label class="form-check-label w-100" for="deliveryShipping">
                                         <strong>Envio a domicilio</strong>
-                                        <small class="d-block text-muted">Llega a tu direccion</small>
+                                        <small class="d-block text-muted">Ideal para recibir tu pedido en casa u oficina.</small>
                                     </label>
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-check card-radio p-3 border rounded-3">
+                                <div class="form-check card-radio p-3 border rounded-4 h-100">
                                     <input class="form-check-input" type="radio" name="delivery_type" id="deliveryPickup" value="pickup" {{ old('delivery_type') === 'pickup' ? 'checked' : '' }}>
                                     <label class="form-check-label w-100" for="deliveryPickup">
                                         <strong>Punto de entrega</strong>
-                                        <small class="d-block text-muted">Recoge en sede Deskcir</small>
+                                        <small class="d-block text-muted">Recoge en una sede Deskcir mas cercana.</small>
                                     </label>
                                 </div>
                             </div>
                         </div>
 
-                        <div id="shippingFields" class="row g-2">
+                        <div id="shippingFields" class="row g-3">
                             <div class="col-12">
                                 <label class="form-label">Direccion</label>
-                                <input name="address" class="form-control" value="{{ old('address') }}" placeholder="Calle, numero, colonia">
+                                <input name="address" class="form-control" value="{{ old('address') }}" placeholder="Calle, numero, colonia y referencias">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Ciudad</label>
@@ -99,7 +109,7 @@
                             </div>
                         </div>
 
-                        <div id="pickupFields" class="row g-2 d-none">
+                        <div id="pickupFields" class="row g-3 d-none">
                             <div class="col-12">
                                 <label class="form-label">Punto de entrega</label>
                                 <select class="form-select" name="pickup_point">
@@ -111,14 +121,14 @@
                             </div>
                         </div>
 
-                        <div class="row g-2 mt-1">
+                        <div class="row g-3 mt-1">
                             <div class="col-md-6">
                                 <label class="form-label">Telefono de contacto</label>
                                 <input name="phone" class="form-control" value="{{ old('phone') }}" placeholder="10 digitos" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Notas de entrega</label>
-                                <input name="delivery_notes" class="form-control" value="{{ old('delivery_notes') }}" placeholder="Referencias, horario, etc.">
+                                <input name="delivery_notes" class="form-control" value="{{ old('delivery_notes') }}" placeholder="Horario, referencias o acceso">
                             </div>
                         </div>
                     </div>
@@ -126,64 +136,53 @@
 
                 <div class="card checkout-card border-0 shadow-sm mb-4">
                     <div class="card-body p-4">
-                        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                            <span class="material-symbols-outlined">credit_card</span>
-                            Metodo de pago
-                        </h5>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                            <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined">credit_card</span>
+                                Metodo de pago
+                            </h5>
+                            <span class="badge bg-light text-dark border">Paso 2</span>
+                        </div>
 
-                        <div class="row g-2 mb-3">
-                            <div class="col-md-6">
-                                <div class="form-check card-radio p-3 border rounded-3 h-100">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="paySavedCard" value="card_saved" {{ old('payment_method') === 'card_saved' ? 'checked' : '' }}>
-                                    <label class="form-check-label w-100" for="paySavedCard">
-                                        <strong>Tarjeta guardada</strong>
-                                        <small class="d-block text-muted">Usa una tarjeta existente</small>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check card-radio p-3 border rounded-3 h-100">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payNewCard" value="card_new" {{ old('payment_method', 'card_new') === 'card_new' ? 'checked' : '' }}>
-                                    <label class="form-check-label w-100" for="payNewCard">
-                                        <strong>Nueva tarjeta</strong>
-                                        <small class="d-block text-muted">Captura una tarjeta nueva</small>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check card-radio p-3 border rounded-3 h-100">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payTransfer" value="transfer" {{ old('payment_method') === 'transfer' ? 'checked' : '' }}>
-                                    <label class="form-check-label w-100" for="payTransfer">
-                                        <strong>Transferencia</strong>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check card-radio p-3 border rounded-3 h-100">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payCash" value="cash" {{ old('payment_method') === 'cash' ? 'checked' : '' }}>
-                                    <label class="form-check-label w-100" for="payCash">
-                                        <strong>Efectivo</strong>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-check card-radio p-3 border rounded-3 h-100">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payWallet" value="wallet" {{ old('payment_method') === 'wallet' ? 'checked' : '' }}>
-                                    <label class="form-check-label w-100" for="payWallet">
-                                        <strong>Billetera</strong>
-                                        <small class="d-block text-muted">Saldo: ${{ number_format($walletBalance, 2) }}</small>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-check card-radio p-3 border rounded-3 h-100">
-                                    <input class="form-check-input" type="radio" name="payment_method" id="payBitcoin" value="bitcoin" {{ old('payment_method') === 'bitcoin' ? 'checked' : '' }}>
-                                    <label class="form-check-label w-100" for="payBitcoin">
-                                        <strong>Bitcoin</strong>
-                                        <small class="d-block text-muted">Pago en cripto con referencia</small>
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="checkout-brand-strip mb-3">
+                            <span class="checkout-brand-chip">Visa</span>
+                            <span class="checkout-brand-chip">Mastercard</span>
+                            <span class="checkout-brand-chip">Amex</span>
+                            <span class="checkout-brand-chip">Mercado Pago</span>
+                            <span class="checkout-brand-chip">SPEI</span>
+                            <span class="checkout-brand-chip">Cripto</span>
+                        </div>
+                        <div class="checkout-pay-grid mb-3">
+                            <label class="checkout-pay-card">
+                                <input class="form-check-input" type="radio" name="payment_method" id="paySavedCard" value="card_saved" {{ old('payment_method') === 'card_saved' ? 'checked' : '' }}>
+                                <span class="checkout-pay-card__brand">Tarjeta guardada</span>
+                                <small>Usa una tarjeta ya validada en tu cuenta.</small>
+                            </label>
+                            <label class="checkout-pay-card">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payNewCard" value="card_new" {{ old('payment_method', 'card_new') === 'card_new' ? 'checked' : '' }}>
+                                <span class="checkout-pay-card__brand">Nueva tarjeta</span>
+                                <small>Visa, Mastercard, Amex y tarjetas bancarias.</small>
+                            </label>
+                            <label class="checkout-pay-card">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payTransfer" value="transfer" {{ old('payment_method') === 'transfer' ? 'checked' : '' }}>
+                                <span class="checkout-pay-card__brand">Transferencia</span>
+                                <small>BBVA, Banorte, Santander, Banamex y SPEI.</small>
+                            </label>
+                            <label class="checkout-pay-card">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payCash" value="cash" {{ old('payment_method') === 'cash' ? 'checked' : '' }}>
+                                <span class="checkout-pay-card__brand">Efectivo</span>
+                                <small>Contra entrega o pago presencial en punto.</small>
+                            </label>
+                            <label class="checkout-pay-card">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payWallet" value="wallet" {{ old('payment_method') === 'wallet' ? 'checked' : '' }}>
+                                <span class="checkout-pay-card__brand">Billetera Deskcir</span>
+                                <small>Saldo disponible: ${{ number_format($walletBalance, 2) }}</small>
+                            </label>
+                            <label class="checkout-pay-card">
+                                <input class="form-check-input" type="radio" name="payment_method" id="payBitcoin" value="bitcoin" {{ old('payment_method') === 'bitcoin' ? 'checked' : '' }}>
+                                <span class="checkout-pay-card__brand">Cripto</span>
+                                <small>BTC, ETH o USDT con referencia manual.</small>
+                            </label>
                         </div>
 
                         <div id="savedCardBox" class="payment-box d-none">
@@ -195,11 +194,11 @@
                             @else
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <strong>Selecciona tarjeta</strong>
-                                    <a href="{{ route('wallet.index') }}" class="small">Administrar tarjetas</a>
+                                    <a href="{{ route('wallet.index') }}" class="small text-decoration-none">Administrar tarjetas</a>
                                 </div>
                                 @foreach($cards as $card)
-                                    <label class="saved-card-item mb-2 p-2 border rounded-3 d-flex align-items-center justify-content-between gap-2">
-                                        <span class="form-check d-flex align-items-center gap-2 mb-0">
+                                    <label class="saved-card-item mb-2 p-3 border rounded-4 d-flex align-items-center justify-content-between gap-2">
+                                        <span class="form-check d-flex align-items-center gap-3 mb-0">
                                             <input class="form-check-input" type="radio" name="saved_card_id" value="{{ $card->id }}" {{ (string) old('saved_card_id', $defaultCardId) === (string) $card->id ? 'checked' : '' }}>
                                             <span>
                                                 <strong>{{ $card->alias ?: ($card->brand . ' ' . $card->last4) }}</strong>
@@ -224,7 +223,13 @@
                         </div>
 
                         <div id="newCardBox" class="payment-box d-none">
-                            <div class="row g-2">
+                            <div class="checkout-brand-strip mb-3">
+                                <span class="checkout-brand-chip">Visa</span>
+                                <span class="checkout-brand-chip">Mastercard</span>
+                                <span class="checkout-brand-chip">Amex</span>
+                                <span class="checkout-brand-chip">Mercado Pago</span>
+                            </div>
+                            <div class="row g-3">
                                 <div class="col-md-8">
                                     <label class="form-label">Numero de tarjeta</label>
                                     <input name="card_number" class="form-control" value="{{ old('card_number') }}" placeholder="4111 1111 1111 1111">
@@ -259,15 +264,19 @@
                         </div>
 
                         <div id="transferBox" class="payment-box d-none">
-                            <div class="alert alert-info mb-0">
-                                <div><strong>Banco:</strong> BBVA</div>
-                                <div><strong>CLABE:</strong> 012180001234567890</div>
-                                <div><strong>Referencia:</strong> DESKCIR-{{ now()->format('His') }}</div>
+                            <div class="row g-3">
+                                <div class="col-md-6"><div class="checkout-note-card"><strong>Banco principal</strong><span>BBVA</span></div></div>
+                                <div class="col-md-6"><div class="checkout-note-card"><strong>CLABE</strong><span>012180001234567890</span></div></div>
+                                <div class="col-md-6"><div class="checkout-note-card"><strong>Referencia</strong><span>DESKCIR-{{ now()->format('His') }}</span></div></div>
+                                <div class="col-md-6"><div class="checkout-note-card"><strong>Bancos sugeridos</strong><span>BBVA, Banorte, Santander, Citibanamex, Mercado Pago</span></div></div>
                             </div>
                         </div>
 
                         <div id="cashBox" class="payment-box d-none">
-                            <div class="alert alert-secondary mb-0">Pago contra entrega o en punto de retiro.</div>
+                            <div class="checkout-note-card">
+                                <strong>Pago en efectivo</strong>
+                                <span>Disponible contra entrega o en punto de retiro, sujeto a confirmacion de zona.</span>
+                            </div>
                         </div>
 
                         <div id="walletBox" class="payment-box d-none">
@@ -283,17 +292,17 @@
                         </div>
 
                         <div id="bitcoinBox" class="payment-box d-none">
-                            <div class="alert alert-warning mb-0">
-                                <div><strong>Red:</strong> Bitcoin</div>
-                                <div><strong>Wallet:</strong> bc1qdeskcirficticia12345</div>
-                                <div><strong>Memo:</strong> DSK-{{ now()->format('His') }}</div>
+                            <div class="row g-3">
+                                <div class="col-md-4"><div class="checkout-note-card"><strong>Red</strong><span>BTC / ETH / USDT</span></div></div>
+                                <div class="col-md-4"><div class="checkout-note-card"><strong>Wallet</strong><span>bc1qdeskcirficticia12345</span></div></div>
+                                <div class="col-md-4"><div class="checkout-note-card"><strong>Memo</strong><span>DSK-{{ now()->format('His') }}</span></div></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="d-grid">
-                    <button class="btn btn-success btn-lg">Confirmar compra</button>
+                    <button class="btn btn-deskcir btn-lg">Confirmar compra</button>
                 </div>
             </form>
         </div>
@@ -315,10 +324,10 @@
 
                     <hr>
 
-                    <div class="d-flex justify-content-between small mb-1"><span>Subtotal</span><span id="subtotalValue">${{ number_format($summary['subtotal'], 2) }}</span></div>
+                    <div class="d-flex justify-content-between small mb-1"><span>Subtotal</span><span>${{ number_format($summary['subtotal'], 2) }}</span></div>
                     <div class="d-flex justify-content-between small mb-1"><span>Envio</span><span id="shippingValue">${{ number_format($summary['shipping_fee'], 2) }}</span></div>
-                    <div class="d-flex justify-content-between small mb-1"><span>Servicio</span><span id="serviceValue">${{ number_format($summary['service_fee'], 2) }}</span></div>
-                    <div class="d-flex justify-content-between small mb-2"><span>Descuento</span><span id="discountValue">-${{ number_format($summary['discount'], 2) }}</span></div>
+                    <div class="d-flex justify-content-between small mb-1"><span>Servicio</span><span>${{ number_format($summary['service_fee'], 2) }}</span></div>
+                    <div class="d-flex justify-content-between small mb-2"><span>Descuento</span><span>-${{ number_format($summary['discount'], 2) }}</span></div>
 
                     <div class="d-flex justify-content-between fs-4 fw-bold pt-2 border-top">
                         <span>Total</span>
@@ -384,7 +393,6 @@
 
     function refreshPaymentUI() {
         const selected = document.querySelector('input[name="payment_method"]:checked')?.value;
-
         Object.keys(paymentBoxes).forEach((key) => {
             if (!paymentBoxes[key]) return;
             paymentBoxes[key].classList.toggle('d-none', key !== selected);
@@ -394,13 +402,10 @@
     function refreshDeliveryUI() {
         const selected = document.querySelector('input[name="delivery_type"]:checked')?.value;
         const isPickup = selected === 'pickup';
-
         if (shippingFields) shippingFields.classList.toggle('d-none', isPickup);
         if (pickupFields) pickupFields.classList.toggle('d-none', !isPickup);
-
         const shipping = isPickup ? 0 : 79;
         const total = Math.max(0, subtotal + shipping + service - discount);
-
         if (shippingValue) shippingValue.textContent = currency(shipping);
         if (totalValue) totalValue.textContent = currency(total);
     }
@@ -422,3 +427,4 @@
 })();
 </script>
 @endsection
+

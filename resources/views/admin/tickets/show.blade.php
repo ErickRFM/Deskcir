@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="ticket-workspace">
-    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm mb-3 d-inline-flex align-items-center gap-2">
+    <a href="{{ url()->previous() }}" class="btn btn-outline-deskcir btn-sm mb-3 d-inline-flex align-items-center gap-2" data-smart-back data-fallback="/admin/tickets">
         <span class="material-symbols-outlined">arrow_back</span>
         Regresar
     </a>

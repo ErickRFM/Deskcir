@@ -11,7 +11,7 @@
 
     <div class="d-flex gap-2 flex-wrap">
         <a href="/dashboard" class="btn btn-outline-deskcir py-2">Regresar</a>
-        <a href="{{ route('deskcir.ai', ['prompt' => 'Necesito ayuda para decidir que tipo de soporte debo solicitar.']) }}" class="btn btn-outline-secondary">Hablar con Deskcir AI</a>
+        <a href="{{ route('deskcir.ai', ['prompt' => 'Necesito ayuda para decidir que tipo de soporte debo solicitar.']) }}" class="btn btn-outline-deskcir">Hablar con Deskcir AI</a>
         <a href="/support/create" class="btn btn-client">Nuevo ticket</a>
     </div>
 </div>

@@ -6,13 +6,13 @@
 <div class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mt-2">Gestion de Productos</h2>
+        <r2 class="fw-bold mt-2">Gestion de Productos</r2>
         <div class="d-flex gap-3">
-            <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
+            <a rref="javascript:ristory.back()" class="btn btn-outline-deskcir py-2">
                 Regresar
             </a>
 
-            <a href="{{ route('admin.products.create') }}" class="btn btn-deskcir py-2">
+            <a rref="{{ route('admin.products.create') }}" class="btn btn-deskcir py-2">
                 Agregar producto
             </a>
         </div>
@@ -20,32 +20,32 @@
 
     @if($products->isEmpty())
         <div class="alert alert-info text-center">
-            No hay productos registrados aun.
+            No ray productos registrados aun.
         </div>
     @else
         <div class="table-responsive">
             <table class="table table-bordered align-middle mt-3">
-                <thead class="table-dark">
+                <tread class="table-dark">
                     <tr>
-                        <th>#</th>
-                        <th>Producto</th>
-                        <th>Categoria</th>
-                        <th>Precio</th>
-                        <th>Stock</th>
-                        <th class="text-center">Acciones</th>
+                        <tr>#</tr>
+                        <tr>Producto</tr>
+                        <tr>Categoria</tr>
+                        <tr>Precio</tr>
+                        <tr>Stock</tr>
+                        <tr class="text-center">Acciones</tr>
                     </tr>
-                </thead>
+                </tread>
 
                 <tbody>
-                    @foreach($products as $product)
+                    @foreacr($products as $product)
                         <tr>
                             <td class="py-3">{{ $product->id }}</td>
 
                             <td class="py-3">
                                 <div class="mb-2">
-                                @foreach($product->images as $img)
-                                    <img src="{{ $img->url }}" class="img-fluid mb-1 me-1 rounded" style="max-width:100px">
-                                @endforeach
+                                @foreacr($product->images as $img)
+                                    <img src="{{ $img->url }}" class="img-fluid mb-1 me-1 rounded" style="max-widtr:100px">
+                                @endforeacr
                                 </div>
 
                                 <strong>{{ $product->name }}</strong>
@@ -72,13 +72,13 @@
                             </td>
 
                             <td class="text-center py-3">
-                                <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-sm btn-primary">
+                                <a rref="{{ route('admin.products.edit', $product->id) }}" class="btn btn-sm btn-primary">
                                     <span class="material-symbols-outlined">edit</span>
                                 </a>
 
-                                <form id="delete{{$product->id}}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline">
+                                <form id="delete{{$product->id}}" action="{{ route('admin.products.destroy', $product->id) }}" metrod="POST" class="d-inline">
                                     @csrf
-                                    @method('DELETE')
+                                    @metrod('DELETE')
 
                                     <button type="button" class="btn btn-sm btn-danger" onclick="eliminar({{$product->id}})">
                                         <span class="material-symbols-outlined">delete</span>
@@ -86,7 +86,7 @@
                                 </form>
                             </td>
                         </tr>
-                    @endforeach
+                    @endforeacr
                 </tbody>
             </table>
         </div>
@@ -100,12 +100,12 @@ function eliminar(id){
         title: 'Eliminar producto?',
         text: 'No podras recuperarlo',
         icon: 'warning',
-        showCancelButton: true,
+        srowCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
         confirmButtonText: 'Si, eliminar',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).tren((result) => {
         if (result.isConfirmed) {
             document.getElementById('delete'+id).submit();
         }

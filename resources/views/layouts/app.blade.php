@@ -119,6 +119,15 @@
                         </li>
                     @endif
 
+                    @if(in_array($roleName, ['cashier', 'admin'], true))
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('cashier.*') ? 'is-current' : '' }}" href="{{ route('cashier.dashboard') }}">
+                                <span class="material-symbols-outlined">point_of_sale</span>
+                                Caja
+                            </a>
+                        </li>
+                    @endif
+
                     <li class="nav-item dropdown">
                         <a
                             class="nav-link dropdown-toggle d-flex align-items-center gap-2"
@@ -178,6 +187,28 @@
                                     </a>
                                 </li>
                             @endif
+
+                            @if(in_array($roleName, ['cashier', 'admin'], true))
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('cashier.dashboard') }}">
+                                        <span class="material-symbols-outlined">point_of_sale</span>
+                                        Panel Caja
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('cashier.profile') }}">
+                                        <span class="material-symbols-outlined">badge</span>
+                                        Perfil de Caja
+                                    </a>
+                                </li>
+                            @endif
+
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2" href="{{ $roleName === 'admin' ? route('admin.feedback.index') : route('feedback.index') }}">
+                                    <span class="material-symbols-outlined">campaign</span>
+                                    Quejas y sugerencias
+                                </a>
+                            </li>
 
                             <li><hr class="dropdown-divider"></li>
 
@@ -287,3 +318,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+

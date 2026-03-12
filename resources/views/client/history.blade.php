@@ -10,7 +10,7 @@
             <p class="text-muted mb-0">Servicios, tickets y compras recientes</p>
         </div>
 
-        <a href="/client" class="btn btn-outline-secondary">Regresar a mi cuenta</a>
+        <a href="/client" class="btn btn-outline-deskcir" data-smart-back data-fallback="/client">Regresar a mi cuenta</a>
     </div>
 
     <div class="row g-3 mb-4">
@@ -63,7 +63,7 @@
                         <td>{{ ucfirst(str_replace('_', ' ', $ticket->status)) }}</td>
                         <td>{{ $ticket->created_at?->format('d/m/Y') }}</td>
                         <td class="text-end">
-                            <a href="/support/{{ $ticket->id }}" class="btn btn-sm btn-outline-dark">Ver</a>
+                            <a href="/support/{{ $ticket->id }}" class="btn btn-sm btn-outline-deskcir">Ver</a>
                         </td>
                     </tr>
                     @empty

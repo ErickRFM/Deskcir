@@ -10,7 +10,7 @@
             <h4 class="fw-bold mb-1">Agendar servicio tecnico</h4>
             <p class="text-muted mb-0">Ticket #{{ $ticket->id }} - {{ $ticket->subject }}</p>
         </div>
-        <a href="/support/{{ $ticket->id }}#agenda-tecnica" class="btn btn-outline-secondary btn-sm">Volver al ticket</a>
+        <a href="/support/{{ $ticket->id }}#agenda-tecnica" class="btn btn-outline-deskcir btn-sm" data-smart-back data-fallback="/support/{{ $ticket->id }}#agenda-tecnica">Volver al ticket</a>
     </div>
 
     @if ($errors->any())
@@ -54,7 +54,7 @@
                         </div>
 
                         <div class="col-12 d-flex justify-content-end gap-2">
-                            <a href="/support/{{ $ticket->id }}#agenda-tecnica" class="btn btn-outline-secondary">Cancelar</a>
+                            <a href="/support/{{ $ticket->id }}#agenda-tecnica" class="btn btn-outline-deskcir" data-smart-back data-fallback="/support/{{ $ticket->id }}#agenda-tecnica">Cancelar</a>
                             <button class="btn btn-deskcir">Guardar agenda</button>
                         </div>
                     </form>

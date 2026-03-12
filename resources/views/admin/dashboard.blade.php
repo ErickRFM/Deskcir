@@ -11,7 +11,7 @@
             <p class="mb-0">Usa el dashboard para revisar metricas, abrir reportes y entrar directo a usuarios, productos, tickets y analitica.</p>
         </div>
         <div class="d-flex gap-2 flex-wrap">
-            <a href="{{ route('deskcir.ai') }}" class="btn btn-light admin-dashboard-hero__btn">Abrir Deskcir AI</a>
+            <a href="{{ route('deskcir.ai') }}" class="btn btn-deskcir admin-dashboard-hero__btn">Abrir Deskcir AI</a>
             <a href="/admin/tickets" class="btn btn-outline-light admin-dashboard-hero__btn">Ver tickets</a>
             <a href="/admin/reports" class="btn btn-outline-light admin-dashboard-hero__btn">Ver reportes</a>
         </div>

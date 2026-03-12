@@ -3,320 +3,232 @@
 @section('title','Mi perfil | Deskcir')
 
 @section('content')
+<div class="container py-4 profile-page">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Mi perfil</h2>
+            <p class="text-muted mb-0">Actualiza tu informacion, foto y seguridad desde un solo lugar.</p>
+        </div>
 
-<div class="container py-4">
-<div class="row justify-content-center">
-<div class="col-lg-9">
-
-{{-- ================= PERFIL ================= --}}
-<div class="card mb-4">
-<div class="card-body p-4">
-
-<div class="d-flex justify-content-between align-items-start mb-4">
-    <div>
-        <h4 class="fw-bold mb-1">Mi perfil</h4>
-        <p class="text-muted mb-0">
-            Actualiza tu información personal
-        </p>
+        <a href="/dashboard" class="btn btn-outline-deskcir d-inline-flex align-items-center gap-2" data-smart-back data-fallback="/dashboard">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Regresar
+        </a>
     </div>
 
-    {{-- 🔥 REGRESO REAL --}}
-    <a href="/dashboard" class="btn btn-sm btn-outline-secondary">
-        Regresar
-    </a>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if(session('status') === 'password-updated')
+        <div class="alert alert-success">Tu contrasena se actualizo correctamente.</div>
+    @endif
+
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0 ps-3">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm h-100 profile-card">
+                <div class="card-body p-4 text-center d-flex flex-column justify-content-center">
+                    <img id="preview"
+                        src="{{ auth()->user()->avatar ? asset('storage/'.auth()->user()->avatar) : 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=00798E&color=fff' }}"
+                        class="profile-avatar mx-auto mb-3"
+                        alt="Avatar de usuario">
+
+                    <h5 class="fw-bold mb-1">{{ auth()->user()->name }}</h5>
+                    <p class="text-muted mb-3">{{ auth()->user()->email }}</p>
+
+                    <form method="POST" action="{{ route('profile.avatar') }}" enctype="multipart/form-data" class="d-grid gap-2">
+                        @csrf
+                        <label class="btn btn-outline-deskcir" for="avatarInput">Cambiar foto</label>
+                        <input id="avatarInput" type="file" name="avatar" hidden accept="image/*">
+                        <button type="submit" class="btn btn-deskcir">Guardar foto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4 profile-card">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <p class="profile-kicker mb-1">Informacion personal</p>
+                        <h4 class="fw-bold mb-1">Datos de la cuenta</h4>
+                        <p class="text-muted mb-0">Mantener esta informacion actualizada ayuda a soporte y seguimiento.</p>
+                    </div>
+
+                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+                        @csrf
+                        @method('PATCH')
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nombre</label>
+                                <input name="name" value="{{ old('name', auth()->user()->name) }}" class="form-control input-pro @error('name') is-invalid @enderror" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Correo</label>
+                                <input name="email" type="email" value="{{ old('email', auth()->user()->email) }}" class="form-control input-pro @error('email') is-invalid @enderror" required>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-flex justify-content-end">
+                            <button class="btn btn-deskcir px-4">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm profile-card">
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <p class="profile-kicker mb-1">Seguridad</p>
+                        <h4 class="fw-bold mb-1">Actualizar contrasena</h4>
+                        <p class="text-muted mb-0">Usa una contrasena larga, con mayuscula y numero, para mantener tu cuenta segura.</p>
+                    </div>
+
+                    <form method="POST" action="{{ route('password.update') }}" id="formPass">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Contrasena actual</label>
+                                <input type="password" name="current_password" id="current" class="form-control input-pro @error('current_password') is-invalid @enderror" autocomplete="current-password">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Nueva contrasena</label>
+                                <input type="password" name="password" id="pass1" class="form-control input-pro @error('password') is-invalid @enderror" autocomplete="new-password">
+                                <small class="text-muted d-block mt-1">Minimo 8 caracteres, una mayuscula y un numero.</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Confirmar contrasena</label>
+                                <input type="password" name="password_confirmation" id="pass2" class="form-control input-pro" autocomplete="new-password">
+                                <small id="errorPass" class="text-danger fw-bold d-none mt-1">Las contrasenas no coinciden.</small>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 d-flex justify-content-end">
+                            <button class="btn btn-outline-deskcir px-4" id="btnPass">Actualizar contrasena</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-<form method="POST"
-action="{{ route('profile.update') }}"
-enctype="multipart/form-data">
-@csrf
-@method('PATCH')
-
-{{-- ===== AVATAR ===== --}}
-<div class="d-flex flex-column align-items-center mb-4">
-
-<img id="preview"
-src="{{ auth()->user()->avatar
-? asset('storage/'.auth()->user()->avatar)
-: 'https://ui-avatars.com/api/?name='.urlencode(auth()->user()->name).'&background=00798E&color=fff' }}"
-class="rounded-circle mb-2 shadow avatar-pro">
-
-<label class="btn btn-sm btn-outline-secondary">
-Cambiar foto
-<input id="avatarInput"
-type="file"
-name="avatar"
-hidden
-accept="image/*">
-</label>
-
-@error('avatar')
-<small class="text-danger fw-bold">{{ $message }}</small>
-@enderror
-
-</div>
-
-{{-- ===== DATOS ===== --}}
-<div class="row">
-<div class="col-md-6 mb-3">
-<label class="form-label">Nombre</label>
-<input name="name"
-value="{{ old('name', auth()->user()->name) }}"
-class="form-control input-pro @error('name') is-invalid @enderror">
-
-@error('name')
-<small class="text-danger fw-bold">{{ $message }}</small>
-@enderror
-</div>
-
-<div class="col-md-6 mb-3">
-<label class="form-label">Correo</label>
-<input name="email"
-value="{{ old('email', auth()->user()->email) }}"
-class="form-control input-pro @error('email') is-invalid @enderror">
-
-@error('email')
-<small class="text-danger fw-bold">{{ $message }}</small>
-@enderror
-</div>
-</div>
-
-<div class="text-center mt-3">
-<button class="btn btn-client px-5">
-Guardar cambios
-</button>
-</div>
-
-</form>
-</div>
-</div>
-
-{{-- ================= CONTRASEÑA ================= --}}
-<div class="card">
-<div class="card-body p-4">
-
-<div class="mb-4">
-<h4 class="fw-bold mb-1">Seguridad</h4>
-<p class="text-muted mb-0">
-Cambia tu contraseña
-</p>
-</div>
-
-{{-- 🔥 MODALES --}}
-@if (session('status') === 'password-updated')
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-Swal.fire({
-    icon: 'success',
-    title: '¡Contraseña actualizada!',
-    text: 'Tu contraseña fue cambiada correctamente',
-    confirmButtonColor: '#00798E'
-})
-})
-</script>
-@endif
-
-@if ($errors->has('current_password'))
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-Swal.fire({
-    icon: 'error',
-    title: 'Contraseña incorrecta',
-    text: 'La contraseña actual no coincide',
-    confirmButtonColor: '#00798E'
-})
-})
-</script>
-@endif
-
-
-<form method="POST" action="{{ route('password.update') }}" id="formPass">
-@csrf
-@method('PUT')
-
-<div class="row">
-
-{{-- ACTUAL --}}
-<div class="col-md-6 mb-3">
-<label class="form-label">Contraseña actual</label>
-
-<input type="password"
-name="current_password"
-id="current"
-class="form-control input-pro @error('current_password') is-invalid @enderror">
-
-@error('current_password')
-<small class="text-danger fw-bold">{{ $message }}</small>
-@enderror
-</div>
-
-{{-- NUEVA --}}
-<div class="col-md-6 mb-3">
-<label class="form-label">Nueva contraseña</label>
-
-<input type="password"
-name="password"
-id="pass1"
-class="form-control input-pro @error('password') is-invalid @enderror">
-
-<small class="text-muted">
-Mínimo 8 caracteres, una mayúscula y un número
-</small>
-
-@error('password')
-<small class="text-danger fw-bold d-block">{{ $message }}</small>
-@enderror
-</div>
-
-{{-- CONFIRMAR --}}
-<div class="col-md-6 mb-3">
-<label class="form-label">Confirmar</label>
-
-<input type="password"
-name="password_confirmation"
-id="pass2"
-class="form-control input-pro">
-
-<small id="errorPass" class="text-danger fw-bold d-none">
-Las contraseñas no coinciden
-</small>
-</div>
-
-</div>
-
-<div class="text-center mt-3">
-<button class="btn btn-client-outline px-5" id="btnPass">
-Actualizar contraseña
-</button>
-</div>
-
-</form>
-</div>
-</div>
-
-{{-- ===== ESTILOS ===== --}}
-<style>
-.avatar-pro{
-width:120px;
-height:120px;
-object-fit:cover;
-border-radius:50%;
-border:3px solid #00798E;
-}
-
-.btn-client{
-background:#00798E;
-color:white;
-border-radius:12px;
-}
-
-.btn-client-outline{
-border:1px solid #00798E;
-color:#00798E;
-border-radius:12px;
-}
-
-.input-pro{
-border-radius:12px;
-padding:10px;
-}
-.is-invalid{
-border:2px solid #dc3545 !important;
-}
-</style>
-
 @endsection
 
-
 @push('scripts')
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-{{-- ===== PREVIEW AVATAR ===== --}}
 <script>
-avatarInput.addEventListener('change', e => {
-const [file] = e.target.files
-if(file){
-preview.src = URL.createObjectURL(file)
-}
-})
+(function(){
+    const avatarInput = document.getElementById('avatarInput');
+    const preview = document.getElementById('preview');
+    const p1 = document.getElementById('pass1');
+    const p2 = document.getElementById('pass2');
+    const current = document.getElementById('current');
+    const form = document.getElementById('formPass');
+    const btn = document.getElementById('btnPass');
+    const errorPass = document.getElementById('errorPass');
+
+    if (avatarInput && preview) {
+        avatarInput.addEventListener('change', function (event) {
+            const file = event.target.files && event.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+            }
+        });
+    }
+
+    const isStrong = (value) => /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(value || '');
+
+    function validatePasswords() {
+        if (!p1 || !p2 || !current || !btn) return true;
+
+        let valid = true;
+        const pass1 = p1.value || '';
+        const pass2 = p2.value || '';
+        const currentPass = current.value || '';
+
+        if (pass1.length > 0 && !isStrong(pass1)) {
+            p1.classList.add('is-invalid');
+            valid = false;
+        } else {
+            p1.classList.remove('is-invalid');
+        }
+
+        if (pass2.length > 0 && pass1 !== pass2) {
+            p2.classList.add('is-invalid');
+            errorPass?.classList.remove('d-none');
+            valid = false;
+        } else {
+            p2.classList.remove('is-invalid');
+            errorPass?.classList.add('d-none');
+        }
+
+        if ((pass1.length || pass2.length) && currentPass.length < 4) {
+            current.classList.add('is-invalid');
+            valid = false;
+        } else {
+            current.classList.remove('is-invalid');
+        }
+
+        btn.disabled = !valid;
+        return valid;
+    }
+
+    [p1, p2, current].forEach((field) => field?.addEventListener('input', validatePasswords));
+
+    form?.addEventListener('submit', function(event){
+        if (!validatePasswords()) {
+            event.preventDefault();
+        }
+    });
+})();
 </script>
 
-{{-- ===== VALIDACIÓN CONTRASEÑAS PRO ===== --}}
-<script>
-const p1 = document.getElementById('pass1')
-const p2 = document.getElementById('pass2')
-const actual = document.getElementById('current')
-const form = document.getElementById('formPass')
-const btn = document.getElementById('btnPass')
-
-function reglaSegura(pass){
-    return /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(pass)
+<style>
+.profile-card {
+    border-radius: 20px;
 }
 
-function validar(){
-
-    let ok = true
-
-    // 👉 NUEVA CONTRASEÑA
-    if(reglaSegura(p1.value)){
-        p1.classList.remove('is-invalid')
-        p1.classList.add('is-valid')
-    }else{
-        p1.classList.add('is-invalid')
-        p1.classList.remove('is-valid')
-        ok = false
-    }
-
-    // 👉 CONFIRMAR
-    if(p1.value === p2.value && p1.value !== ''){
-        p2.classList.remove('is-invalid')
-        p2.classList.add('is-valid')
-    }else{
-        p2.classList.add('is-invalid')
-        p2.classList.remove('is-valid')
-        ok = false
-    }
-
-    // 👉 CONTRASEÑA ACTUAL
-    if(actual.value.length >= 4){
-        actual.classList.add('is-valid')
-    }else{
-        actual.classList.remove('is-valid')
-        ok = false
-    }
-
-    btn.disabled = !ok
-    return ok
+.profile-avatar {
+    width: 132px;
+    height: 132px;
+    object-fit: cover;
+    border-radius: 999px;
+    border: 4px solid rgba(0, 121, 142, 0.18);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
 }
 
-// Eventos
-p1.addEventListener('keyup', validar)
-p2.addEventListener('keyup', validar)
-actual.addEventListener('keyup', validar)
+.profile-kicker {
+    font-size: .78rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #0a8698;
+}
 
-// Submit con alerta pro
-form.addEventListener('submit', e => {
+.profile-page .input-pro {
+    border-radius: 14px;
+    padding: .85rem .95rem;
+}
 
-    if(!validar()){
-        e.preventDefault()
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Contraseña insegura',
-            html: `
-            <div class="text-start">
-            Debe contener:<br>
-            • 8 caracteres mínimo<br>
-            • 1 mayúscula<br>
-            • 1 número<br>
-            • Coincidir confirmación
-            </div>`,
-            confirmButtonColor:'#00798E'
-        })
+@media (max-width: 767.98px) {
+    .profile-avatar {
+        width: 112px;
+        height: 112px;
     }
-
-})
-</script>
-
+}
+</style>
 @endpush

@@ -28,7 +28,7 @@
                 <p><strong>Notas:</strong> {{ $appointment->notes }}</p>
             @endif
 
-            <a href="/appointments" class="btn btn-outline-secondary mt-2">Regresar</a>
+            <a href="/appointments" class="btn btn-outline-deskcir mt-2" data-smart-back data-fallback="/appointments">Regresar</a>
         </div>
     </div>
 </div>

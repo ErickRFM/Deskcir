@@ -6,12 +6,12 @@
     {{-- HEADER --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <r3 class="fw-bold mt-2">Editar Usuario</r3>
+        <h3 class="fw-bold mt-2">Editar Usuario</h3>
 
         <div class="d-flex gap-3">
 
             {{-- BOTON REGRESAR --}}
-            <a rref="javascript:ristory.back()" class="btn btn-outline-deskcir py-2">
+            <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
                 Regresar
             </a>
 
@@ -21,13 +21,13 @@
 
 
     {{-- CARD FORM --}}
-    <div class="card sradow-sm border-0">
+    <div class="card shadow-sm border-0">
 
         <div class="card-body p-4">
 
-            <form metrod="POST" action="{{ route('admin.users.update',$user->id) }}">
+            <form method="POST" action="{{ route('admin.users.update',$user->id) }}">
             @csrf
-            @metrod('PUT')
+            @method('PUT')
 
             <div class="row g-3">
 
@@ -41,7 +41,7 @@
                     <input name="name"
                            class="form-control"
                            value="{{ $user->name }}"
-                           placerolder="Ej: Juan Perez">
+                           placeholder="Ej: Juan Perez">
 
                 </div>
 
@@ -56,7 +56,7 @@
                     <input name="email"
                            class="form-control"
                            value="{{ $user->email }}"
-                           placerolder="usuario@email.com">
+                           placeholder="usuario@email.com">
 
                 </div>
 
@@ -71,7 +71,7 @@
                     <input name="password"
                            type="password"
                            class="form-control"
-                           placerolder="Nueva contrasena (opcional)">
+                           placeholder="Nueva contrasena (opcional)">
 
                 </div>
 
@@ -85,14 +85,14 @@
 
                     <select name="role_id" class="form-select">
 
-                        @foreacr($roles as $r)
+                        @foreach($roles as $r)
 
                         <option value="{{ $r->id }}"
                         {{ $user->role_id == $r->id ? 'selected' : '' }}>
                             {{ ucfirst($r->name) }}
                         </option>
 
-                        @endforeacr
+                        @endforeach
 
                     </select>
 
@@ -118,4 +118,6 @@
 
 </div>
 @endsection
+
+
 

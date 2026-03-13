@@ -7,8 +7,11 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class ProductController extends Controller
 {
@@ -20,7 +23,44 @@ class ProductController extends Controller
             return 'public';
         }
 
+        if ($defaultDisk === 's3' && ! $this->s3Configured()) {
+            return 'public';
+        }
+
         return $defaultDisk ?: 'public';
+    }
+
+    private function s3Configured(): bool
+    {
+        return ! blank(config('filesystems.disks.s3.key'))
+            && ! blank(config('filesystems.disks.s3.secret'))
+            && ! blank(config('filesystems.disks.s3.bucket'))
+            && ! blank(config('filesystems.disks.s3.endpoint'));
+    }
+
+    private function storeProductImage(UploadedFile $img, string $disk): string
+    {
+        try {
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($img->getRealPath());
+
+            if (method_exists($image, 'orient')) {
+                $image = $image->orient();
+            }
+
+            $image = $image->scaleDown(width: 1600);
+            $encoded = $image->toWebp(quality: 82);
+            $path = 'products/' . Str::uuid()->toString() . '.webp';
+
+            Storage::disk($disk)->put($path, (string) $encoded, [
+                'visibility' => 'public',
+                'ContentType' => 'image/webp',
+            ]);
+
+            return $path;
+        } catch (\Throwable $exception) {
+            return $img->storePublicly('products', $disk);
+        }
     }
 
     public function create()
@@ -89,7 +129,7 @@ class ProductController extends Controller
             $disk = $this->mediaDisk();
 
             foreach ($request->file('images') as $img) {
-                $path = $img->storePublicly('products', $disk);
+                $path = $this->storeProductImage($img, $disk);
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -140,7 +180,7 @@ class ProductController extends Controller
             $disk = $this->mediaDisk();
 
             foreach ($request->file('images') as $img) {
-                $path = $img->storePublicly('products', $disk);
+                $path = $this->storeProductImage($img, $disk);
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -188,20 +228,4 @@ class ProductController extends Controller
         return Category::query()->orderBy('name')->get();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

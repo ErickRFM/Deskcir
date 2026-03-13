@@ -12,7 +12,7 @@
         </div>
         <div class="d-flex gap-2 flex-wrap">
             <a href="/checkout" class="btn btn-deskcir">Cobrar pedido</a>
-            <a href="/admin/products" class="btn btn-outline-light">Inventario</a>
+            <a href="{{ route('cashier.catalog') }}" class="btn btn-outline-light">Inventario</a>
             <a href="{{ route('cashier.profile') }}" class="btn btn-outline-light">Perfil de caja</a>
         </div>
     </div>
@@ -56,11 +56,11 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="fw-bold mb-0">Inventario rapido</h5>
-                        <a href="/admin/products" class="btn btn-sm btn-outline-deskcir">Gestionar</a>
+                        <a href="{{ route('cashier.catalog') }}" class="btn btn-sm btn-outline-deskcir">Gestionar</a>
                     </div>
                     <div class="d-grid gap-2">
-                        <a href="/admin/products" class="btn btn-outline-deskcir">Ver catalogo</a>
-                        <a href="/admin/products/create" class="btn btn-outline-deskcir">Agregar producto</a>
+                        <a href="{{ route('cashier.catalog') }}" class="btn btn-outline-deskcir">Ver catalogo</a>
+                        <a href="{{ route('cashier.catalog') }}" class="btn btn-outline-deskcir">Agregar producto</a>
                     </div>
                 </div>
             </div>
@@ -84,3 +84,5 @@
     </div>
 </div>
 @endsection
+
+

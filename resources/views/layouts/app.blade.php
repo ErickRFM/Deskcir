@@ -94,6 +94,7 @@
                         @endif
                     </a>
                 </li>
+                @if($roleName !== 'admin')
 
                 <li class="nav-item">
                     <a class="nav-link nav-ai-link {{ $isAiActive ? 'is-current is-ai-current' : '' }}" href="{{ route('deskcir.ai') }}">
@@ -108,6 +109,7 @@
                         Solicitar soporte
                     </a>
                 </li>
+                @endif
 
                 @auth
                     @if($roleName === 'admin')
@@ -119,7 +121,7 @@
                         </li>
                     @endif
 
-                    @if(in_array($roleName, ['cashier', 'admin'], true))
+                    @if($roleName === 'cashier')
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('cashier.*') ? 'is-current' : '' }}" href="{{ route('cashier.dashboard') }}">
                                 <span class="material-symbols-outlined">point_of_sale</span>
@@ -140,6 +142,7 @@
                         </a>
 
                         <ul class="dropdown-menu dropdown-menu-end">
+                            @if($roleName !== 'admin')
                             <li>
                                 <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('deskcir.ai') }}">
                                     <span class="material-symbols-outlined">auto_awesome</span>
@@ -153,6 +156,7 @@
                                     Nuevo soporte
                                 </a>
                             </li>
+                            @endif
 
                             @if($roleName === 'admin')
                                 <li>
@@ -188,7 +192,7 @@
                                 </li>
                             @endif
 
-                            @if(in_array($roleName, ['cashier', 'admin'], true))
+                            @if($roleName === 'cashier')
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('cashier.dashboard') }}">
                                         <span class="material-symbols-outlined">point_of_sale</span>
@@ -318,4 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
 </body>
 
 </html>
+
+
+
+
 

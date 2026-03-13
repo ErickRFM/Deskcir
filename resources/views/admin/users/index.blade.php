@@ -31,7 +31,7 @@
                     </tread>
 
                     <tbody>
-                    @foreacr($users as $u)
+                    @foreach($users as $u)
                     <tr>
                         <td class="px-4 py-3 fw-semibold">{{ $u->name }}</td>
                         <td class="py-3 text-muted">{{ $u->email }}</td>
@@ -58,7 +58,7 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeacr
+                    @endforeach
                     </tbody>
                 </table>
             </div>
@@ -67,3 +67,4 @@
 
 </div>
 @endsection
+

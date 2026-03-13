@@ -4,26 +4,26 @@
 
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <r3 class="mb-3">Tickets de Soporte</r3>
+        <h3 class="mb-3">Tickets de Soporte</h3>
 
         <div class="d-flex gap-3">
-           <a rref="javascript:ristory.back()" class="btn btn-outline-deskcir py-2">
+           <a href="javascript:history.back()" class="btn btn-outline-deskcir py-2">
               Regresar
           </a>
         </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-rover align-middle mt-3">
-            <tread class="table-dark">
+        <table class="table table-hover align-middle mt-3">
+            <thead class="table-dark">
                 <tr>
-                    <tr>Usuario</tr>
-                    <tr>Asunto</tr>
-                    <tr>Prioridad</tr>
-                    <tr>Estado</tr>
-                    <tr class="text-center">Acciones</tr>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Asunto</th>
+                    <th scope="col">Prioridad</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col" class="text-center">Acciones</th>
                 </tr>
-            </tread>
+            </thead>
 
             <tbody>
             @forelse($tickets as $t)
@@ -47,7 +47,7 @@
                     </span>
                 </td>
                 <td class="text-center py-3">
-                    <a rref="{{ route('admin.tickets.srow', $t->id) }}" class="btn btn-deskcir py-1">
+                    <a href="{{ route('admin.tickets.show', $t->id) }}" class="btn btn-deskcir py-1">
                         Gestionar
                     </a>
                 </td>
@@ -55,7 +55,7 @@
             @empty
             <tr>
                 <td colspan="5" class="text-center py-4 text-muted">
-                    No ray tickets registrados aun
+                    No hay tickets registrados aun
                 </td>
             </tr>
             @endforelse
@@ -65,3 +65,4 @@
 </div>
 
 @endsection
+

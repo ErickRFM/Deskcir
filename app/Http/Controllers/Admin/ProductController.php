@@ -40,6 +40,11 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
+    public function show($id)
+    {
+        return redirect()->route('admin.products.edit', $id);
+    }
+
     public function deleteImage($id)
     {
         $img = ProductImage::findOrFail($id);
@@ -84,7 +89,7 @@ class ProductController extends Controller
             $disk = $this->mediaDisk();
 
             foreach ($request->file('images') as $img) {
-                $path = $img->store('products', $disk);
+                $path = $img->storePublicly('products', $disk);
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -135,7 +140,7 @@ class ProductController extends Controller
             $disk = $this->mediaDisk();
 
             foreach ($request->file('images') as $img) {
-                $path = $img->store('products', $disk);
+                $path = $img->storePublicly('products', $disk);
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -146,7 +151,7 @@ class ProductController extends Controller
         }
 
         return redirect()
-            ->route('admin.products.index')
+            ->route('admin.products.edit', $product->id)
             ->with('success', 'Producto actualizado correctamente');
     }
 
@@ -183,6 +188,18 @@ class ProductController extends Controller
         return Category::query()->orderBy('name')->get();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

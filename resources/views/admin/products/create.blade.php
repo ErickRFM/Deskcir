@@ -121,4 +121,34 @@ if (imageInput && previewContainer) {
     });
 }
 </script>
+
+@if(session('success'))
+<script>
+Swal.fire({
+  icon: 'success',
+  title: 'Listo!',
+  text: '{{ session('success') }}'
+});
+</script>
+@endif
+
+@if(session('error'))
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Error',
+  text: '{{ session('error') }}'
+});
+</script>
+@endif
+
+@if($errors->any())
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Error',
+  text: '{{ $errors->first() }}'
+});
+</script>
+@endif
 @endsection

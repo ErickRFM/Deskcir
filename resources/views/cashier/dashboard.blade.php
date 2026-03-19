@@ -25,14 +25,14 @@
 
     <div class="row g-4">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="card border-0 shadow-sm mb-4 desk-table-card">
+                <div class="card-body p-0">
+                    <div class="d-flex justify-content-between align-items-center desk-table-toolbar">
                         <h5 class="fw-bold mb-0">Pedidos recientes</h5>
                         <a href="/admin/sales" class="btn btn-sm btn-outline-deskcir">Ver ventas</a>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
+                    <div class="table-responsive desk-table-wrap">
+                        <table class="table align-middle mb-0 desk-table">
                             <thead><tr><th>#</th><th>Cliente</th><th>Pago</th><th>Total</th><th>Estado</th></tr></thead>
                             <tbody>
                             @forelse($recentOrders as $order)
@@ -44,7 +44,7 @@
                                     <td>{{ ucfirst($order->status) }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="5" class="text-center text-muted py-4">Sin pedidos recientes.</td></tr>
+                                <tr><td colspan="5" class="desk-table-empty">Sin pedidos recientes.</td></tr>
                             @endforelse
                             </tbody>
                         </table>

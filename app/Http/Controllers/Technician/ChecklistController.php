@@ -79,14 +79,15 @@ class ChecklistController extends Controller
     {
         abort_unless((int) $ticket->technician_id === (int) auth()->id(), 403);
 
+        $ticket->load(['user', 'technician']);
         $checklist = $ticket->checklist()->with('photos')->first();
 
         $pdf = Pdf::loadView('pdf.checklist', [
             'ticket' => $ticket,
             'checklist' => $checklist,
-        ]);
+        ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('checklist_ticket_' . $ticket->id . '.pdf');
+        return $pdf->download('deskcir_checklist_ticket_' . $ticket->id . '_' . now()->format('Ymd_His') . '.pdf');
     }
 
     public function deletePhoto(Ticket $ticket, $photo)

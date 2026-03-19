@@ -16,9 +16,9 @@
         <a href="{{ route('feedback.create') }}" class="btn btn-deskcir">Nuevo comentario</a>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
+    <div class="card border-0 shadow-sm desk-table-card">
+        <div class="table-responsive desk-table-wrap">
+            <table class="table align-middle mb-0 desk-table">
                 <thead>
                     <tr>
                         <th>Tipo</th>
@@ -40,13 +40,13 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">Aun no has enviado comentarios.</td>
+                        <td colspan="4" class="desk-table-empty">Aun no has enviado comentarios.</td>
                     </tr>
                 @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="p-3">{{ $feedback->links() }}</div>
+        <div class="desk-table-footer">{{ $feedback->links() }}</div>
     </div>
 </div>
 @endsection

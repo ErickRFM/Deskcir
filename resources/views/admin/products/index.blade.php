@@ -23,9 +23,10 @@
             No hay productos registrados aun.
         </div>
     @else
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle mt-3">
-                <thead class="table-dark">
+        <div class="card border-0 shadow-sm desk-table-card">
+            <div class="table-responsive desk-table-wrap">
+                <table class="table align-middle mb-0 desk-table">
+                    <thead>
                     <tr>
                         <th>#</th>
                         <th>Producto</th>
@@ -33,62 +34,63 @@
                         <th>Precio</th>
                         <th>Stock</th>
                         <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach($products as $product)
-                        <tr>
-                            <td class="py-3">{{ $product->id }}</td>
-
-                            <td class="py-3">
-                                <div class="mb-2 d-flex flex-wrap gap-1">
-                                    @foreach($product->images as $img)
-                                        <img src="{{ $img->url }}" class="img-fluid rounded" style="max-width:100px">
-                                    @endforeach
-                                </div>
-
-                                <strong>{{ $product->name }}</strong>
-                                <br>
-                                <small class="text-muted">{{ \Illuminate\Support\Str::limit($product->description, 50) }}</small>
-                            </td>
-
-                            <td class="py-3">
-                                @if($product->category)
-                                    <span class="badge bg-secondary">{{ $product->category->name }}</span>
-                                @else
-                                    <span class="badge bg-warning">Sin categoria</span>
-                                @endif
-                            </td>
-
-                            <td class="py-3">${{ number_format($product->price, 2) }}</td>
-
-                            <td class="py-3">
-                                @if($product->stock > 0)
-                                    <span class="badge bg-success">{{ $product->stock }}</span>
-                                @else
-                                    <span class="badge bg-danger">Sin stock</span>
-                                @endif
-                            </td>
-
-                            <td class="text-center py-3">
-                                <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-sm btn-primary">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </a>
-
-                                <form id="delete{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button type="button" class="btn btn-sm btn-danger" onclick="eliminar({{ $product->id }})">
-                                        <span class="material-symbols-outlined">delete</span>
-                                    </button>
-                                </form>
-                            </td>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+
+                    <tbody>
+                        @foreach($products as $product)
+                            <tr>
+                                <td class="py-3">{{ $product->id }}</td>
+
+                                <td class="py-3">
+                                    <div class="mb-2 d-flex flex-wrap gap-1">
+                                        @foreach($product->images as $img)
+                                            <img src="{{ $img->url }}" class="img-fluid rounded" style="max-width:100px">
+                                        @endforeach
+                                    </div>
+
+                                    <strong>{{ $product->name }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ \Illuminate\Support\Str::limit($product->description, 50) }}</small>
+                                </td>
+
+                                <td class="py-3">
+                                    @if($product->category)
+                                        <span class="badge bg-secondary">{{ $product->category->name }}</span>
+                                    @else
+                                        <span class="badge bg-warning">Sin categoria</span>
+                                    @endif
+                                </td>
+
+                                <td class="py-3">${{ number_format($product->price, 2) }}</td>
+
+                                <td class="py-3">
+                                    @if($product->stock > 0)
+                                        <span class="badge bg-success">{{ $product->stock }}</span>
+                                    @else
+                                        <span class="badge bg-danger">Sin stock</span>
+                                    @endif
+                                </td>
+
+                                <td class="text-center py-3">
+                                    <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-sm btn-primary">
+                                        <span class="material-symbols-outlined">edit</span>
+                                    </a>
+
+                                    <form id="delete{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="button" class="btn btn-sm btn-danger" onclick="eliminar({{ $product->id }})">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     @endif
 

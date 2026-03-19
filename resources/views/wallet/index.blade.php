@@ -267,15 +267,20 @@
                 </div>
             </div>
 
-            <div class="card wallet-card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
-                        <span class="material-symbols-outlined">receipt_long</span>
-                        Movimientos
-                    </h5>
+            <div class="card wallet-card border-0 shadow-sm desk-table-card">
+                <div class="card-body p-0">
+                    <div class="desk-table-toolbar">
+                        <div>
+                            <h5 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                                <span class="material-symbols-outlined">receipt_long</span>
+                                Movimientos
+                            </h5>
+                            <p class="desk-table-subtle mb-0">Consulta recargas y compras registradas en tu cuenta.</p>
+                        </div>
+                    </div>
 
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
+                    <div class="table-responsive desk-table-wrap">
+                        <table class="table align-middle mb-0 desk-table">
                             <thead>
                             <tr>
                                 <th>Tipo</th>
@@ -302,14 +307,14 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted py-4">Aun no hay movimientos.</td>
+                                    <td colspan="4" class="desk-table-empty">Aun no hay movimientos.</td>
                                 </tr>
                             @endforelse
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="mt-3">
+                    <div class="desk-table-footer">
                         {{ $transactions->links() }}
                     </div>
                 </div>

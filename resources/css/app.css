@@ -4361,5 +4361,196 @@ textarea {
     color: #cfe4f6;
 }
 
+/* ========================= */
+/* DESKCIR TABLE SYSTEM      */
+/* ========================= */
+.desk-table-card {
+    overflow: hidden;
+    border-radius: 22px !important;
+    border: 1px solid #d9e7ef !important;
+    background: #ffffff;
+}
+
+.desk-table-card .card-header,
+.desk-table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.05rem 1.2rem;
+    border-bottom: 1px solid #d8e5ed;
+    background: linear-gradient(180deg, #fbfdff 0%, #f2f8fb 100%);
+}
+
+.desk-table-card .card-header {
+    font-weight: 800;
+    color: #123a52;
+}
+
+.desk-table-toolbar h5,
+.desk-table-toolbar h6,
+.desk-table-toolbar .fw-bold {
+    color: #123a52;
+}
+
+.desk-table-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .55rem;
+}
+
+.desk-table-subtle {
+    color: #5f778b;
+}
+
+.desk-table-wrap {
+    width: 100%;
+}
+
+.desk-table {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: #f7fbfd;
+    --bs-table-hover-bg: #eef7fb;
+    --bs-table-border-color: #dce8ef;
+    margin-bottom: 0;
+}
+
+.desk-table thead th {
+    background: linear-gradient(180deg, #f7fbfd 0%, #eef6fa 100%) !important;
+    color: #2a495d !important;
+    border-top: 0 !important;
+    border-bottom: 1px solid #d6e4ec !important;
+    padding: .95rem 1rem !important;
+    font-size: .76rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.desk-table tbody td {
+    padding: 1rem !important;
+    color: #112c41;
+    border-bottom: 1px solid #e3edf3 !important;
+    vertical-align: middle;
+}
+
+.desk-table tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+
+.desk-table tbody tr {
+    transition: background-color .18s ease;
+}
+
+.desk-table tbody tr:hover {
+    background: #f5fbfe;
+}
+
+.desk-table td .badge,
+.desk-table th .badge {
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.desk-table-empty {
+    padding: 2rem 1rem !important;
+    text-align: center;
+    color: #6b8296 !important;
+    background: #fbfdff;
+}
+
+.desk-table-footer {
+    padding: 1rem 1.2rem;
+    border-top: 1px solid #dce8ef;
+    background: #fbfdff;
+}
+
+.desk-table-footer .pagination {
+    margin-bottom: 0;
+}
+
+.desk-table-inline-media {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    min-width: 220px;
+}
+
+.desk-table-inline-media__thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    border: 1px solid #d6e4ec;
+    background: #eef6fa;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.dark .desk-table-card {
+    background: #0f1c2f;
+    border-color: #274059 !important;
+}
+
+.dark .desk-table-card .card-header,
+.dark .desk-table-toolbar {
+    background: linear-gradient(180deg, #12253a 0%, #0f1d31 100%);
+    border-bottom-color: #274059;
+    color: #e7f2ff;
+}
+
+.dark .desk-table-toolbar h5,
+.dark .desk-table-toolbar h6,
+.dark .desk-table-toolbar .fw-bold,
+.dark .desk-table-card .card-header {
+    color: #e7f2ff;
+}
+
+.dark .desk-table-subtle {
+    color: #9fb7cd;
+}
+
+.dark .desk-table thead th {
+    background: linear-gradient(180deg, #12253a 0%, #0f1d31 100%) !important;
+    color: #cfe4f6 !important;
+    border-bottom-color: #274059 !important;
+}
+
+.dark .desk-table tbody td {
+    color: #e7f2ff;
+    border-bottom-color: #22374d !important;
+}
+
+.dark .desk-table tbody tr:hover {
+    background: #132840;
+}
+
+.dark .desk-table-empty,
+.dark .desk-table-footer {
+    background: #0f1c2f;
+    color: #9fb7cd !important;
+}
+
+.dark .desk-table-footer {
+    border-top-color: #274059;
+}
+
+.dark .desk-table-inline-media__thumb {
+    background: #132238;
+    border-color: #274059;
+}
+
+@media (max-width: 767.98px) {
+    .desk-table-card .card-header,
+    .desk-table-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .desk-table-actions {
+        width: 100%;
+    }
+}
+
 
 

@@ -40,11 +40,11 @@
         </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-4 border-0 shadow-sm desk-table-card">
         <div class="card-header fw-bold">Tickets de soporte</div>
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="table-light">
+        <div class="table-responsive desk-table-wrap">
+            <table class="table align-middle mb-0 desk-table">
+                <thead>
                     <tr>
                         <th>#</th>
                         <th>Asunto</th>
@@ -68,7 +68,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">No tienes tickets registrados.</td>
+                        <td colspan="6" class="desk-table-empty">No tienes tickets registrados.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -76,11 +76,11 @@
         </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-4 border-0 shadow-sm desk-table-card">
         <div class="card-header fw-bold">Citas</div>
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="table-light">
+        <div class="table-responsive desk-table-wrap">
+            <table class="table align-middle mb-0 desk-table">
+                <thead>
                     <tr>
                         <th>#</th>
                         <th>Tipo</th>
@@ -104,7 +104,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center text-muted py-4">No tienes citas registradas.</td>
+                        <td colspan="7" class="desk-table-empty">No tienes citas registradas.</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -112,11 +112,11 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card border-0 shadow-sm desk-table-card">
         <div class="card-header fw-bold">Compras</div>
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead class="table-light">
+        <div class="table-responsive desk-table-wrap">
+            <table class="table align-middle mb-0 desk-table">
+                <thead>
                     <tr>
                         <th># Orden</th>
                         <th>Metodo</th>
@@ -136,7 +136,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">Aun no tienes compras registradas.</td>
+                        <td colspan="5" class="desk-table-empty">Aun no tienes compras registradas.</td>
                     </tr>
                     @endforelse
                 </tbody>

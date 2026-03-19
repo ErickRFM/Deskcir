@@ -292,18 +292,18 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div class="card shadow-sm desk-table-card">
+                <div class="card-body p-0">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 desk-table-toolbar">
                         <h5 class="mb-0">Historial de ventas</h5>
-                        <div class="d-flex gap-2 flex-wrap">
+                        <div class="d-flex gap-2 flex-wrap desk-table-actions">
                             <a href="/admin/sales" class="btn btn-deskcir btn-sm">Ver todas</a>
                             <a href="/admin/reports/export/excel" class="btn btn-outline-deskcir btn-sm">Exportar Excel</a>
                         </div>
                     </div>
 
-                    <div class="table-responsive">
-                        <table class="table align-middle">
+                    <div class="table-responsive desk-table-wrap">
+                        <table class="table align-middle mb-0 desk-table">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -336,7 +336,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center py-4 text-muted">Todavia no hay ventas para mostrar.</td>
+                                    <td colspan="6" class="desk-table-empty">Todavia no hay ventas para mostrar.</td>
                                 </tr>
                             @endforelse
                             </tbody>

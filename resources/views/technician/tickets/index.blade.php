@@ -47,8 +47,9 @@
 </div>
 </form>
 
-<div class="card">
-<table class="table align-middle mb-0">
+<div class="card border-0 shadow-sm desk-table-card">
+<div class="table-responsive desk-table-wrap">
+<table class="table align-middle mb-0 desk-table">
 <thead>
 <tr>
     <th>Cliente</th>
@@ -84,11 +85,12 @@
 </tr>
 @empty
 <tr>
-<td colspan="6" class="text-center text-muted py-4">No tienes tickets asignados</td>
+<td colspan="6" class="desk-table-empty">No tienes tickets asignados</td>
 </tr>
 @endforelse
 </tbody>
 </table>
+</div>
 </div>
 
 </div>

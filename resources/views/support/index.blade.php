@@ -49,10 +49,10 @@
     </form>
 </div>
 
-<div class="card">
-<div class="table-responsive">
-<table class="table align-middle mb-0">
-<thead class="table-light">
+<div class="card desk-table-card">
+<div class="table-responsive desk-table-wrap">
+<table class="table align-middle mb-0 desk-table">
+<thead>
 <tr>
 <th>Asunto</th>
 <th>Prioridad</th>
@@ -97,7 +97,7 @@
 </tr>
 @empty
 <tr>
-<td colspan="5" class="text-center text-muted py-4">Sin tickets activos</td>
+<td colspan="5" class="desk-table-empty">Sin tickets activos</td>
 </tr>
 @endforelse
 </tbody>

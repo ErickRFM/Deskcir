@@ -12,8 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -22,48 +22,31 @@ class RegisteredUserController extends Controller
     {
         return view('auth.register', [
             'redirectTo' => $this->sanitizeRedirect($request->query('redirect_to')),
+            'roles' => $this->registrationRoles(),
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
+        $roles = $this->registrationRoles();
+        $selectedRole = Str::lower((string) $request->input('role', 'client'));
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'string'],
+            'role' => ['nullable', 'string', Rule::in($roles->pluck('name')->all())],
             'redirect_to' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $roleRaw = Str::lower(trim((string) $request->input('role')));
-
-        $aliases = [
-            'admin' => ['admin', 'administrador', '1'],
-            'technician' => ['technician', 'tecnico', '2'],
-            'client' => ['client', 'cliente', '3'],
-            'cashier' => ['cashier', 'caja', '4'],
-        ];
-
-        $canonicalRole = null;
-        foreach ($aliases as $canonical => $validInputs) {
-            if (in_array($roleRaw, $validInputs, true)) {
-                $canonicalRole = $canonical;
-                break;
-            }
-        }
-
-        if (! $canonicalRole) {
-            throw ValidationException::withMessages([
-                'role' => 'El rol seleccionado no es valido.',
-            ]);
-        }
-
-        $role = Role::query()->firstOrCreate(['name' => $canonicalRole]);
+        $role = $roles->firstWhere('name', $selectedRole)
+            ?? $roles->firstWhere('name', 'client')
+            ?? Role::query()->firstOrCreate(['name' => 'client']);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => (string) $request->name,
+            'email' => (string) $request->email,
+            'password' => Hash::make((string) $request->password),
             'role_id' => (int) $role->id,
         ]);
 
@@ -76,6 +59,21 @@ class RegisteredUserController extends Controller
         }
 
         return redirect(RouteServiceProvider::HOME);
+    }
+
+    private function registrationRoles()
+    {
+        $roleOrder = ['client', 'technician', 'cashier', 'admin'];
+
+        foreach ($roleOrder as $roleName) {
+            Role::query()->firstOrCreate(['name' => $roleName]);
+        }
+
+        return Role::query()
+            ->whereIn('name', $roleOrder)
+            ->get()
+            ->sortBy(fn (Role $role) => array_search($role->name, $roleOrder, true))
+            ->values();
     }
 
     private function sanitizeRedirect(?string $redirectTo): ?string

@@ -28,15 +28,14 @@ class AuthenticatedSessionController extends Controller
             return redirect($redirectTo);
         }
 
-        if (auth()->user()->role->name === 'admin') {
-            return redirect('/admin');
-        }
+        $roleName = strtolower((string) optional(auth()->user()->role)->name);
 
-        if (auth()->user()->role->name === 'technician') {
-            return redirect('/technician');
-        }
-
-        return redirect('/client');
+        return redirect(match ($roleName) {
+            'admin' => '/admin',
+            'technician' => '/technician',
+            'cashier' => '/cashier',
+            default => '/client',
+        });
     }
 
     public function destroy(Request $request): RedirectResponse

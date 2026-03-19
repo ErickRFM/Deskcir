@@ -62,7 +62,7 @@
         </section>
     @endif
 
-    <section class="card border-0 shadow-sm mb-4">
+    <section class="card border-0 shadow-sm mb-4 desk-table-card">
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                 <div>
@@ -80,11 +80,11 @@
                 @endif
             </div>
 
-            <p class="text-muted small mb-3">La agenda vive en una pantalla separada para visitas, recepcion y entrega de equipos.</p>
+            <p class="text-muted small mb-3 desk-table-subtle">La agenda vive en una pantalla separada para visitas, recepcion y entrega de equipos.</p>
 
             @if(isset($appointments) && $appointments->count())
-                <div class="table-responsive">
-                    <table class="table align-middle mb-0">
+                <div class="table-responsive desk-table-wrap">
+                    <table class="table align-middle mb-0 desk-table">
                         <thead>
                             <tr>
                                 <th>Fecha</th>

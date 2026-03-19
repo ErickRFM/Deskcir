@@ -14,7 +14,7 @@
                             name="password"
                             required autocomplete="current-password" />
 
-            <x-input-error :messages="->get('password')" class="mt-2" />
+            <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <div class="flex justify-end mt-4">

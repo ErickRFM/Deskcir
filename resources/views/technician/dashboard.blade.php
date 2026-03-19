@@ -55,12 +55,15 @@
         </div>
     </div>
 
-    <div class="card shadow-sm mt-4">
-        <div class="card-body">
-            <h5 class="fw-bold mb-3">Ultimos Tickets</h5>
+    <div class="card border-0 shadow-sm mt-4 desk-table-card">
+        <div class="card-body p-0">
+            <div class="desk-table-toolbar">
+                <h5 class="fw-bold mb-0">Ultimos Tickets</h5>
+            </div>
 
             @if($tickets->count())
-                <table class="table align-middle">
+                <div class="table-responsive desk-table-wrap">
+                <table class="table align-middle mb-0 desk-table">
                     <thead>
                     <tr>
                         <th>ID</th>
@@ -97,8 +100,9 @@
                     @endforeach
                     </tbody>
                 </table>
+                </div>
             @else
-                <p class="text-muted mb-0">No hay tickets recientes</p>
+                <div class="desk-table-empty">No hay tickets recientes</div>
             @endif
         </div>
     </div>

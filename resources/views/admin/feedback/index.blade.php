@@ -42,9 +42,9 @@
         </div>
     </form>
 
-    <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
+    <div class="card border-0 shadow-sm desk-table-card">
+        <div class="table-responsive desk-table-wrap">
+            <table class="table align-middle mb-0 desk-table">
                 <thead>
                     <tr>
                         <th>Usuario</th>
@@ -79,13 +79,13 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">No hay comentarios registrados.</td>
+                        <td colspan="5" class="desk-table-empty">No hay comentarios registrados.</td>
                     </tr>
                 @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="p-3">{{ $feedback->links() }}</div>
+        <div class="desk-table-footer">{{ $feedback->links() }}</div>
     </div>
 </div>
 @endsection

@@ -65,18 +65,22 @@ public function clients()
 
 public function excel()
 {
-    $orders = Order::with('user')->get();
+    $orders = Order::with('user')->latest()->get();
 
-    return Excel::download(new \App\Exports\OrdersExport($orders),'ventas.xlsx');
+    return Excel::download(
+        new \App\Exports\OrdersExport($orders),
+        'deskcir_reporte_ventas_' . now()->format('Ymd_His') . '.xlsx'
+    );
 }
 
 public function pdf()
 {
-    $orders = Order::with('user')->get();
+    $orders = Order::with('user')->latest()->get();
 
-    $pdf = PDF::loadView('admin.reports.pdf',compact('orders'));
+    $pdf = PDF::loadView('admin.reports.pdf', compact('orders'))
+        ->setPaper('a4', 'landscape');
 
-    return $pdf->download('ventas.pdf');
+    return $pdf->download('deskcir_reporte_ventas_' . now()->format('Ymd_His') . '.pdf');
 }
 
 }

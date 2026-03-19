@@ -23,13 +23,13 @@
 </div>
 
 {{-- TABLA --}}
-<div class="card shadow-sm">
-<div class="card-body">
+<div class="card border-0 shadow-sm desk-table-card">
+<div class="card-body p-0">
 
-<div class="table-responsive">
-<table class="table align-middle">
+<div class="table-responsive desk-table-wrap">
+<table class="table align-middle mb-0 desk-table">
 
-<thead class="table-dark">
+<thead>
 <tr>
     <th>#</th>
     <th>Cliente</th>
@@ -144,7 +144,7 @@ Ver
 @empty
 
 <tr>
-<td colspan="8" class="text-center py-4">
+<td colspan="8" class="desk-table-empty">
     No hay ventas registradas
 </td>
 </tr>
@@ -156,7 +156,7 @@ Ver
 </div>
 
 {{-- PAGINACION --}}
-<div class="mt-3">
+<div class="desk-table-footer">
 {{ $orders->links() }}
 </div>
 

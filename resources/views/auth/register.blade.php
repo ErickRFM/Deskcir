@@ -52,11 +52,24 @@
 
         <div class="mb-3">
             <label for="role" class="form-label">Rol</label>
-            <select id="role" name="role" class="form-control input-pro" required>
-                <option value="client" {{ old('role', 'client') == 'client' ? 'selected' : '' }}>Cliente</option>
-                <option value="technician" {{ old('role') == 'technician' ? 'selected' : '' }}>Tecnico</option>
-                <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                <option value="cashier" {{ old('role') == 'cashier' ? 'selected' : '' }}>Caja</option>
+            <select id="role" name="role" class="form-select input-pro">
+                @foreach(($roles ?? collect()) as $role)
+                    <option value="{{ $role->name }}" @selected(old('role', 'client') === $role->name)>
+                        @switch($role->name)
+                            @case('admin')
+                                Administrador
+                                @break
+                            @case('technician')
+                                Tecnico
+                                @break
+                            @case('cashier')
+                                Caja
+                                @break
+                            @default
+                                Cliente
+                        @endswitch
+                    </option>
+                @endforeach
             </select>
             @error('role')
             <small class="text-danger fw-bold">{{ $message }}</small>
@@ -202,3 +215,4 @@ transform:none;
 </style>
 
 @endsection
+

@@ -21,13 +21,16 @@
     <div class="col-md-3"><div class="card"><div class="card-body"><h6 class="text-muted">Completadas</h6><h3>{{ $completadas }}</h3></div></div></div>
 </div>
 
-<div class="card">
-<div class="card-body">
+<div class="card border-0 shadow-sm desk-table-card">
+<div class="card-body p-0">
 
-<h5 class="mb-3">Servicios programados</h5>
+<div class="desk-table-toolbar">
+    <h5 class="mb-0">Servicios programados</h5>
+</div>
 
-<table class="table align-middle">
-<thead class="table-dark">
+<div class="table-responsive desk-table-wrap">
+<table class="table align-middle mb-0 desk-table">
+<thead>
 <tr>
 <th>Hora</th>
 <th>Cliente</th>
@@ -71,10 +74,11 @@
 </td>
 </tr>
 @empty
-<tr><td colspan="6" class="text-center py-4">Sin citas programadas</td></tr>
+<tr><td colspan="6" class="desk-table-empty">Sin citas programadas</td></tr>
 @endforelse
 </tbody>
 </table>
+</div>
 
 </div>
 </div>

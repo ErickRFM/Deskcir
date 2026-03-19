@@ -1,106 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<meta charset="utf-8">
-
-<style>
-body{
-font-family: DejaVu Sans, sans-serif;
-font-size:12px;
-color:#333;
-}
-
-h1{
-font-size:18px;
-margin-bottom:20px;
-}
-
-.section{
-margin-bottom:20px;
-}
-
-.title{
-font-weight:bold;
-margin-bottom:5px;
-}
-
-.box{
-border:1px solid #ccc;
-padding:8px;
-min-height:40px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:10px;
-}
-
-td{
-padding:6px;
-vertical-align:top;
-}
-
-img{
-width:150px;
-margin:5px;
-border:1px solid #ccc;
-padding:3px;
-}
-</style>
+    <meta charset="utf-8">
+    <title>Checklist tecnico Deskcir</title>
+    @include('pdf.partials.document-styles')
 </head>
 <body>
+<div class="document-shell">
+    @include('pdf.partials.document-header', [
+        'title' => 'Checklist Tecnico',
+        'subtitle' => 'Control documentado de diagnostico, reparacion, pruebas y evidencia visual del servicio.',
+    ])
 
-<h1>Checklist Tecnico</h1>
+    <table class="summary-table" cellpadding="0" cellspacing="10">
+        <tr>
+            <td class="summary-card">
+                <span class="summary-label">Ticket</span>
+                <span class="summary-value">#{{ $ticket->id }}</span>
+            </td>
+            <td class="summary-card">
+                <span class="summary-label">Cliente</span>
+                <span class="summary-value" style="font-size: 13px;">{{ optional($ticket->user)->name ?? 'Sin cliente' }}</span>
+            </td>
+            <td class="summary-card">
+                <span class="summary-label">Tecnico</span>
+                <span class="summary-value" style="font-size: 13px;">{{ optional($ticket->technician)->name ?? 'Sin asignar' }}</span>
+            </td>
+            <td class="summary-card">
+                <span class="summary-label">Estado</span>
+                <span class="summary-value" style="font-size: 13px;">{{ ucfirst(str_replace('_', ' ', optional($checklist)->status ?? 'pendiente')) }}</span>
+            </td>
+        </tr>
+    </table>
 
-<div class="section">
-<strong>Ticket:</strong> #{{ $ticket->id }} <br>
-<strong>Cliente:</strong> {{ $ticket->user->name ?? 'Cliente' }}
-</div>
+    <div class="section-block">
+        <h3 class="section-title">Progreso del servicio</h3>
+        <table class="meta-table" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
+                    <span class="meta-label">Diagnostico</span>
+                    <span class="meta-value">{{ optional($checklist)->diagnostico ? 'Completado' : 'Pendiente' }}</span>
+                </td>
+                <td>
+                    <span class="meta-label">Reparacion</span>
+                    <span class="meta-value">{{ optional($checklist)->reparacion ? 'Completada' : 'Pendiente' }}</span>
+                </td>
+                <td>
+                    <span class="meta-label">Pruebas</span>
+                    <span class="meta-value">{{ optional($checklist)->pruebas ? 'Completadas' : 'Pendientes' }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-<div class="section">
-<div class="title">Diagnostico realizado</div>
-<div class="box">
-{{ $checklist->diagnostico_notes ?? 'Sin informacion' }}
-</div>
-</div>
+    <div class="section-block">
+        <h3 class="section-title">Diagnostico realizado</h3>
+        <div class="note-box">{{ optional($checklist)->diagnostico_notes ?: 'Sin informacion registrada.' }}</div>
+    </div>
 
-<div class="section">
-<div class="title">Reparacion aplicada</div>
-<div class="box">
-{{ $checklist->reparacion_notes ?? 'Sin informacion' }}
-</div>
-</div>
+    <div class="section-block">
+        <h3 class="section-title">Reparacion aplicada</h3>
+        <div class="note-box">{{ optional($checklist)->reparacion_notes ?: 'Sin informacion registrada.' }}</div>
+    </div>
 
-<div class="section">
-<div class="title">Pruebas finales</div>
-<div class="box">
-{{ $checklist->pruebas_notes ?? 'Sin informacion' }}
-</div>
-</div>
+    <div class="section-block">
+        <h3 class="section-title">Pruebas finales</h3>
+        <div class="note-box">{{ optional($checklist)->pruebas_notes ?: 'Sin informacion registrada.' }}</div>
+    </div>
 
-@if(!empty($checklist->errores))
-<div class="section">
-<div class="title">Errores encontrados</div>
-<div class="box">{{ $checklist->errores }}</div>
-</div>
-@endif
+    <div class="section-block">
+        <h3 class="section-title">Observaciones adicionales</h3>
+        <table class="meta-table" cellpadding="0" cellspacing="0">
+            <tr>
+                <td style="width: 50%;">
+                    <span class="meta-label">Errores encontrados</span>
+                    <span class="meta-value">{{ optional($checklist)->errores ?: 'Sin errores reportados.' }}</span>
+                </td>
+                <td style="width: 50%;">
+                    <span class="meta-label">Observaciones</span>
+                    <span class="meta-value">{{ optional($checklist)->observaciones ?: 'Sin observaciones adicionales.' }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-@if(!empty($checklist->observaciones))
-<div class="section">
-<div class="title">Observaciones</div>
-<div class="box">{{ $checklist->observaciones }}</div>
-</div>
-@endif
+    <div class="section-block">
+        <h3 class="section-title">Evidencia fotografica</h3>
+        @if(optional($checklist)->photos && $checklist->photos->count())
+            <table class="photo-grid" cellpadding="0" cellspacing="0">
+                @foreach($checklist->photos->chunk(2) as $photoRow)
+                    <tr>
+                        @foreach($photoRow as $photo)
+                            @php
+                                $disk = $photo->disk ?: 'public';
+                                $photoPath = null;
 
-@if($ticket->images && count($ticket->images))
-<div class="section">
-<div class="title">Imagenes</div>
-@foreach($ticket->images as $img)
-    <img src="{{ public_path('storage/'.$img->path) }}" alt="imagen">
-@endforeach
-</div>
-@endif
+                                try {
+                                    $photoPath = \Illuminate\Support\Facades\Storage::disk($disk)->path($photo->path);
+                                } catch (\Throwable $e) {
+                                    $photoPath = null;
+                                }
+                            @endphp
+                            <td>
+                                <div class="photo-card">
+                                    @if($photoPath && file_exists($photoPath))
+                                        <img src="{{ $photoPath }}" alt="Foto del checklist">
+                                    @else
+                                        <div class="empty-state">No se pudo cargar la imagen almacenada.</div>
+                                    @endif
+                                    <div class="muted">Archivo: {{ basename((string) $photo->path) }}</div>
+                                </div>
+                            </td>
+                        @endforeach
+                        @if($photoRow->count() === 1)
+                            <td></td>
+                        @endif
+                    </tr>
+                @endforeach
+            </table>
+        @else
+            <div class="empty-state">No se adjuntaron fotografias en este checklist.</div>
+        @endif
+    </div>
 
+    @include('pdf.partials.document-footer')
+</div>
 </body>
 </html>

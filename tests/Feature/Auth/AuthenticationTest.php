@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -50,5 +51,19 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
         $response->assertRedirect('/store');
+    }
+
+    public function test_cashier_users_are_redirected_to_cashier_panel_after_login(): void
+    {
+        $cashierRoleId = Role::query()->firstOrCreate(['name' => 'cashier'])->id;
+        $user = User::factory()->create(['role_id' => $cashierRoleId]);
+
+        $response = $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertAuthenticated();
+        $response->assertRedirect('/cashier');
     }
 }

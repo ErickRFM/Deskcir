@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
@@ -40,6 +41,25 @@ class TicketController extends Controller
         })->get();
 
         return view('admin.tickets.show', compact('ticket', 'technicians'));
+    }
+
+    public function checklist($id)
+    {
+        $ticket = Ticket::with(['user', 'technician', 'checklist.photos'])->findOrFail($id);
+
+        return view('admin.tickets.checklist', compact('ticket'));
+    }
+
+    public function checklistPdf($id)
+    {
+        $ticket = Ticket::with(['user', 'technician', 'checklist.photos'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('pdf.checklist', [
+            'ticket' => $ticket,
+            'checklist' => $ticket->checklist,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->download('deskcir_checklist_admin_ticket_' . $ticket->id . '_' . now()->format('Ymd_His') . '.pdf');
     }
 
     public function updateStatus(Request $request, $id)

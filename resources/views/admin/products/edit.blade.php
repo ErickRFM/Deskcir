@@ -221,7 +221,7 @@ function lockEditSubmit() {
 }
 
 function eliminarImagen(id){
-    Swal.fire({
+    deskcirFire({
         title: 'Eliminar imagen?',
         text: 'La imagen se quitara del producto.',
         icon: 'warning',
@@ -234,7 +234,7 @@ function eliminarImagen(id){
             return;
         }
 
-        Swal.fire({
+        deskcirFire({
             title: 'Eliminando imagen',
             text: 'Espera un momento.',
             allowOutsideClick: false,
@@ -256,7 +256,7 @@ function eliminarImagen(id){
                 throw new Error(data.message || 'No se pudo eliminar la imagen.');
             }
 
-            await Swal.fire({
+            await deskcirFire({
                 icon: 'success',
                 title: 'Imagen eliminada',
                 text: data.message || 'La imagen se elimino correctamente.',
@@ -265,7 +265,7 @@ function eliminarImagen(id){
             location.reload();
         })
         .catch((error) => {
-            Swal.fire({
+            deskcirFire({
                 icon: 'error',
                 title: 'Error',
                 text: error.message || 'No se pudo eliminar la imagen.',
@@ -281,7 +281,7 @@ if (imageInput && previewContainer) {
         if (imageError) {
             imageInput.value = '';
             previewContainer.innerHTML = '';
-            Swal.fire({
+            deskcirFire({
               icon: 'error',
               title: 'Imagen invalida',
               text: imageError
@@ -310,7 +310,7 @@ if (productEditForm) {
         const validationError = validateEditForm();
 
         if (validationError) {
-            Swal.fire({
+            deskcirFire({
               icon: 'error',
               title: 'Revisa el formulario',
               text: validationError
@@ -318,7 +318,7 @@ if (productEditForm) {
             return;
         }
 
-        Swal.fire({
+        deskcirFire({
             icon: 'question',
             title: 'Guardar cambios?',
             text: 'Se actualizara la informacion del producto.',
@@ -333,7 +333,7 @@ if (productEditForm) {
 
             lockEditSubmit();
 
-            Swal.fire({
+            deskcirFire({
                 title: 'Actualizando producto',
                 text: 'Espera un momento mientras se guardan los cambios.',
                 allowOutsideClick: false,
@@ -346,34 +346,21 @@ if (productEditForm) {
 }
 </script>
 
+@php
+    $flashModal = null;
 
-@if(session('success'))
-<script>
-Swal.fire({
-  icon: 'success',
-  title: 'Listo!',
-  text: '{{ session('success') }}'
-});
-</script>
-@endif
+    if ($errors->any()) {
+        $flashModal = ['icon' => 'error', 'title' => 'Error', 'text' => $errors->first()];
+    } elseif (session('error')) {
+        $flashModal = ['icon' => 'error', 'title' => 'Error', 'text' => session('error')];
+    } elseif (session('success')) {
+        $flashModal = ['icon' => 'success', 'title' => 'Listo!', 'text' => session('success')];
+    }
+@endphp
 
-@if(session('error'))
+@if($flashModal)
 <script>
-Swal.fire({
-  icon: 'error',
-  title: 'Error',
-  text: '{{ session('error') }}'
-});
-</script>
-@endif
-
-@if($errors->any())
-<script>
-Swal.fire({
-  icon: 'error',
-  title: 'Error',
-  text: '{{ $errors->first() }}'
-});
+deskcirShowFlash(@json($flashModal));
 </script>
 @endif
 @endsection

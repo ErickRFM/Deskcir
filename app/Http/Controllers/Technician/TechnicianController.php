@@ -114,4 +114,31 @@ class TechnicianController extends Controller
             'completadas'
         ));
     }
+
+    public function profile()
+    {
+        $user = auth()->user();
+
+        $ticketBaseQuery = Ticket::query()->where('technician_id', $user->id);
+
+        $assignedTickets = (clone $ticketBaseQuery)->count();
+        $activeTickets = (clone $ticketBaseQuery)
+            ->whereIn('status', ['abierto', 'en_proceso'])
+            ->count();
+        $closedTickets = (clone $ticketBaseQuery)
+            ->where('status', 'cerrado')
+            ->count();
+        $upcomingAppointments = Appointment::query()
+            ->where('technician_id', $user->id)
+            ->whereDate('date', '>=', now()->toDateString())
+            ->count();
+
+        return view('technician.profile', compact(
+            'user',
+            'assignedTickets',
+            'activeTickets',
+            'closedTickets',
+            'upcomingAppointments'
+        ));
+    }
 }

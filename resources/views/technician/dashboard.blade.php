@@ -13,6 +13,7 @@
         <div class="d-flex gap-2 flex-wrap">
             <a href="{{ route('deskcir.ai') }}" class="btn btn-deskcir">Abrir Deskcir AI</a>
             <a href="{{ route('technician.tickets') }}" class="btn btn-outline-light">Ir a tickets</a>
+            <a href="{{ route('technician.profile') }}" class="btn btn-outline-light">Mi perfil</a>
         </div>
     </div>
 
@@ -29,9 +30,10 @@
     </div>
 
 <div class="row g-4 mb-5 tech-action-row">
-        <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Tickets asignados</h5><p class="text-muted mb-4">Gestiona incidencias, responde al cliente y sube evidencias</p><a href="{{ route('technician.tickets') }}" class="btn btn-deskcir w-100 py-2">Ir a tickets</a></div></div></div>
-        <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Agenda</h5><p class="text-muted mb-4">Citas y servicios programados</p><a href="{{ route('technician.calendar') }}" class="btn btn-deskcir w-100 py-2">Ver agenda</a></div></div></div>
-        <div class="col-md-4"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Deskcir AI</h5><p class="text-muted mb-4">Organiza pasos tecnicos y redacta mensajes de seguimiento</p><a href="{{ route('deskcir.ai') }}" class="btn btn-outline-deskcir w-100 py-2">Abrir IA</a></div></div></div>
+        <div class="col-lg-3 col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Tickets asignados</h5><p class="text-muted mb-4">Gestiona incidencias, responde al cliente y sube evidencias</p><a href="{{ route('technician.tickets') }}" class="btn btn-deskcir w-100 py-2">Ir a tickets</a></div></div></div>
+        <div class="col-lg-3 col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Agenda</h5><p class="text-muted mb-4">Citas y servicios programados</p><a href="{{ route('technician.calendar') }}" class="btn btn-deskcir w-100 py-2">Ver agenda</a></div></div></div>
+        <div class="col-lg-3 col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Mi perfil</h5><p class="text-muted mb-4">Actualiza tus datos, foto y seguridad desde una vista tecnica.</p><a href="{{ route('technician.profile') }}" class="btn btn-outline-deskcir w-100 py-2">Abrir perfil</a></div></div></div>
+        <div class="col-lg-3 col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body p-4"><h5 class="fw-bold mb-1">Deskcir AI</h5><p class="text-muted mb-4">Organiza pasos tecnicos y redacta mensajes de seguimiento</p><a href="{{ route('deskcir.ai') }}" class="btn btn-outline-deskcir w-100 py-2">Abrir IA</a></div></div></div>
     </div>
 
     <div class="card border-0 shadow-sm mb-4">

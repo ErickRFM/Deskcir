@@ -4309,6 +4309,42 @@ textarea {
 }
 
 /* ========================= */
+/* SWEETALERT THEME          */
+/* ========================= */
+.deskcir-swal-popup {
+    border-radius: 22px;
+    border: 1px solid rgba(15, 118, 110, 0.14);
+    box-shadow: 0 24px 60px rgba(8, 29, 42, 0.18);
+}
+
+.deskcir-swal-popup--dark {
+    border-color: #23435a;
+    box-shadow: 0 28px 70px rgba(0, 0, 0, 0.48);
+}
+
+.deskcir-swal-title {
+    font-weight: 800;
+    letter-spacing: -.02em;
+}
+
+.deskcir-swal-text {
+    line-height: 1.6;
+}
+
+body .swal2-container.swal2-backdrop-show {
+    background: rgba(3, 12, 24, 0.58);
+    backdrop-filter: blur(4px);
+}
+
+.dark body .swal2-container.swal2-backdrop-show {
+    background: rgba(2, 8, 18, 0.74);
+}
+
+.dark .swal2-loader {
+    border-color: #274059 transparent #274059 transparent;
+}
+
+/* ========================= */
 /* TECHNICIAN ACTION CARDS   */
 /* ========================= */
 .technician-dashboard .tech-action-row .card-body {

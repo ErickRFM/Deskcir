@@ -158,6 +158,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
     Route::get('/tickets/{id}',[AdminTicketController::class,'show'])
         ->name('admin.tickets.show');
 
+    Route::get('/tickets/{id}/checklist', [AdminTicketController::class, 'checklist'])
+        ->name('admin.tickets.checklist');
+
+    Route::get('/tickets/{id}/checklist/pdf', [AdminTicketController::class, 'checklistPdf'])
+        ->name('admin.tickets.checklist.pdf');
+
     Route::post('/tickets/{id}/reply',[AdminTicketController::class,'reply'])
         ->name('admin.tickets.reply');
 
@@ -183,6 +189,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function(){
 
 Route::middleware(['auth', 'role:technician'])->prefix('technician')->group(function(){
     Route::get('/',[TechnicianController::class,'dashboard'])->name('technician.dashboard');
+    Route::get('/profile', [TechnicianController::class, 'profile'])->name('technician.profile');
 
     Route::get('/tickets',[TechnicianTicketController::class,'index'])->name('technician.tickets');
     Route::get('/tickets/{id}',[TechnicianTicketController::class,'show'])->name('technician.tickets.show');

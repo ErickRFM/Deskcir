@@ -195,7 +195,7 @@ if (cashierImageInput && cashierPreview) {
         if (imageError) {
             cashierImageInput.value = '';
             cashierPreview.innerHTML = '';
-            Swal.fire({
+            deskcirFire({
               icon: 'error',
               title: 'Imagen invalida',
               text: imageError
@@ -223,7 +223,7 @@ if (cashierProductForm) {
         const validationError = validateCashierForm();
 
         if (validationError) {
-            Swal.fire({
+            deskcirFire({
               icon: 'error',
               title: 'Revisa el formulario',
               text: validationError
@@ -231,7 +231,7 @@ if (cashierProductForm) {
             return;
         }
 
-        Swal.fire({
+        deskcirFire({
             icon: 'question',
             title: 'Guardar producto?',
             text: 'Se registrara el producto desde caja.',
@@ -246,7 +246,7 @@ if (cashierProductForm) {
 
             lockCashierSubmit();
 
-            Swal.fire({
+            deskcirFire({
                 title: 'Guardando producto',
                 text: 'Espera un momento mientras se carga la informacion.',
                 allowOutsideClick: false,
@@ -259,33 +259,21 @@ if (cashierProductForm) {
 }
 </script>
 
-@if(session('success'))
-<script>
-Swal.fire({
-  icon: 'success',
-  title: 'Listo!',
-  text: '{{ session('success') }}'
-});
-</script>
-@endif
+@php
+    $flashModal = null;
 
-@if(session('error'))
-<script>
-Swal.fire({
-  icon: 'error',
-  title: 'Error',
-  text: '{{ session('error') }}'
-});
-</script>
-@endif
+    if ($errors->any()) {
+        $flashModal = ['icon' => 'error', 'title' => 'Error', 'text' => $errors->first()];
+    } elseif (session('error')) {
+        $flashModal = ['icon' => 'error', 'title' => 'Error', 'text' => session('error')];
+    } elseif (session('success')) {
+        $flashModal = ['icon' => 'success', 'title' => 'Listo!', 'text' => session('success')];
+    }
+@endphp
 
-@if($errors->any())
+@if($flashModal)
 <script>
-Swal.fire({
-  icon: 'error',
-  title: 'Error',
-  text: '{{ $errors->first() }}'
-});
+deskcirShowFlash(@json($flashModal));
 </script>
 @endif
 @endsection

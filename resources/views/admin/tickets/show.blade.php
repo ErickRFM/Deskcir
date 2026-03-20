@@ -144,7 +144,7 @@
                 </div>
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge bg-light text-dark border text-uppercase">{{ optional($ticket->checklist)->progress ?? 'pendiente' }}</span>
-                    <a href="{{ route('technician.checklist',$ticket->id) }}" class="btn btn-sm btn-outline-deskcir d-inline-flex align-items-center gap-2">
+                    <a href="{{ route('admin.tickets.checklist',$ticket->id) }}" class="btn btn-sm btn-outline-deskcir d-inline-flex align-items-center gap-2">
                         <span class="material-symbols-outlined">checklist</span>
                         Ver checklist completo
                     </a>

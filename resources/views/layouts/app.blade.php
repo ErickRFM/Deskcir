@@ -54,6 +54,52 @@ if (!window.Swal) {
         showLoading() {},
     };
 }
+
+window.deskcirSwalOptions = function (options = {}) {
+    const isDark = document.documentElement.classList.contains('dark');
+    const baseOptions = {
+        background: isDark ? '#0f172a' : '#ffffff',
+        color: isDark ? '#e5eef8' : '#10263a',
+        confirmButtonColor: options.confirmButtonColor || '#0f766e',
+        cancelButtonColor: options.cancelButtonColor || '#64748b',
+        customClass: {
+            popup: `deskcir-swal-popup${isDark ? ' deskcir-swal-popup--dark' : ''}`,
+            title: 'deskcir-swal-title',
+            htmlContainer: 'deskcir-swal-text',
+            confirmButton: 'deskcir-swal-confirm',
+            cancelButton: 'deskcir-swal-cancel',
+        },
+    };
+
+    return {
+        ...baseOptions,
+        ...options,
+        customClass: {
+            ...baseOptions.customClass,
+            ...(options.customClass || {}),
+        },
+    };
+};
+
+window.deskcirFire = function (options = {}) {
+    if (typeof window.Swal?.close === 'function' && typeof window.Swal?.isVisible === 'function' && window.Swal.isVisible()) {
+        window.Swal.close();
+    }
+
+    return window.Swal.fire(window.deskcirSwalOptions(options));
+};
+
+window.__deskcirFlashShown = false;
+
+window.deskcirShowFlash = function (options = {}) {
+    if (window.__deskcirFlashShown) {
+        return Promise.resolve({ isConfirmed: false, isDismissed: true });
+    }
+
+    window.__deskcirFlashShown = true;
+
+    return window.deskcirFire(options);
+};
 </script>
 
 @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
@@ -212,6 +258,12 @@ if (!window.Swal) {
                                     <a class="dropdown-item d-flex align-items-center gap-2" href="/technician">
                                         <span class="material-symbols-outlined">build</span>
                                         Panel Tecnico
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('technician.profile') }}">
+                                        <span class="material-symbols-outlined">badge</span>
+                                        Perfil Tecnico
                                     </a>
                                 </li>
                             @endif

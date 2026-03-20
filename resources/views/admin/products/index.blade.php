@@ -101,7 +101,7 @@ function eliminar(id){
     const form = document.getElementById('delete' + id);
     const productName = form?.dataset.productName || 'este producto';
 
-    Swal.fire({
+    deskcirFire({
         title: 'Eliminar producto?',
         text: `Se eliminara ${productName}. Esta accion no se podra deshacer.`,
         icon: 'warning',
@@ -112,7 +112,7 @@ function eliminar(id){
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire({
+            deskcirFire({
                 title: 'Eliminando producto',
                 text: 'Espera un momento.',
                 allowOutsideClick: false,
@@ -125,23 +125,19 @@ function eliminar(id){
 }
 </script>
 
-@if(session('success'))
-<script>
-Swal.fire({
-  icon: 'success',
-  title: 'Listo!',
-  text: '{{ session('success') }}'
-});
-</script>
-@endif
+@php
+    $flashModal = null;
 
-@if(session('error'))
+    if (session('error')) {
+        $flashModal = ['icon' => 'error', 'title' => 'Error', 'text' => session('error')];
+    } elseif (session('success')) {
+        $flashModal = ['icon' => 'success', 'title' => 'Listo!', 'text' => session('success')];
+    }
+@endphp
+
+@if($flashModal)
 <script>
-Swal.fire({
-  icon: 'error',
-  title: 'Error',
-  text: '{{ session('error') }}'
-});
+deskcirShowFlash(@json($flashModal));
 </script>
 @endif
 

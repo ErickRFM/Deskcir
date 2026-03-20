@@ -181,11 +181,17 @@
     const modalConfirm = wrapper.querySelector('[data-modal-confirm]');
 
     const supportsRtc = typeof window.RTCPeerConnection === 'function' && !!navigator.mediaDevices;
+    const supportsDisplayCapture = typeof navigator.mediaDevices?.getDisplayMedia === 'function';
     const config = {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' }
-        ]
+            { urls: 'stun:openrelay.metered.ca:80' },
+            { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+            { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+            { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' }
+        ],
+        iceCandidatePoolSize: 4,
+        bundlePolicy: 'max-bundle'
     };
 
     let pc = null;
@@ -244,14 +250,23 @@
     };
     const updateButtons = () => {
         const canStart = !!peerId && supportsRtc && peerOnline && !actionLock && currentMode === 'idle' && !pendingOffer;
+        const canStartScreen = canStart && (screenFlow === 'request-peer' || supportsDisplayCapture);
         const hasSession = currentMode !== 'idle' || !!pendingOffer || !!pc;
         if (btnCall) {
             btnCall.disabled = !canStart;
             btnCall.title = !supportsRtc ? 'Tu navegador no soporta Deskcir Live.' : !peerId ? 'No hay otro usuario disponible en este ticket.' : !peerOnline ? `${peerLabel} no esta en linea ahora mismo.` : '';
         }
         if (btnScreen) {
-            btnScreen.disabled = !canStart;
-            btnScreen.title = btnCall?.title || '';
+            btnScreen.disabled = !canStartScreen;
+            btnScreen.title = !supportsRtc
+                ? 'Tu navegador no soporta Deskcir Live.'
+                : !peerId
+                    ? 'No hay otro usuario disponible en este ticket.'
+                    : !peerOnline
+                        ? `${peerLabel} no esta en linea ahora mismo.`
+                        : screenFlow !== 'request-peer' && !supportsDisplayCapture
+                            ? 'Este navegador o dispositivo no puede compartir pantalla desde la web.'
+                            : '';
         }
         if (btnStop) btnStop.disabled = !hasSession;
         if (btnResume) btnResume.hidden = consolePanel && !consolePanel.hidden ? true : !hasSession;
@@ -265,13 +280,35 @@
         }
         updateButtons();
     };
+    const safePlay = async (video, options = {}) => {
+        if (!video) return;
+
+        const { fallbackMuted = false } = options;
+
+        try {
+            await video.play();
+        } catch (error) {
+            if (!fallbackMuted) return;
+
+            try {
+                video.muted = true;
+                await video.play();
+                video.dataset.autoplayMuted = '1';
+                setStatus('La vista remota ya esta lista. Si no escuchas audio, toca el video para activarlo.');
+            } catch (nestedError) {
+                console.warn('No se pudo reproducir el video remoto.', nestedError);
+            }
+        }
+    };
     const signalMode = (mode) => mode === 'screen-request' ? 'screen-request' : mode === 'screen-share' ? 'screen-share' : 'call';
     const errorText = (error, mode) => {
         const name = error?.name || '';
         if (!supportsRtc) return 'Tu navegador no soporta videollamada ni compartir pantalla en este modulo.';
+        if (mode !== 'call' && !supportsDisplayCapture) return 'Este navegador o dispositivo no permite compartir pantalla desde la web.';
         if (name === 'NotAllowedError' || name === 'PermissionDeniedError') return mode === 'call' ? 'No se concedieron permisos para camara o microfono.' : 'No se concedio permiso para compartir pantalla.';
         if (name === 'NotReadableError') return mode === 'call' ? 'La camara o el microfono ya estan siendo usados por otra app.' : 'No fue posible leer la pantalla seleccionada.';
         if (name === 'NotFoundError' || name === 'DevicesNotFoundError') return mode === 'call' ? 'No se encontro una camara o microfono disponible.' : 'No se encontro una fuente de pantalla para compartir.';
+        if (name === 'NotSupportedError' || name === 'TypeError') return mode === 'call' ? 'Este navegador no pudo abrir la camara o el microfono.' : 'Este navegador o dispositivo no soporta compartir pantalla en esta sesion.';
         if (name === 'AbortError') return 'La operacion fue cancelada antes de completarse.';
         return 'No fue posible completar la sesion. Revisa permisos, conectividad y vuelve a intentarlo.';
     };
@@ -330,6 +367,7 @@
     function bindLocalStream(stream, mode) {
         localStream = stream;
         if (localVideo) localVideo.srcObject = stream;
+        safePlay(localVideo);
         const primaryTrack = stream.getVideoTracks()[0] || stream.getTracks()[0];
         if (primaryTrack) {
             primaryTrack.onended = () => {
@@ -348,6 +386,7 @@
             if (pc !== peer) return;
             remoteVideo.srcObject = event.streams?.[0] || new MediaStream([event.track]);
             syncVideoState();
+            safePlay(remoteVideo, { fallbackMuted: true });
             setStatus('Conexion activa. Ya puedes continuar la asistencia remota.');
             setMode(currentMode, currentMode === 'call' ? 'Llamada activa' : 'Pantalla activa');
             updateButtons();
@@ -370,6 +409,17 @@
             if (peer.connectionState === 'disconnected') setStatus('La sesion se desconecto. Estamos esperando a que vuelva la conectividad.');
             if (peer.connectionState === 'failed') {
                 stopCall({ notify: true, reason: 'disconnected', keepConsole: true, statusText: 'La sesion fallo por conectividad. Puedes volver a intentarlo desde este panel.' });
+            }
+        };
+        peer.oniceconnectionstatechange = () => {
+            if (pc !== peer) return;
+
+            if (peer.iceConnectionState === 'checking') {
+                setStatus('Verificando conectividad segura entre ambos dispositivos...');
+            }
+
+            if (peer.iceConnectionState === 'connected' || peer.iceConnectionState === 'completed') {
+                setStatus('Canal remoto establecido. Renderizando audio y video...');
             }
         };
         return peer;
@@ -462,6 +512,9 @@
                 bindLocalStream(stream, mode);
                 stream.getTracks().forEach((track) => peer.addTrack(track, stream));
             } else if (mode === 'screen-share') {
+                if (!supportsDisplayCapture) {
+                    throw new DOMException('Display capture is not supported', 'NotSupportedError');
+                }
                 setStatus('Abriendo selector del navegador para elegir pantalla, ventana o pestana...');
                 const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
                 bindLocalStream(stream, mode);
@@ -469,7 +522,6 @@
             } else {
                 setStatus(`Solicitud enviada a ${peerLabel}. Cuando acepte podra elegir pantalla, ventana o pestana.`);
                 peer.addTransceiver('video', { direction: 'recvonly' });
-                peer.addTransceiver('audio', { direction: 'recvonly' });
             }
 
             const offer = await peer.createOffer();
@@ -513,6 +565,9 @@
                 bindLocalStream(stream, mode);
                 stream.getTracks().forEach((track) => peer.addTrack(track, stream));
             } else if (mode === 'screen-request') {
+                if (!supportsDisplayCapture) {
+                    throw new DOMException('Display capture is not supported', 'NotSupportedError');
+                }
                 setStatus('Elige pantalla, ventana o pestana en el selector del navegador para compartir.');
                 const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
                 bindLocalStream(stream, mode);
@@ -610,6 +665,14 @@
     btnStop?.addEventListener('click', () => stopCall({ notify: true, reason: 'ended', keepConsole: true, statusText: 'Sesion finalizada. El panel queda listo para volver a iniciar otra conexion.' }));
     btnHide?.addEventListener('click', hideConsole);
     btnResume?.addEventListener('click', openConsole);
+    remoteVideo?.addEventListener('click', async () => {
+        if (remoteVideo.dataset.autoplayMuted !== '1') return;
+
+        remoteVideo.muted = false;
+        remoteVideo.dataset.autoplayMuted = '0';
+        await safePlay(remoteVideo);
+        setStatus('Audio remoto activado.');
+    });
     modalBackdrop?.addEventListener('click', () => modalState?.onCancel ? modalState.onCancel() : closeModal());
     modalCancel?.addEventListener('click', () => modalState?.onCancel ? modalState.onCancel() : closeModal());
     modalConfirm?.addEventListener('click', () => modalState?.onConfirm ? modalState.onConfirm() : closeModal());
@@ -660,19 +723,21 @@
 .ticket-call-console__mode { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: .45rem .75rem; border-radius: 999px; background: rgba(143, 209, 226, 0.12); border: 1px solid rgba(143, 209, 226, 0.2); color: #cfeef7; font-size: .8rem; font-weight: 700; }
 .ticket-call-console__mode.is-active { background: rgba(19, 214, 164, 0.14); border-color: rgba(19, 214, 164, 0.26); color: #a8ffde; }
 .ticket-call-console__status { padding: .9rem 1.1rem 0; color: #b9d8e4; min-height: 56px; }
-.ticket-call-console__grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, .9fr); gap: 1rem; padding: 1rem 1.1rem 1.1rem; }
+.ticket-call-console__grid { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem 1.1rem 1.1rem; }
 .ticket-call-console__main { display: grid; gap: .9rem; }
-.ticket-call-console__video-shell { border: 1px solid rgba(177, 223, 236, 0.16); border-radius: 18px; padding: .8rem; background: rgba(7, 24, 39, 0.48); }
+.ticket-call-console__video-shell { border: 1px solid rgba(177, 223, 236, 0.16); border-radius: 18px; padding: .8rem; background: rgba(7, 24, 39, 0.48); width: 100%; }
 .ticket-call-console__video-label { margin-bottom: .45rem; color: #8fd1e2; font-size: .82rem; font-weight: 700; }
-.ticket-call-console__video-stage { position: relative; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, rgba(3, 7, 18, 0.98), rgba(6, 21, 34, 0.94)); aspect-ratio: 16 / 9; min-height: 220px; }
+.ticket-call-console__video-stage { position: relative; border-radius: 14px; overflow: hidden; background: linear-gradient(160deg, rgba(3, 7, 18, 0.98), rgba(6, 21, 34, 0.94)); aspect-ratio: 16 / 9; min-height: 220px; width: 100%; }
 .ticket-call-console__video-stage.is-local-preview { aspect-ratio: 16 / 10; min-height: 170px; }
 .ticket-call-console__video-stage video { width: 100%; height: 100%; object-fit: cover; display: block; background: transparent; }
 .ticket-call-console__placeholder { position: absolute; inset: 0; display: grid; place-content: center; gap: .45rem; text-align: center; padding: 1.2rem; color: #dceefa; background: radial-gradient(circle at top, rgba(34, 211, 238, 0.12), transparent 38%), linear-gradient(145deg, rgba(9, 20, 31, 0.82), rgba(3, 7, 18, 0.94)); }
 .ticket-call-console__placeholder .material-symbols-outlined { font-size: 2rem; color: #8fd1e2; }
 .ticket-call-console__placeholder strong { font-size: 1rem; }
 .ticket-call-console__placeholder p { margin: 0; color: #9fc8d8; font-size: .88rem; }
-.ticket-call-console__side { display: grid; gap: .85rem; }
-.ticket-call-console__card { border: 1px solid rgba(177, 223, 236, 0.16); border-radius: 18px; padding: .95rem 1rem; background: rgba(7, 24, 39, 0.44); color: #dbedf4; }
+.ticket-call-console__side { display: grid; gap: .85rem; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); align-items: start; }
+.ticket-call-console__card { border: 1px solid rgba(177, 223, 236, 0.16); border-radius: 18px; padding: .95rem 1rem; background: rgba(7, 24, 39, 0.44); color: #dbedf4; min-height: 100%; }
+.ticket-call-console__video-shell.is-local .ticket-call-console__video-stage { min-height: 150px; max-height: 190px; }
+.ticket-call-console__video-shell.is-remote .ticket-call-console__video-stage { min-height: 260px; }
 .ticket-call-console__card.is-accent { background: rgba(1, 104, 122, 0.22); border-color: rgba(118, 221, 240, 0.26); }
 .ticket-call-console__card ol, .ticket-call-console__card ul { padding-left: 1rem; display: grid; gap: .45rem; }
 .ticket-call-modal { position: fixed; inset: 0; z-index: 1080; display: grid; place-items: center; padding: 1rem; }
@@ -687,7 +752,13 @@
 .dark .ticket-call-modal__dialog { background: #071827; border-color: #1f4960; color: #ecf8ff; }
 .dark .ticket-call-modal__badge { background: rgba(0, 183, 224, 0.12); border-color: rgba(88, 200, 230, 0.24); color: #99eafe; }
 .dark .ticket-call-modal__body { color: #b8d7e3; }
-@media (max-width: 991.98px) { .ticket-call-console__grid { grid-template-columns: 1fr; } }
+@media (min-width: 1200px) {
+    .ticket-call-console__grid { grid-template-columns: minmax(0, 1.2fr) minmax(280px, .88fr); }
+    .ticket-call-console__side { grid-template-columns: 1fr; }
+}
+@media (max-width: 991.98px) {
+    .ticket-call-console__video-shell.is-remote .ticket-call-console__video-stage { min-height: 220px; }
+}
 @media (max-width: 767.98px) {
     .ticket-call-tools, .ticket-call-console { min-width: 100%; }
     .ticket-call-console__topbar, .ticket-call-console__topbar-actions, .ticket-call-modal__actions { flex-direction: column; align-items: stretch; }

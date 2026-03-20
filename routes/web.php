@@ -218,6 +218,7 @@ Route::middleware('auth')->group(function(){
     Route::post('/webrtc/offer',[App\Http\Controllers\WebRTCController::class,'offer']);
     Route::post('/webrtc/answer',[App\Http\Controllers\WebRTCController::class,'answer']);
     Route::post('/webrtc/ice',[App\Http\Controllers\WebRTCController::class,'ice']);
+    Route::post('/webrtc/hangup',[App\Http\Controllers\WebRTCController::class,'hangup']);
     Route::get('/webrtc/poll',[App\Http\Controllers\WebRTCController::class,'poll']);
 });
 

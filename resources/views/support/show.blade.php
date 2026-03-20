@@ -24,7 +24,7 @@
                 </div>
 
                 @php $peerName = optional($ticket->technician)->name ?? 'Tecnico'; @endphp
-                <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir mi pantalla" call-label="Llamar tecnico" :peer-user-id="optional($ticket->technician)->id" :peer-label="$peerName" />
+                <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir mi pantalla" call-label="Llamar tecnico" :peer-user-id="optional($ticket->technician)->id" :peer-label="$peerName" screen-flow="share-self" />
             </div>
         </div>
     </section>

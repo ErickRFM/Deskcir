@@ -23,7 +23,7 @@
                     </div>
                 </div>
 
-                <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir pantalla" call-label="Videollamada" :peer-user-id="$ticket->user->id" :peer-label="$ticket->user->name" />
+                <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir pantalla" call-label="Videollamada" :peer-user-id="$ticket->user->id" :peer-label="$ticket->user->name" screen-flow="request-peer" />
             </div>
         </div>
     </section>

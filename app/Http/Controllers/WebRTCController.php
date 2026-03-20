@@ -15,7 +15,7 @@ class WebRTCController extends Controller
         $data = $r->validate([
             'ticket_id' => ['required', 'integer', 'exists:tickets,id'],
             'offer' => ['required', 'array'],
-            'request_mode' => ['nullable', 'in:call,screen'],
+            'request_mode' => ['nullable', 'in:call,screen-share,screen-request'],
         ]);
 
         $this->authorizeTicket((int) $data['ticket_id']);
@@ -90,6 +90,34 @@ class WebRTCController extends Controller
         ]))->toOthers();
 
         return response()->json(['ok'=>true,'id'=>$signal->id]);
+    }
+
+    public function hangup(Request $r): JsonResponse
+    {
+        $data = $r->validate([
+            'ticket_id' => ['required', 'integer', 'exists:tickets,id'],
+            'reason' => ['nullable', 'in:ended,declined,denied,busy,reload,disconnected'],
+        ]);
+
+        $this->authorizeTicket((int) $data['ticket_id']);
+
+        $payload = ['reason' => $data['reason'] ?? 'ended'];
+
+        $signal = $this->storeSignal(
+            (int) $data['ticket_id'],
+            'hangup',
+            $payload
+        );
+
+        broadcast(new WebRTCSignal([
+            'id' => $signal->id,
+            'ticket_id' => $data['ticket_id'],
+            'type' => 'hangup',
+            'data' => $payload,
+            'user_id' => auth()->id(),
+        ]))->toOthers();
+
+        return response()->json(['ok' => true, 'id' => $signal->id]);
     }
 
     public function poll(Request $r): JsonResponse

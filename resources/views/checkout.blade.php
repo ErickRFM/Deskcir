@@ -17,6 +17,16 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
+    @if(!empty($cartAlerts))
+        <div class="alert alert-warning">
+            <ul class="mb-0 ps-3">
+                @foreach($cartAlerts as $alert)
+                    <li>{{ $alert }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     @if($errors->any())
         <div class="alert alert-danger">
             <ul class="mb-0 ps-3">

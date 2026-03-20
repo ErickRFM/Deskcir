@@ -24,6 +24,37 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+if (!window.Swal) {
+    window.Swal = {
+        fire(options = {}) {
+            const title = options.title || '';
+            const text = options.text || '';
+            const message = [title, text].filter(Boolean).join('\n\n');
+
+            if (options.showCancelButton || options.icon === 'warning' || options.icon === 'question') {
+                const isConfirmed = window.confirm(message || 'Confirmar accion');
+
+                return Promise.resolve({
+                    isConfirmed,
+                    isDismissed: !isConfirmed,
+                });
+            }
+
+            if (message) {
+                window.alert(message);
+            }
+
+            return Promise.resolve({
+                isConfirmed: true,
+                isDismissed: false,
+            });
+        },
+        showLoading() {},
+    };
+}
+</script>
 
 @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
     @vite(['resources/css/app.css','resources/js/app.js'])

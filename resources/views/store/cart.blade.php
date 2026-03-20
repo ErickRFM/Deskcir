@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Carrito | Deskcir')
 
@@ -11,6 +11,24 @@
 @endphp
 
 <div class="cart-page">
+    @if(session('success'))
+        <div class="alert alert-success mb-3">{{ session('success') }}</div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger mb-3">{{ session('error') }}</div>
+    @endif
+
+    @if(!empty($cartAlerts))
+        <div class="alert alert-warning mb-3">
+            <ul class="mb-0 ps-3">
+                @foreach($cartAlerts as $alert)
+                    <li>{{ $alert }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <section class="cart-page__hero mb-4">
         <div>
             <p class="deskcir-ai__eyebrow mb-2">Deskcir Store</p>
@@ -40,7 +58,7 @@
                         <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
                             <div>
                                 <h2 class="cart-section-title mb-1">Productos agregados</h2>
-                                <p class="text-muted mb-0">Dise�o compacto, limpio y congruente con el resto del sistema.</p>
+                                <p class="text-muted mb-0">Diseño compacto, limpio y congruente con el resto del sistema.</p>
                             </div>
                             <a href="/store" class="btn btn-outline-deskcir">Seguir comprando</a>
                         </div>
@@ -67,11 +85,25 @@
                                         <td>
                                             <div class="cart-product-cell">
                                                 <div class="cart-product-icon">
-                                                    <span class="material-symbols-outlined">inventory_2</span>
+                                                    @if(!empty($item['image_url']))
+                                                        <img
+                                                            src="{{ $item['image_url'] }}"
+                                                            alt="{{ $item['name'] }}"
+                                                            class="rounded-3"
+                                                            style="width:56px;height:56px;object-fit:cover"
+                                                        >
+                                                    @else
+                                                        <span class="material-symbols-outlined">inventory_2</span>
+                                                    @endif
                                                 </div>
                                                 <div>
                                                     <strong>{{ $item['name'] }}</strong>
-                                                    <div class="text-muted small">Articulo agregado al carrito</div>
+                                                    <div class="text-muted small">
+                                                        Articulo agregado al carrito
+                                                        @if(isset($item['available_stock']))
+                                                            | Stock actual: {{ (int) $item['available_stock'] }}
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </div>
                                         </td>
@@ -132,3 +164,4 @@
     @endif
 </div>
 @endsection
+

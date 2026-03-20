@@ -15,10 +15,19 @@
     }
 
     $mainImage = $gallery->first();
+    $stock = max(0, (int) ($product->stock ?? 0));
+    $isOutOfStock = $stock < 1;
 @endphp
 
 <div class="product-detail-page">
     <div class="container py-4 py-lg-5">
+        @if(session('success'))
+            <div class="alert alert-success mb-3">{{ session('success') }}</div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger mb-3">{{ session('error') }}</div>
+        @endif
 
         <div class="detail-breadcrumb mb-3">
             <a href="/store" class="breadcrumb-link">Inicio</a>
@@ -74,8 +83,8 @@
                     <p class="small product-muted mb-3">Hasta 3 MSI en compras seleccionadas.</p>
 
                     <div class="stock-pill mb-3">
-                        @if((int)($product->stock ?? 0) > 0)
-                            <span class="in-stock">Stock disponible: {{ (int) $product->stock }}</span>
+                        @if($stock > 0)
+                            <span class="in-stock">Stock disponible: {{ $stock }}</span>
                         @else
                             <span class="out-stock">Producto sin stock por ahora</span>
                         @endif
@@ -85,12 +94,24 @@
                         @csrf
                         <div class="d-flex gap-2 align-items-center flex-wrap mb-3">
                             <label for="qty" class="small fw-semibold mb-0 product-label">Cantidad</label>
-                            <input id="qty" type="number" name="qty" min="1" max="99" value="1" class="form-control qty-input">
+                            <input
+                                id="qty"
+                                type="number"
+                                name="qty"
+                                min="1"
+                                max="{{ max(1, $stock) }}"
+                                value="1"
+                                class="form-control qty-input"
+                                {{ $isOutOfStock ? 'disabled' : '' }}
+                            >
+                            @if(!$isOutOfStock)
+                                <span class="small text-muted">Maximo disponible: {{ $stock }}</span>
+                            @endif
                         </div>
 
                         <div class="d-flex gap-2 flex-wrap">
-                            <button class="btn btn-deskcir px-4" type="submit">Agregar al carrito</button>
-                            <button class="btn btn-buy-now px-4" type="submit" name="buy_now" value="1">Comprar ahora</button>
+                            <button class="btn btn-deskcir px-4" type="submit" {{ $isOutOfStock ? 'disabled' : '' }}>Agregar al carrito</button>
+                            <button class="btn btn-buy-now px-4" type="submit" name="buy_now" value="1" {{ $isOutOfStock ? 'disabled' : '' }}>Comprar ahora</button>
                         </div>
                     </form>
 

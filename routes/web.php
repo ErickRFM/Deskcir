@@ -13,6 +13,7 @@ use App\Http\Controllers\{
     StoreController,
     TicketController,
     AppointmentController,
+    ProductImageFileController,
     ReportController,
     CartController,
     CheckoutController,
@@ -86,6 +87,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/store', [StoreController::class, 'index']);
 Route::get('/store/category/{slug}', [StoreController::class, 'category']);
 Route::get('/store/product/{id}', [StoreController::class, 'show']);
+Route::get('/products/image/{productImage}', ProductImageFileController::class)->name('products.images.file');
 Route::post('/cart/add/{id}', [StoreController::class, 'addToCart']);
 
 Route::get('/cart', [CartController::class, 'index']);

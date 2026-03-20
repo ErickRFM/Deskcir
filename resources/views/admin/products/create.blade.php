@@ -26,7 +26,8 @@
 <form method="POST"
       action="{{ route('admin.products.store') }}"
       enctype="multipart/form-data"
-      class="card p-4 shadow-sm">
+      class="card p-4 shadow-sm"
+      id="productCreateForm">
 
     @csrf
 
@@ -35,6 +36,7 @@
         <input class="form-control input-pro"
                name="name"
                value="{{ old('name') }}"
+               maxlength="255"
                required>
     </div>
 
@@ -50,6 +52,7 @@
             <label class="form-label fw-semibold">Precio</label>
             <input type="number"
                    step="0.01"
+                   min="0"
                    class="form-control input-pro"
                    name="price"
                    value="{{ old('price') }}"
@@ -59,6 +62,7 @@
         <div class="col-md-6 mb-3">
             <label class="form-label fw-semibold">Stock</label>
             <input type="number"
+                   min="0"
                    class="form-control input-pro"
                    name="stock"
                    value="{{ old('stock') }}"
@@ -87,13 +91,14 @@
                name="images[]"
                multiple
                class="form-control input-pro"
-               id="imageInput">
+               id="imageInput"
+               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
 
         <div id="previewContainer" class="mt-3 d-flex gap-2 flex-wrap"></div>
     </div>
 
     <div class="mt-3">
-        <button class="btn btn-deskcir py-2" type="submit">
+        <button class="btn btn-deskcir py-2" type="submit" id="productCreateSubmit">
             Guardar producto
         </button>
     </div>
@@ -104,9 +109,74 @@
 <script>
 const imageInput = document.getElementById('imageInput');
 const previewContainer = document.getElementById('previewContainer');
+const productCreateForm = document.getElementById('productCreateForm');
+const productCreateSubmit = document.getElementById('productCreateSubmit');
+
+function validateProductImages(input) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const files = [...(input?.files ?? [])];
+
+    for (const file of files) {
+        if (!allowedTypes.includes(file.type)) {
+            return 'Solo se permiten imagenes JPG, PNG o WEBP.';
+        }
+
+        if (file.size > (5 * 1024 * 1024)) {
+            return `La imagen ${file.name} supera el maximo permitido de 5 MB.`;
+        }
+    }
+
+    return null;
+}
+
+function validateCreateForm() {
+    const name = productCreateForm?.querySelector('[name="name"]')?.value.trim() ?? '';
+    const priceRaw = productCreateForm?.querySelector('[name="price"]')?.value ?? '';
+    const stockRaw = productCreateForm?.querySelector('[name="stock"]')?.value ?? '';
+    const price = Number(priceRaw);
+    const stock = Number(stockRaw);
+    const categoryId = productCreateForm?.querySelector('[name="category_id"]')?.value ?? '';
+
+    if (name.length < 2) {
+        return 'Escribe un nombre valido para el producto.';
+    }
+
+    if (priceRaw === '' || !Number.isFinite(price) || price < 0) {
+        return 'Ingresa un precio valido igual o mayor a 0.';
+    }
+
+    if (stockRaw === '' || !Number.isInteger(stock) || stock < 0) {
+        return 'Ingresa un stock valido igual o mayor a 0.';
+    }
+
+    if (!categoryId) {
+        return 'Selecciona una categoria para continuar.';
+    }
+
+    return validateProductImages(imageInput);
+}
+
+function lockCreateSubmit() {
+    if (!productCreateSubmit) return;
+    productCreateSubmit.disabled = true;
+    productCreateSubmit.innerText = 'Guardando...';
+}
 
 if (imageInput && previewContainer) {
     imageInput.addEventListener('change', function (e) {
+        const imageError = validateProductImages(imageInput);
+
+        if (imageError) {
+            imageInput.value = '';
+            previewContainer.innerHTML = '';
+            Swal.fire({
+              icon: 'error',
+              title: 'Imagen invalida',
+              text: imageError
+            });
+            return;
+        }
+
         previewContainer.innerHTML = '';
 
         [...e.target.files].forEach((file) => {
@@ -117,6 +187,48 @@ if (imageInput && previewContainer) {
             img.style.objectFit = 'cover';
             img.classList.add('border', 'rounded', 'p-1', 'shadow-sm');
             previewContainer.appendChild(img);
+        });
+    });
+}
+
+if (productCreateForm) {
+    productCreateForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const validationError = validateCreateForm();
+
+        if (validationError) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Revisa el formulario',
+              text: validationError
+            });
+            return;
+        }
+
+        Swal.fire({
+            icon: 'question',
+            title: 'Guardar producto?',
+            text: 'Se registrara el producto con la informacion capturada.',
+            showCancelButton: true,
+            confirmButtonText: 'Si, guardar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#0f766e',
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            lockCreateSubmit();
+
+            Swal.fire({
+                title: 'Guardando producto',
+                text: 'Espera un momento mientras se sube la informacion.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+
+            productCreateForm.submit();
         });
     });
 }

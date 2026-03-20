@@ -23,6 +23,14 @@ $statsCategories = $categories->count();
 <div class="store-wrapper store-scope">
 <div class="container-fluid px-3 px-lg-4">
 
+@if(session('success'))
+<div class="alert alert-success mb-4">{{ session('success') }}</div>
+@endif
+
+@if(session('error'))
+<div class="alert alert-danger mb-4">{{ session('error') }}</div>
+@endif
+
 
 {{-- HERO SOLO SI NO HAY BUSQUEDA --}}
 @if(!$hasSearch)
@@ -128,6 +136,9 @@ Segun historial de carrito y compras
 <div class="row g-3">
 
 @foreach($popularProducts as $product)
+@php
+$popularStock = max(0, (int) ($product->stock ?? 0));
+@endphp
 
 <div class="col-xl-2 col-lg-4 col-md-6">
 
@@ -150,6 +161,9 @@ Segun historial de carrito y compras
 <div class="popular-body">
 <h4>{{ Str::limit($product->name,42) }}</h4>
 <p>${{ number_format($product->price,2) }}</p>
+<span class="badge {{ $popularStock > 0 ? 'text-bg-success' : 'text-bg-danger' }}">
+{{ $popularStock > 0 ? "Stock {$popularStock}" : 'Sin stock' }}
+</span>
 </div>
 
 </a>
@@ -277,6 +291,9 @@ Limpiar filtros
 <div class="row g-4 mb-4">
 
 @foreach($category->products as $product)
+@php
+$productStock = max(0, (int) ($product->stock ?? 0));
+@endphp
 
 <div class="col-xl-4 col-md-6">
 
@@ -306,6 +323,12 @@ Limpiar filtros
 {{ Str::limit($product->description,70) }}
 </p>
 
+<div class="mb-3">
+<span class="badge {{ $productStock > 0 ? 'text-bg-success' : 'text-bg-danger' }}">
+{{ $productStock > 0 ? "Disponibles: {$productStock}" : 'Sin stock' }}
+</span>
+</div>
+
 <div class="product-footer">
 
 <span class="product-price">
@@ -320,7 +343,7 @@ ${{ number_format($product->price,2) }}
 
 <form method="POST" action="/cart/add/{{ $product->id }}">
 @csrf
-<button class="btn btn-cart">
+<button class="btn btn-cart" {{ $productStock < 1 ? 'disabled' : '' }} aria-label="{{ $productStock < 1 ? 'Producto sin stock' : 'Agregar al carrito' }}">
 <i class="bi bi-cart-plus"></i>
 </button>
 </form>

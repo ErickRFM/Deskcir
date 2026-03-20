@@ -6,19 +6,29 @@ use App\Models\Card;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Payment;
+use App\Models\Product;
 use App\Models\WalletTransaction;
+use App\Support\CartInventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
 {
-    public function index()
+    public function index(CartInventory $cartInventory)
     {
-        $cart = session()->get('cart', []);
+        $sync = $cartInventory->refresh(session()->get('cart', []));
+        $cart = $sync['cart'];
+
+        session()->put('cart', $cart);
 
         if (empty($cart)) {
             return redirect('/cart')->with('error', 'El carrito esta vacio.');
+        }
+
+        if ($sync['inventory_changed']) {
+            return redirect('/cart')->with('error', implode(' ', $sync['alerts']));
         }
 
         $summary = $this->buildSummary($cart, 'shipping');
@@ -30,16 +40,24 @@ class CheckoutController extends Controller
             ->get();
 
         $pickupPoints = $this->pickupPoints();
+        $cartAlerts = $sync['alerts'];
 
-        return view('checkout', compact('cart', 'summary', 'cards', 'pickupPoints'));
+        return view('checkout', compact('cart', 'summary', 'cards', 'pickupPoints', 'cartAlerts'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CartInventory $cartInventory)
     {
-        $cart = session()->get('cart', []);
+        $sync = $cartInventory->refresh(session()->get('cart', []));
+        $cart = $sync['cart'];
+
+        session()->put('cart', $cart);
 
         if (empty($cart)) {
-            return back()->with('error', 'Carrito vacio.');
+            return redirect('/cart')->with('error', 'Carrito vacio.');
+        }
+
+        if ($sync['inventory_changed']) {
+            return redirect('/cart')->with('error', implode(' ', $sync['alerts']));
         }
 
         $validated = $request->validate([
@@ -165,77 +183,115 @@ class CheckoutController extends Controller
 
         $orderId = null;
 
-        DB::transaction(function () use (
-            $user,
-            $paymentMethod,
-            $selectedCard,
-            $validated,
-            $summary,
-            $cart,
-            $address,
-            $city,
-            $postalCode,
-            $paymentStatus,
-            $paymentReference,
-            $paymentMeta,
-            &$orderId
-        ) {
-            $order = Order::create([
-                'user_id' => $user->id,
-                'payment_method' => $paymentMethod,
-                'card_id' => $selectedCard?->id,
-                'status' => 'pendiente',
-                'address' => $address,
-                'city' => $city,
-                'postal_code' => $postalCode,
-                'phone' => $validated['phone'],
-                'subtotal' => $summary['subtotal'],
-                'shipping_fee' => $summary['shipping_fee'],
-                'service_fee' => $summary['service_fee'],
-                'discount' => $summary['discount'],
-                'wallet_used' => $paymentMethod === 'wallet' ? $summary['total'] : 0,
-                'delivery_type' => $validated['delivery_type'],
-                'pickup_point' => $validated['pickup_point'] ?? null,
-                'delivery_notes' => $validated['delivery_notes'] ?? null,
-                'tracking_code' => 'DSK-' . date('ymd') . '-' . strtoupper(Str::random(6)),
-                'total' => $summary['total'],
-            ]);
+        try {
+            DB::transaction(function () use (
+                $user,
+                $paymentMethod,
+                $selectedCard,
+                $validated,
+                $summary,
+                $cart,
+                $address,
+                $city,
+                $postalCode,
+                $paymentStatus,
+                $paymentReference,
+                $paymentMeta,
+                &$orderId
+            ) {
+                $products = Product::query()
+                    ->whereIn('id', array_map('intval', array_keys($cart)))
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
 
-            foreach ($cart as $productId => $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => (int) $productId,
-                    'qty' => (int) ($item['qty'] ?? 1),
-                    'price' => (float) ($item['price'] ?? 0),
-                ]);
-            }
+                foreach ($cart as $productId => $item) {
+                    $product = $products->get((int) $productId);
+                    $requestedQty = max(1, (int) ($item['qty'] ?? 1));
 
-            Payment::create([
-                'order_id' => $order->id,
-                'method' => $paymentMethod,
-                'status' => $paymentStatus,
-                'amount' => $summary['total'],
-                'reference' => $paymentReference,
-                'paid_at' => $paymentStatus === 'paid' ? now() : null,
-                'meta' => $paymentMeta,
-            ]);
+                    if (! $product) {
+                        throw ValidationException::withMessages([
+                            'cart' => 'Uno de los productos de tu carrito ya no esta disponible.',
+                        ]);
+                    }
 
-            if ($paymentMethod === 'wallet') {
-                $user->wallet_balance = (float) $user->wallet_balance - (float) $summary['total'];
-                $user->save();
+                    if ((int) $product->stock < $requestedQty) {
+                        throw ValidationException::withMessages([
+                            'cart' => "El stock de {$product->name} cambio mientras completabas la compra.",
+                        ]);
+                    }
+                }
 
-                WalletTransaction::create([
+                $order = Order::create([
                     'user_id' => $user->id,
-                    'order_id' => $order->id,
-                    'type' => 'purchase',
-                    'amount' => (float) $summary['total'],
-                    'reference' => $order->tracking_code,
-                    'status' => 'completed',
+                    'payment_method' => $paymentMethod,
+                    'card_id' => $selectedCard?->id,
+                    'status' => 'pendiente',
+                    'address' => $address,
+                    'city' => $city,
+                    'postal_code' => $postalCode,
+                    'phone' => $validated['phone'],
+                    'subtotal' => $summary['subtotal'],
+                    'shipping_fee' => $summary['shipping_fee'],
+                    'service_fee' => $summary['service_fee'],
+                    'discount' => $summary['discount'],
+                    'wallet_used' => $paymentMethod === 'wallet' ? $summary['total'] : 0,
+                    'delivery_type' => $validated['delivery_type'],
+                    'pickup_point' => $validated['pickup_point'] ?? null,
+                    'delivery_notes' => $validated['delivery_notes'] ?? null,
+                    'tracking_code' => 'DSK-' . date('ymd') . '-' . strtoupper(Str::random(6)),
+                    'total' => $summary['total'],
                 ]);
-            }
 
-            $orderId = $order->id;
-        });
+                foreach ($cart as $productId => $item) {
+                    $product = $products->get((int) $productId);
+                    $requestedQty = max(1, (int) ($item['qty'] ?? 1));
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => (int) $productId,
+                        'qty' => $requestedQty,
+                        'price' => (float) ($item['price'] ?? 0),
+                    ]);
+
+                    $product->decrement('stock', $requestedQty);
+                }
+
+                Payment::create([
+                    'order_id' => $order->id,
+                    'method' => $paymentMethod,
+                    'status' => $paymentStatus,
+                    'amount' => $summary['total'],
+                    'reference' => $paymentReference,
+                    'paid_at' => $paymentStatus === 'paid' ? now() : null,
+                    'meta' => $paymentMeta,
+                ]);
+
+                if ($paymentMethod === 'wallet') {
+                    $user->wallet_balance = (float) $user->wallet_balance - (float) $summary['total'];
+                    $user->save();
+
+                    WalletTransaction::create([
+                        'user_id' => $user->id,
+                        'order_id' => $order->id,
+                        'type' => 'purchase',
+                        'amount' => (float) $summary['total'],
+                        'reference' => $order->tracking_code,
+                        'status' => 'completed',
+                    ]);
+                }
+
+                $orderId = $order->id;
+            });
+        } catch (ValidationException $exception) {
+            $latestSync = $cartInventory->refresh(session()->get('cart', []));
+            session()->put('cart', $latestSync['cart']);
+
+            return redirect('/cart')->with(
+                'error',
+                $exception->errors()['cart'][0] ?? 'El inventario cambio y actualizamos tu carrito.'
+            );
+        }
 
         session()->forget('cart');
 

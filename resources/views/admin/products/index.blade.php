@@ -45,7 +45,7 @@
                                 <td class="py-3">
                                     <div class="mb-2 d-flex flex-wrap gap-1">
                                         @foreach($product->images as $img)
-                                            <img src="{{ $img->url }}" class="img-fluid rounded" style="max-width:100px">
+                                            <img src="{{ $img->url }}" class="img-fluid rounded" style="max-width:100px" onerror="this.classList.add('d-none')">
                                         @endforeach
                                     </div>
 
@@ -77,7 +77,7 @@
                                         <span class="material-symbols-outlined">edit</span>
                                     </a>
 
-                                    <form id="delete{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline">
+                                    <form id="delete{{ $product->id }}" action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline" data-product-name="{{ $product->name }}">
                                         @csrf
                                         @method('DELETE')
 
@@ -98,9 +98,12 @@
 
 <script>
 function eliminar(id){
+    const form = document.getElementById('delete' + id);
+    const productName = form?.dataset.productName || 'este producto';
+
     Swal.fire({
         title: 'Eliminar producto?',
-        text: 'No podras recuperarlo',
+        text: `Se eliminara ${productName}. Esta accion no se podra deshacer.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -109,7 +112,14 @@ function eliminar(id){
         cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
-            document.getElementById('delete' + id).submit();
+            Swal.fire({
+                title: 'Eliminando producto',
+                text: 'Espera un momento.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+
+            form.submit();
         }
     });
 }
@@ -121,6 +131,16 @@ Swal.fire({
   icon: 'success',
   title: 'Listo!',
   text: '{{ session('success') }}'
+});
+</script>
+@endif
+
+@if(session('error'))
+<script>
+Swal.fire({
+  icon: 'error',
+  title: 'Error',
+  text: '{{ session('error') }}'
 });
 </script>
 @endif

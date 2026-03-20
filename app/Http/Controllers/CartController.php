@@ -2,15 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Support\CartInventory;
 
 class CartController extends Controller
 {
-    public function index()
+    public function index(CartInventory $cartInventory)
     {
-        $cart = session()->get('cart', []);
+        $sync = $cartInventory->refresh(session()->get('cart', []));
+        $cart = $sync['cart'];
 
-        return view('store.cart', compact('cart'));
+        session()->put('cart', $cart);
+
+        $cartAlerts = $sync['alerts'];
+
+        return view('store.cart', compact('cart', 'cartAlerts'));
     }
 
     public function remove($id)

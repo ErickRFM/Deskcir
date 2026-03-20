@@ -16,12 +16,25 @@ trait ResolvesMediaUrls
             return $path;
         }
 
+        $path = ltrim(str_replace('\\', '/', $path), '/');
         $disk = $disk ?: 'public';
+
+        if (str_starts_with($path, 'storage/')) {
+            $path = substr($path, 8);
+        }
+
+        if ($disk === 'public') {
+            return '/storage/' . ltrim(preg_replace('#^public/#', '', $path) ?? $path, '/');
+        }
+
+        if ($disk === 'local' && str_starts_with($path, 'public/')) {
+            return '/storage/' . ltrim(substr($path, 7), '/');
+        }
 
         try {
             return Storage::disk($disk)->url($path);
         } catch (\Throwable $exception) {
-            return asset('storage/' . ltrim($path, '/'));
+            return '/storage/' . ltrim(preg_replace('#^public/#', '', $path) ?? $path, '/');
         }
     }
 }

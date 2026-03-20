@@ -90,11 +90,11 @@
                         </div>
                     </div>
 
-                    <form method="POST" action="{{ route('cashier.products.store') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('cashier.products.store') }}" enctype="multipart/form-data" id="cashierProductForm">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Nombre</label>
-                            <input class="form-control input-pro" name="name" value="{{ old('name') }}" required>
+                            <input class="form-control input-pro" name="name" value="{{ old('name') }}" maxlength="255" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Descripcion</label>
@@ -103,11 +103,11 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Precio</label>
-                                <input type="number" step="0.01" class="form-control input-pro" name="price" value="{{ old('price') }}" required>
+                                <input type="number" step="0.01" min="0" class="form-control input-pro" name="price" value="{{ old('price') }}" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Stock</label>
-                                <input type="number" class="form-control input-pro" name="stock" value="{{ old('stock') }}" required>
+                                <input type="number" min="0" class="form-control input-pro" name="stock" value="{{ old('stock') }}" required>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -121,10 +121,10 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Imagenes del producto</label>
-                            <input type="file" name="images[]" multiple class="form-control input-pro" id="cashierImageInput">
+                            <input type="file" name="images[]" multiple class="form-control input-pro" id="cashierImageInput" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
                             <div id="cashierPreview" class="mt-3 d-flex gap-2 flex-wrap"></div>
                         </div>
-                        <button class="btn btn-deskcir w-100" type="submit">Guardar producto</button>
+                        <button class="btn btn-deskcir w-100" type="submit" id="cashierProductSubmit">Guardar producto</button>
                     </form>
                 </div>
             </div>
@@ -135,9 +135,74 @@
 <script>
 const cashierImageInput = document.getElementById('cashierImageInput');
 const cashierPreview = document.getElementById('cashierPreview');
+const cashierProductForm = document.getElementById('cashierProductForm');
+const cashierProductSubmit = document.getElementById('cashierProductSubmit');
+
+function validateCashierImages(input) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    const files = [...(input?.files ?? [])];
+
+    for (const file of files) {
+        if (!allowedTypes.includes(file.type)) {
+            return 'Solo se permiten imagenes JPG, PNG o WEBP.';
+        }
+
+        if (file.size > (5 * 1024 * 1024)) {
+            return `La imagen ${file.name} supera el maximo permitido de 5 MB.`;
+        }
+    }
+
+    return null;
+}
+
+function validateCashierForm() {
+    const name = cashierProductForm?.querySelector('[name="name"]')?.value.trim() ?? '';
+    const priceRaw = cashierProductForm?.querySelector('[name="price"]')?.value ?? '';
+    const stockRaw = cashierProductForm?.querySelector('[name="stock"]')?.value ?? '';
+    const price = Number(priceRaw);
+    const stock = Number(stockRaw);
+    const categoryId = cashierProductForm?.querySelector('[name="category_id"]')?.value ?? '';
+
+    if (name.length < 2) {
+        return 'Escribe un nombre valido para el producto.';
+    }
+
+    if (priceRaw === '' || !Number.isFinite(price) || price < 0) {
+        return 'Ingresa un precio valido igual o mayor a 0.';
+    }
+
+    if (stockRaw === '' || !Number.isInteger(stock) || stock < 0) {
+        return 'Ingresa un stock valido igual o mayor a 0.';
+    }
+
+    if (!categoryId) {
+        return 'Selecciona una categoria para continuar.';
+    }
+
+    return validateCashierImages(cashierImageInput);
+}
+
+function lockCashierSubmit() {
+    if (!cashierProductSubmit) return;
+    cashierProductSubmit.disabled = true;
+    cashierProductSubmit.innerText = 'Guardando...';
+}
 
 if (cashierImageInput && cashierPreview) {
     cashierImageInput.addEventListener('change', (e) => {
+        const imageError = validateCashierImages(cashierImageInput);
+
+        if (imageError) {
+            cashierImageInput.value = '';
+            cashierPreview.innerHTML = '';
+            Swal.fire({
+              icon: 'error',
+              title: 'Imagen invalida',
+              text: imageError
+            });
+            return;
+        }
+
         cashierPreview.innerHTML = '';
         [...e.target.files].forEach((file) => {
             const img = document.createElement('img');
@@ -147,6 +212,48 @@ if (cashierImageInput && cashierPreview) {
             img.style.objectFit = 'cover';
             img.classList.add('border', 'rounded', 'shadow-sm');
             cashierPreview.appendChild(img);
+        });
+    });
+}
+
+if (cashierProductForm) {
+    cashierProductForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const validationError = validateCashierForm();
+
+        if (validationError) {
+            Swal.fire({
+              icon: 'error',
+              title: 'Revisa el formulario',
+              text: validationError
+            });
+            return;
+        }
+
+        Swal.fire({
+            icon: 'question',
+            title: 'Guardar producto?',
+            text: 'Se registrara el producto desde caja.',
+            showCancelButton: true,
+            confirmButtonText: 'Si, guardar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#0f766e',
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                return;
+            }
+
+            lockCashierSubmit();
+
+            Swal.fire({
+                title: 'Guardando producto',
+                text: 'Espera un momento mientras se carga la informacion.',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+            });
+
+            cashierProductForm.submit();
         });
     });
 }

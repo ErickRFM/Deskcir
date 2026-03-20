@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Support\CartInventory;
 use Illuminate\Http\Request;
 
 class StoreController extends Controller
@@ -244,26 +245,26 @@ class StoreController extends Controller
         return view('store.cart', compact('cart'));
     }
 
-    public function addToCart(Request $request, $id)
+    public function addToCart(Request $request, CartInventory $cartInventory, $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::query()
+            ->with('images')
+            ->findOrFail($id);
 
-        $cart = session()->get('cart', []);
         $qty = max(1, (int) $request->input('qty', 1));
+        $result = $cartInventory->add(session()->get('cart', []), $product, $qty);
 
-        $cart[$id] = [
-            'name' => $product->name,
-            'price' => $product->price,
-            'qty' => ($cart[$id]['qty'] ?? 0) + $qty,
-        ];
-
-        session()->put('cart', $cart);
+        session()->put('cart', $result['cart']);
 
         if ((int) $request->input('buy_now', 0) === 1) {
+            if (($result['level'] ?? 'success') !== 'success') {
+                return back()->with('error', $result['message']);
+            }
+
             return redirect('/checkout');
         }
 
-        return back()->with('success', 'Producto agregado al carrito.');
+        return back()->with($result['level'] ?? 'success', $result['message']);
     }
 }
 

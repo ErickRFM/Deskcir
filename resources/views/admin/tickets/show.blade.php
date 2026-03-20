@@ -21,20 +21,17 @@
                         <span class="badge text-bg-info text-uppercase">{{ $ticket->priority ?? 'media' }}</span>
                         <span class="badge text-bg-light border text-dark">Ticket #{{ $ticket->id }}</span>
                     </div>
-                </div>
-
-                <div class="d-grid gap-3">
                     @if($ticket->technician)
-                        <span class="badge bg-success-subtle text-success-emphasis border px-3 py-2 justify-self-start d-inline-flex align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success-emphasis border px-3 py-2 mt-3 justify-self-start d-inline-flex align-items-center gap-2">
                             <span class="material-symbols-outlined">engineering</span>
                             Tecnico: {{ $ticket->technician->name }}
                         </span>
                     @else
-                        <span class="badge bg-secondary-subtle text-secondary-emphasis border px-3 py-2 justify-self-start">Sin tecnico asignado</span>
+                        <span class="badge bg-secondary-subtle text-secondary-emphasis border px-3 py-2 mt-3 justify-self-start">Sin tecnico asignado</span>
                     @endif
-
-                    <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir pantalla" call-label="Videollamada" :peer-user-id="$ticket->user->id" :peer-label="$ticket->user->name" screen-flow="request-peer" />
                 </div>
+
+                <x-ticket-call-tools :ticket="$ticket" screen-label="Compartir pantalla" call-label="Videollamada" :peer-user-id="$ticket->user->id" :peer-label="$ticket->user->name" screen-flow="request-peer" />
             </div>
         </div>
     </section>

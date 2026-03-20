@@ -215,7 +215,7 @@
         modePill.textContent = text || 'Listo';
         modePill.classList.toggle('is-active', mode !== 'idle');
     };
-    const hasLiveTracks = (stream) => !!stream && typeof stream.getTracks === 'function' && stream.getTracks().some((track) => track.readyState === 'live');
+    const hasLiveTracks = (stream) => !!stream && typeof stream.getTracks === 'function' && stream.getTracks().length > 0;
     const syncVideoState = () => {
         if (localPlaceholder) localPlaceholder.hidden = hasLiveTracks(localVideo?.srcObject);
         if (remotePlaceholder) remotePlaceholder.hidden = hasLiveTracks(remoteVideo?.srcObject);
@@ -344,6 +344,7 @@
         peer.ontrack = null;
         peer.onicecandidate = null;
         peer.onconnectionstatechange = null;
+        peer.oniceconnectionstatechange = null;
         try { peer.close(); } catch (error) { console.warn('No se pudo cerrar la conexion WebRTC.', error); }
     }
 
@@ -524,7 +525,9 @@
                 peer.addTransceiver('video', { direction: 'recvonly' });
             }
 
-            const offer = await peer.createOffer();
+            const offer = mode === 'call'
+                ? await peer.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true })
+                : await peer.createOffer();
             await peer.setLocalDescription(offer);
             await postJson('/webrtc/offer', { ticket_id: ticketId, offer, request_mode: mode });
             if (mode === 'call') {
@@ -570,6 +573,10 @@
                 }
                 setStatus('Elige pantalla, ventana o pestana en el selector del navegador para compartir.');
                 const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+                const videoTransceiver = peer.getTransceivers().find((transceiver) => transceiver.receiver?.track?.kind === 'video');
+                if (videoTransceiver) {
+                    videoTransceiver.direction = 'sendonly';
+                }
                 bindLocalStream(stream, mode);
                 stream.getTracks().forEach((track) => peer.addTrack(track, stream));
             } else {
@@ -705,7 +712,9 @@
 </script>
 
 <style>
-.ticket-call-tools { display: grid; gap: .85rem; min-width: min(100%, 34rem); }
+.ticket-call-tools { display: grid; gap: .85rem; min-width: min(100%, 34rem); align-content: start; }
+.ticket-hero__grid > .ticket-call-tools.is-live-open { grid-column: 1 / -1; min-width: 100%; width: 100%; }
+.ticket-hero__grid > .ticket-call-tools.is-live-open .ticket-call-console { width: 100%; }
 .ticket-call-tools__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
 .ticket-call-tools__presence, .ticket-call-tools__actions { display: flex; align-items: center; gap: .55rem; flex-wrap: wrap; }
 .ticket-call-tools__presence-pill { display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px; padding: .45rem .8rem; background: #eff7fb; border: 1px solid #d9e8ef; color: #1c3a4f; font-size: .82rem; font-weight: 700; }
@@ -723,7 +732,7 @@
 .ticket-call-console__mode { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: .45rem .75rem; border-radius: 999px; background: rgba(143, 209, 226, 0.12); border: 1px solid rgba(143, 209, 226, 0.2); color: #cfeef7; font-size: .8rem; font-weight: 700; }
 .ticket-call-console__mode.is-active { background: rgba(19, 214, 164, 0.14); border-color: rgba(19, 214, 164, 0.26); color: #a8ffde; }
 .ticket-call-console__status { padding: .9rem 1.1rem 0; color: #b9d8e4; min-height: 56px; }
-.ticket-call-console__grid { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem 1.1rem 1.1rem; }
+.ticket-call-console__grid { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem 1.1rem 1.1rem; align-items: start; }
 .ticket-call-console__main { display: grid; gap: .9rem; }
 .ticket-call-console__video-shell { border: 1px solid rgba(177, 223, 236, 0.16); border-radius: 18px; padding: .8rem; background: rgba(7, 24, 39, 0.48); width: 100%; }
 .ticket-call-console__video-label { margin-bottom: .45rem; color: #8fd1e2; font-size: .82rem; font-weight: 700; }
@@ -734,7 +743,7 @@
 .ticket-call-console__placeholder .material-symbols-outlined { font-size: 2rem; color: #8fd1e2; }
 .ticket-call-console__placeholder strong { font-size: 1rem; }
 .ticket-call-console__placeholder p { margin: 0; color: #9fc8d8; font-size: .88rem; }
-.ticket-call-console__side { display: grid; gap: .85rem; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); align-items: start; }
+.ticket-call-console__side { display: grid; gap: .85rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); align-items: start; }
 .ticket-call-console__card { border: 1px solid rgba(177, 223, 236, 0.16); border-radius: 18px; padding: .95rem 1rem; background: rgba(7, 24, 39, 0.44); color: #dbedf4; min-height: 100%; }
 .ticket-call-console__video-shell.is-local .ticket-call-console__video-stage { min-height: 150px; max-height: 190px; }
 .ticket-call-console__video-shell.is-remote .ticket-call-console__video-stage { min-height: 260px; }
@@ -753,7 +762,7 @@
 .dark .ticket-call-modal__badge { background: rgba(0, 183, 224, 0.12); border-color: rgba(88, 200, 230, 0.24); color: #99eafe; }
 .dark .ticket-call-modal__body { color: #b8d7e3; }
 @media (min-width: 1200px) {
-    .ticket-call-console__grid { grid-template-columns: minmax(0, 1.2fr) minmax(280px, .88fr); }
+    .ticket-call-console__grid { grid-template-columns: minmax(0, 1.3fr) minmax(300px, .82fr); }
     .ticket-call-console__side { grid-template-columns: 1fr; }
 }
 @media (max-width: 991.98px) {
@@ -761,6 +770,7 @@
 }
 @media (max-width: 767.98px) {
     .ticket-call-tools, .ticket-call-console { min-width: 100%; }
+    .ticket-hero__grid > .ticket-call-tools.is-live-open { grid-column: auto; }
     .ticket-call-console__topbar, .ticket-call-console__topbar-actions, .ticket-call-modal__actions { flex-direction: column; align-items: stretch; }
     .ticket-call-console__status { min-height: 0; }
     .ticket-call-console__video-stage { min-height: 200px; }
